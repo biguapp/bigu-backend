@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 
 import java.util.*;
 
-@SuppressWarnings("JpaAttributeTypeInspection")
 @Entity
 public class Usuario {
     @Id
