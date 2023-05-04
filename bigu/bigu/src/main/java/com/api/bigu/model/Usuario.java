@@ -1,8 +1,6 @@
 package com.api.bigu.model;
 
-import java.util.*;
-
-public class User{
+public class Usuario {
     protected double matricula;
 
     protected String name;
@@ -11,7 +9,7 @@ public class User{
 
     protected String senha;
 
-    public User(double matricula, String name, String email, String senha) {
+    public Usuario(double matricula, String name, String email, String senha) {
         this.matricula = matricula;
         this.name = name;
         this.email = email;
