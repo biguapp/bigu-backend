@@ -10,4 +10,11 @@ public class User{
     protected String email;
 
     protected String senha;
+
+    public User(double matricula, String name, String email, String senha) {
+        this.matricula = matricula;
+        this.name = name;
+        this.email = email;
+        this.senha = senha;
+    }
 }
