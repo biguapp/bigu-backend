@@ -5,7 +5,6 @@ public class UsuarioDTO {
     private Long matricula;
     private String nome;
     private String email;
-
     private String senha;
     private String photoUrl;
 
@@ -14,6 +13,9 @@ public class UsuarioDTO {
         this.nome = nome;
         this.email = email;
         this.senha = senha;
+    }
+
+    public UsuarioDTO(long matricula, String nome, String email) {
     }
 
     public Long getMatricula() {
