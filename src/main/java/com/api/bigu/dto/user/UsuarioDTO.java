@@ -1,4 +1,4 @@
-package com.api.bigu.dto;
+package com.api.bigu.dto.user;
 
 public class UsuarioDTO {
 

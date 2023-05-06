@@ -1,10 +1,11 @@
 package com.api.bigu.models;
 
 import com.api.bigu.models.enums.Role;
+import com.api.bigu.models.enums.UserType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
-import org.hibernate.Hibernate;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,6 +27,9 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
+    @CPF
+    private String cpfUser;
+
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
@@ -36,11 +40,16 @@ public class User implements UserDetails {
     @Column(name="phone_number")
     private String phoneNumber;
 
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(name="user_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
@@ -83,13 +92,12 @@ public class User implements UserDetails {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        User user = (User) o;
-        return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
+        if (!(o instanceof User user)) return false;
+        return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
 
     @Override
     public int hashCode() {
-        return getClass().hashCode();
+        return Objects.hash(getUserId(), getCpfUser());
     }
 }

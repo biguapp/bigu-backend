@@ -26,14 +26,14 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(registerRequest.getRole() == null) {
-            registerRequest.setRole(Role.USER);
+            registerRequest.setRole(Role.USER.toString().toUpperCase());
         }
         var user = User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
+                .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
                 .build();
 
         userRepository.save(user);

@@ -26,7 +26,7 @@ public class BiguApplication {
 					.fullName("Admin")
 					.email("admin@mail.ufcg.edu.com")
 					.password("password")
-					.role(ADMIN)
+					.role("ADMIN")
 					.build();
 			System.err.println("Admin token: " + service.register(admin).getToken());
 
@@ -34,7 +34,7 @@ public class BiguApplication {
 					.fullName("User")
 					.email("user@mail.ufcg.edu.com")
 					.password("password")
-					.role(USER)
+					.role("USER")
 					.build();
 			System.err.println("User token: " + service.register(user).getToken());
 
