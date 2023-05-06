@@ -1,7 +1,7 @@
 package com.api.bigu.auth;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.models.UserModel;
+import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +22,13 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
     public AuthenticationResponse register(RegisterRequest registerRequest) {
-        var user = UserModel.builder()
-                .fisrtName(registerRequest.getFirstname())
-                .lastName(registerRequest.getLastname())
+        if(registerRequest.getRole() == null) {
+            registerRequest.setRole(Role.USER);
+        }
+        var user = User.builder()
+                .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
+                .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(registerRequest.getRole())
                 .build();

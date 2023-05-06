@@ -24,18 +24,16 @@ public class BiguApplication {
 	) {
 		return args -> {
 			var admin = RegisterRequest.builder()
-					.firstname("Admin")
-					.lastname("Admin")
-					.email("admin@mail.com")
+					.fullName("Admin")
+					.email("admin@mail.ufcg.edu.com")
 					.password("password")
 					.role(ADMIN)
 					.build();
 			System.err.println("Admin token: " + service.register(admin).getToken());
 
 			var user = RegisterRequest.builder()
-					.firstname("User")
-					.lastname("User")
-					.email("user@mail.com")
+					.fullName("User")
+					.email("user@mail.ufcg.edu.com")
 					.password("password")
 					.role(USER)
 					.build();

@@ -2,6 +2,7 @@ package com.api.bigu.models;
 
 import com.api.bigu.models.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,32 +15,35 @@ import java.util.Objects;
 
 @Getter
 @Setter
-@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name= "TB_USER")
-public class UserModel implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
-    @Column(name = "first_name", nullable = false)
-    private String fisrtName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Column(name = "full_name", nullable = false)
+    private String fullName;
 
     @Column(name = "email", nullable = false)
+    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.+[\\w-]$", message = "email not valid")
     private String email;
+
+    @Column(name="phone_number")
+    private String phoneNumber;
 
     @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Address> address;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -80,8 +84,8 @@ public class UserModel implements UserDetails {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        UserModel userModel = (UserModel) o;
-        return getUserId() != null && Objects.equals(getUserId(), userModel.getUserId());
+        User user = (User) o;
+        return getUserId() != null && Objects.equals(getUserId(), user.getUserId());
     }
 
     @Override
