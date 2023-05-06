@@ -18,7 +18,7 @@ public class Address {
     private Integer addressId;
 
     @Column(name = "postal_code", nullable = false)
-    private Long pc;
+    private Long postalCode;
 
     @Column(name = "state", nullable = false)
     private String state;
