@@ -1,8 +1,11 @@
-package com.api.bigu.auth;
+package com.api.bigu.controllers;
 
+import com.api.bigu.dto.auth.AuthenticationRequest;
+import com.api.bigu.dto.auth.AuthenticationResponse;
+import com.api.bigu.services.AuthenticationService;
+import com.api.bigu.dto.auth.RegisterRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

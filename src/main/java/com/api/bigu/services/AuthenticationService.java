@@ -1,5 +1,8 @@
-package com.api.bigu.auth;
+package com.api.bigu.services;
 
+import com.api.bigu.dto.auth.AuthenticationRequest;
+import com.api.bigu.dto.auth.AuthenticationResponse;
+import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;

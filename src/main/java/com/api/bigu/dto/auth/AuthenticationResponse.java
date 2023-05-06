@@ -1,4 +1,4 @@
-package com.api.bigu.auth;
+package com.api.bigu.dto.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
