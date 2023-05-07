@@ -1,5 +1,6 @@
 package com.api.bigu;
 
+import com.api.bigu.models.enums.UserType;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.dto.auth.RegisterRequest;
 import org.springframework.boot.CommandLineRunner;
@@ -30,13 +31,23 @@ public class BiguApplication {
 					.build();
 			System.err.println("Admin token: " + service.register(admin).getToken());
 
-			var user = RegisterRequest.builder()
-					.fullName("User")
-					.email("user@mail.ufcg.edu.com")
+			var driver = RegisterRequest.builder()
+					.fullName("Driver")
+					.email("driver@mail.ufcg.edu.com")
 					.password("password")
 					.role("USER")
+					.userType(UserType.DRIVER.name())
 					.build();
-			System.err.println("User token: " + service.register(user).getToken());
+			System.err.println("Driver token: " + service.register(driver).getToken());
+
+			var rider = RegisterRequest.builder()
+					.fullName("Rider")
+					.email("rider@mail.ufcg.edu.com")
+					.password("password")
+					.role("USER")
+					.userType(UserType.RIDER.name())
+					.build();
+			System.err.println("Rider token: " + service.register(rider).getToken());
 
 		};
 	}

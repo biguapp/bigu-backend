@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -20,11 +22,12 @@ public class Ride {
     @Column(name = "driver", nullable = false)
     private User driver;
 
-    @Column(name = "address_start", nullable = false)
-    private Address addressStart;
-
-    @Column(name = "address_destination", nullable = false)
-    private Address addressDestination;
+    // TODO correção do relacionamento com endereço
+//    @Column(name = "start_address", nullable = false)
+//    private Address startAddress;
+//
+//    @Column(name = "destination_address", nullable = false)
+//    private Address destinationAddress;
 
     @Column(name = "distance", nullable = false)
     private float distance;

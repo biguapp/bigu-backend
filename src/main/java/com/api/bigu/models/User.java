@@ -47,7 +47,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name="user_type", nullable = false)
+    @Column(name="user_type")
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
