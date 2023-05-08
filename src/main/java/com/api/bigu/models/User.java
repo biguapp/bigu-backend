@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private String fullName;
 
     @Column(name = "email", nullable = false)
-    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.+[\\w-]$", message = "email not valid")
+    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
 
     @Column(name="phone_number")

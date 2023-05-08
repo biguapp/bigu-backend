@@ -25,7 +25,8 @@ public class BiguApplication {
 		return args -> {
 			var admin = RegisterRequest.builder()
 					.fullName("Admin")
-					.email("admin@mail.ufcg.edu.com")
+					.email("admin@mail.ufcg.edu.br")
+					.phoneNumber("111111111")
 					.password("password")
 					.role("ADMIN")
 					.build();
@@ -33,19 +34,21 @@ public class BiguApplication {
 
 			var driver = RegisterRequest.builder()
 					.fullName("Driver")
-					.email("driver@mail.ufcg.edu.com")
+					.email("driver@mail.ufcg.edu.br")
+					.phoneNumber("222222222")
 					.password("password")
 					.role("USER")
-					.userType(UserType.DRIVER.name())
+					.userType(String.valueOf(UserType.DRIVER))
 					.build();
 			System.err.println("Driver token: " + service.register(driver).getToken());
 
 			var rider = RegisterRequest.builder()
 					.fullName("Rider")
-					.email("rider@mail.ufcg.edu.com")
+					.email("rider@mail.ufcg.edu.br")
+					.phoneNumber("333333333")
 					.password("password")
 					.role("USER")
-					.userType(UserType.RIDER.name())
+					.userType(String.valueOf(UserType.RIDER))
 					.build();
 			System.err.println("Rider token: " + service.register(rider).getToken());
 

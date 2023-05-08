@@ -1,9 +1,7 @@
 package com.api.bigu.controllers;
 
-import com.api.bigu.dto.auth.AuthenticationRequest;
-import com.api.bigu.dto.auth.AuthenticationResponse;
+import com.api.bigu.dto.auth.*;
 import com.api.bigu.services.AuthenticationService;
-import com.api.bigu.dto.auth.RegisterRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +25,16 @@ public class AuthenticationController {
     }
 
     @PostMapping("/authenticate")
-    public ResponseEntity<AuthenticationResponse> register(
+    public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<RecoveryResponse> forgotPassword(
+            @RequestBody @Valid RecoveryRequest recoveryRequest
+            ) {
+        return ResponseEntity.ok(authenticationService.recover(recoveryRequest));
     }
 }
