@@ -100,4 +100,36 @@ public class User implements UserDetails {
     public int hashCode() {
         return Objects.hash(getUserId(), getCpfUser());
     }
+
+	public Integer getUserId() {
+		return this.userId;
+	}
+
+	public String getCpfUser() {
+		return this.cpfUser;
+	}
+
+	public String getFullName() {
+		return this.fullName;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public String getPhoneNumber() {
+		return this.phoneNumber;
+	}
+
+	public Role getRole() {
+		return this.role;
+	}
+
+	public UserType getUserType() {
+		return this.userType;
+	}
+
+	public List<Address> getAddress() {
+		return this.address;
+	}
 }
