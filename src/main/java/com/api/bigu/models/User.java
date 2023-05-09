@@ -54,6 +54,9 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Car> cars;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -94,6 +97,14 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
+    }
+
+    public void addCar(Car car) {
+        this.cars.add(car);
+    }
+
+    public void removeCar(Car car) {
+        this.cars.remove(car);
     }
 
     @Override
