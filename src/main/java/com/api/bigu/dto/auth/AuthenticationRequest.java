@@ -16,4 +16,6 @@ public class AuthenticationRequest {
     private String email;
     @NonNull
     private String password;
+
+
 }

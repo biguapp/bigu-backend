@@ -54,6 +54,12 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
 
+    private boolean accountNonLocked = true;
+
+    private int failedLoginAttempts = 0;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -76,7 +82,19 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
+    }
+
+    public void loginFailed() {
+        failedLoginAttempts++;
+        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            accountNonLocked = false;
+        }
+    }
+
+    public void loginSucceeded() {
+        failedLoginAttempts = 0;
+        accountNonLocked = true;
     }
 
     @Override

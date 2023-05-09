@@ -38,7 +38,7 @@ public class BiguApplication {
 					.phoneNumber("222222222")
 					.password("password")
 					.role("USER")
-					.userType(String.valueOf(UserType.DRIVER))
+					.userType("DRIVER")
 					.build();
 			System.err.println("Driver token: " + service.register(driver).getToken());
 
@@ -48,7 +48,7 @@ public class BiguApplication {
 					.phoneNumber("333333333")
 					.password("password")
 					.role("USER")
-					.userType(String.valueOf(UserType.RIDER))
+					.userType("RIDER")
 					.build();
 			System.err.println("Rider token: " + service.register(rider).getToken());
 

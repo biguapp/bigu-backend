@@ -11,7 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.naming.AuthenticationException;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +24,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final AuthenticationManager authenticationManager;
-
-//    private boolean isBlocked;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(registerRequest.getRole() == null) {
@@ -47,33 +45,30 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()
-                )
+            new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getEmail(),
+                    authenticationRequest.getPassword()
+            )
         );
         var user = userRepository.findByEmail(authenticationRequest.getEmail())
                 .orElseThrow();
+        if (!user.getPassword().equals(authenticationRequest.getPassword())) {
+            LoginAttemptService.incrementLoginAttempts(authenticationRequest.getEmail());
+        } else { LoginAttemptService.resetLoginAttempts(authenticationRequest.getEmail()); }
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
-//    public void blockAuthenticate() {
-//        isBlocked = true;
-//    }
-
     public RecoveryResponse recover(RecoveryRequest recoveryRequest) {
         var user = userRepository.findByEmail(recoveryRequest.getEmail())
                 .orElseThrow();
-        if (user != null){
-            var jwtToken = jwtService.generateToken(user);
-            return RecoveryResponse.builder()
-                    .token(jwtToken)
-                    .build();
-        }
-        return null;
+        var jwtToken = jwtService.generateToken(user);
+        return RecoveryResponse.builder()
+                .token(jwtToken)
+                .build();
     }
 }
