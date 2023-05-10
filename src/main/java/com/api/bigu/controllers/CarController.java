@@ -17,10 +17,10 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    @GetMapping("/{carId}")
-    public ResponseEntity<CarDTO> findCarById(@PathVariable Integer carId) {
-        CarDTO dto = new CarDTO(carService.findCarById(carId));
-        return ResponseEntity.ok(dto);
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<CarDTO>> findCarsByUserId(@PathVariable Integer userId) {
+        List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
+        return ResponseEntity.ok(dtoList);
     }
 
     @PostMapping("/{userId}")
@@ -29,13 +29,7 @@ public class CarController {
         return ResponseEntity.created(null).build();
     }
 
-    @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> deleteCar(@PathVariable Integer carId) {
-        carService.deleteById(carId);
-        return ResponseEntity.noContent().build();
-    }
-
-    @DeleteMapping("/{carId}/{userId}")
+    @DeleteMapping("/{userId}/{carId}")
     public ResponseEntity<Void> removeCarFromUser(@PathVariable Integer userId, @PathVariable Integer carId) {
         carService.removeCarFromUser(userId, carId);
         return ResponseEntity.noContent().build();
