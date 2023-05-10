@@ -2,6 +2,10 @@ package com.api.bigu.dto.car;
 
 import com.api.bigu.models.Car;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class CarDTO {
     private Integer id;
     private Integer userId;
@@ -64,5 +68,13 @@ public class CarDTO {
 
     public Car toEntity() {
         return new Car(id, userId, brand, model, year, color, plate);
+    }
+
+    public static List<CarDTO> toDTOList(List<Car> carList) {
+        List<CarDTO> list = new ArrayList<>();
+        for (Car car : carList) {
+            list.add(new CarDTO(car));
+        }
+        return list;
     }
 }

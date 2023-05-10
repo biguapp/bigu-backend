@@ -49,4 +49,8 @@ public class CarService {
         carRepository.deleteById(carId);
         userRepository.save(user);
     }
+
+    public List<Car> findCarsByUserId(Integer userId) {
+        return carRepository.findAllByUserId(userId);
+    }
 }
