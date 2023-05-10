@@ -57,8 +57,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
 
+    @Builder.Default
     private boolean accountNonLocked = true;
 
+    @Builder.Default
     private int failedLoginAttempts = 0;
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;

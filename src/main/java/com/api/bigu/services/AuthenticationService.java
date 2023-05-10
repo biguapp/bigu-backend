@@ -32,6 +32,7 @@ public class AuthenticationService {
         var user = User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
+                .matricula(registerRequest.getMatricula())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))

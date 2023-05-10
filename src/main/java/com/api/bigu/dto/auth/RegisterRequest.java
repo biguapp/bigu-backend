@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
 	
@@ -22,13 +21,13 @@ public class RegisterRequest {
     private String userType;
 
     public RegisterRequest(String fullName, String email, String matricula, String phoneNumber, String password, String role, String userType) {
-    	setFullName(fullName);
-    	setEmail(email);
-    	setMatricula(matricula);
-    	setPhoneNumber(phoneNumber);
-    	setPassword(password);
-    	setRole(role);
-    	setUserType(userType);
+    	this.fullName = fullName;
+		this.email = email;
+		this.matricula = matricula;
+		this.phoneNumber = phoneNumber;
+		this.password = password;
+		this.role = role;
+		this.userType = userType;
 	}
     
 	public String getFullName() {

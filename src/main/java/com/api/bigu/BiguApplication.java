@@ -3,13 +3,11 @@ package com.api.bigu;
 import com.api.bigu.models.enums.UserType;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.dto.auth.RegisterRequest;
+import org.hibernate.type.internal.UserTypeJavaTypeWrapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import static com.api.bigu.models.enums.Role.ADMIN;
-import static com.api.bigu.models.enums.Role.USER;
 
 @SpringBootApplication
 public class BiguApplication {
@@ -26,6 +24,7 @@ public class BiguApplication {
 			var admin = RegisterRequest.builder()
 					.fullName("Admin")
 					.email("admin@mail.ufcg.edu.br")
+					.matricula("121110612")
 					.phoneNumber("111111111")
 					.password("password")
 					.role("ADMIN")
@@ -35,6 +34,7 @@ public class BiguApplication {
 			var driver = RegisterRequest.builder()
 					.fullName("Driver")
 					.email("driver@mail.ufcg.edu.br")
+					.matricula("121111234")
 					.phoneNumber("222222222")
 					.password("password")
 					.role("USER")
@@ -45,6 +45,7 @@ public class BiguApplication {
 			var rider = RegisterRequest.builder()
 					.fullName("Rider")
 					.email("rider@mail.ufcg.edu.br")
+					.matricula("121111456")
 					.phoneNumber("333333333")
 					.password("password")
 					.role("USER")
