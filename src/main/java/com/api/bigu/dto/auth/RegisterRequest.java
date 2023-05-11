@@ -1,34 +1,30 @@
 package com.api.bigu.dto.auth;
 
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
 	
 	private String fullName;
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "Email not valid")
     private String email;
-    private String matricula;
     private String phoneNumber;
     private String password;
     private String role;
     private String userType;
 
-    public RegisterRequest(String fullName, String email, String matricula, String phoneNumber, String password, String role, String userType) {
-    	setFullName(fullName);
-    	setEmail(email);
-    	setMatricula(matricula);
-    	setPhoneNumber(phoneNumber);
-    	setPassword(password);
-    	setRole(role);
-    	setUserType(userType);
+    public RegisterRequest(String fullName, String email, String phoneNumber, String password, String role, String userType) {
+    	this.fullName = fullName;
+		this.email = email;
+		this.phoneNumber = phoneNumber;
+		this.password = password;
+		this.role = role;
+		this.userType = userType;
 	}
     
 	public String getFullName() {
@@ -78,14 +74,6 @@ public class RegisterRequest {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
-	}
-
-	public String getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
 	}
 
 }

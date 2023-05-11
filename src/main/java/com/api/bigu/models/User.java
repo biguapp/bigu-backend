@@ -36,8 +36,8 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false)
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
-    
-    @Column(name="matricula", nullable = false)
+
+    @Column(name="matricula")
     private String matricula;
 
     @Column(name="phone_number", nullable = false)
@@ -56,6 +56,17 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
+
+    @Builder.Default
+    private boolean accountNonLocked = true;
+
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Car> cars;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -79,7 +90,19 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
+    }
+
+    public void loginFailed() {
+        failedLoginAttempts++;
+        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            accountNonLocked = false;
+        }
+    }
+
+    public void loginSucceeded() {
+        failedLoginAttempts = 0;
+        accountNonLocked = true;
     }
 
     @Override
@@ -97,6 +120,14 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
+    }
+
+    public void addCar(Car car) {
+        this.cars.add(car);
+    }
+
+    public void removeCar(Car car) {
+        this.cars.remove(car);
     }
 
     @Override

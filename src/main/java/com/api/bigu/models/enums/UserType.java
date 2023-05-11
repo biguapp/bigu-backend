@@ -1,15 +1,8 @@
 package com.api.bigu.models.enums;
 
 public enum UserType {
-    DRIVER("DRIVER"),
-    RIDER("RIDER");
 
-    private String name;
+    DRIVER,
+    RIDER
 
-    UserType(String name) {
-    }
-
-    public String getName(){
-        return this.name;
-    }
 }

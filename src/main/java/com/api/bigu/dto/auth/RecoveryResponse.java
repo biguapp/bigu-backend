@@ -13,4 +13,6 @@ public class RecoveryResponse {
 
     private String token;
 
+    private String message;
+
 }

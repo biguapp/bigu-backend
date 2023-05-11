@@ -2,22 +2,34 @@ package com.api.bigu.services;
 
 import com.api.bigu.dto.auth.*;
 import com.api.bigu.config.JwtService;
+import com.api.bigu.exceptions.EmailException;
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
-import com.api.bigu.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AuthenticationService {
 
-    private final UserRepository userRepository;
+
+    private final EmailService emailService;
+
+    private final UserService userService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -25,12 +37,11 @@ public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
 
-//    private boolean isBlocked;
-
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(registerRequest.getRole() == null) {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
         }
+
         var user = User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
@@ -39,41 +50,81 @@ public class AuthenticationService {
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
                 .build();
 
-        userRepository.save(user);
+        userService.registerUser(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException, BadCredentialsException {
+
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()
-                )
+            new UsernamePasswordAuthenticationToken(
+                    authenticationRequest.getEmail(),
+                    authenticationRequest.getPassword()
+            )
         );
-        var user = userRepository.findByEmail(authenticationRequest.getEmail())
+        var user = userService.findUserByEmail(authenticationRequest.getEmail())
                 .orElseThrow();
+        if (!user.getPassword().equals(authenticationRequest.getPassword())) {
+            incrementLoginAttempts(authenticationRequest.getEmail());
+        } else { resetLoginAttempts(authenticationRequest.getEmail()); }
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
-//    public void blockAuthenticate() {
-//        isBlocked = true;
-//    }
-
-    public RecoveryResponse recover(RecoveryRequest recoveryRequest) {
-        var user = userRepository.findByEmail(recoveryRequest.getEmail())
+    public RecoveryResponse recover(RecoveryRequest recoveryRequest) throws UserNotFoundException, EmailException {
+        var user = userService.findUserByEmail(recoveryRequest.getEmail())
                 .orElseThrow();
-        if (user != null){
-            var jwtToken = jwtService.generateToken(user);
-            return RecoveryResponse.builder()
-                    .token(jwtToken)
-                    .build();
+
+        var jwtToken = jwtService.generateToken(user);
+        var recoveryLink = "https://example.com/recover?token=" + jwtToken;
+
+        var subject = "Recuperação de senha";
+        var body = "Olá " + user.getFullName() + ",\n\n" +
+                "Recebemos uma solicitação de recuperação de senha para sua conta em nosso sistema. " +
+                "Clique no link abaixo para criar uma nova senha:\n\n" +
+                recoveryLink + "\n\n" +
+                "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
+                "Atenciosamente,\n" +
+                "Equipe do Sistema";
+
+        emailService.sendEmail(user.getEmail(), subject, body);
+
+        return RecoveryResponse.builder()
+                .message("Um e-mail com instruções de recuperação foi enviado para " + user.getEmail())
+                .build();
+    }
+
+    public void incrementLoginAttempts(String email) {
+        if (userService.findUserByEmail(email).isPresent()) {
+            userService.findUserByEmail(email).get().loginFailed();
         }
-        return null;
+    }
+
+    public void resetLoginAttempts(String email) {
+        if (userService.findUserByEmail(email).isPresent()) {
+            userService.findUserByEmail(email).get().loginFailed();
+        }
+    }
+
+    public void blockAuthenticate(String email) {
+        User user;
+        try {
+            user = userService.findUserByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        user.loginFailed();
+        userService.updateUser(user);
+    }
+
+    public void sendConfirmationEmail(String to, String code) throws EmailException {
+        String subject = "Confirmation code for your account";
+        String body = "Your confirmation code is: " + code;
+        emailService.sendEmail(to, subject, body);
     }
 }

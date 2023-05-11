@@ -1,6 +1,7 @@
 package com.api.bigu.dto.user;
 
 import com.api.bigu.models.Address;
+import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.models.enums.UserType;
@@ -27,6 +28,8 @@ public class UserDTO {
 
     public List<Address> address;
 
+    public List<Car> cars;
+
     public UserDTO(@NonNull User user) {
         this.userId = user.getUserId();
         this.cpfUser = user.getCpfUser();
@@ -36,6 +39,15 @@ public class UserDTO {
         this.role = user.getRole();
         this.userType = user.getUserType();
         this.address = user.getAddress();
+        this.cars = user.getCars();
+    }
+
+    public List<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
     }
 
     public UserDTO(Optional<User> user) {

@@ -1,6 +1,8 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.dto.auth.*;
+import com.api.bigu.exceptions.EmailException;
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,13 +30,23 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest
     ) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+        try {
+            return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<RecoveryResponse> forgotPassword(
             @RequestBody @Valid RecoveryRequest recoveryRequest
             ) {
-        return ResponseEntity.ok(authenticationService.recover(recoveryRequest));
+        try {
+            return ResponseEntity.ok(authenticationService.recover(recoveryRequest));
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (EmailException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
