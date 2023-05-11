@@ -6,6 +6,7 @@ import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
+import com.api.bigu.repositories.RideRepository;
 import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,12 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private RideService rideService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Integer buildUser(RegisterRequest requestUser) {
         User user = User.builder()
@@ -72,6 +77,10 @@ public class UserService {
     }
 
     public void deleteById(Integer userId) {
+    	
+    	//deletamos as caronas em que o user foi motorista ou passageiro
+    	//rideService.deleteByUserId(userId);
+    	
         userRepository.deleteById(userId);
     }
 

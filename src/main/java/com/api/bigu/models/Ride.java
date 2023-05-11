@@ -41,4 +41,8 @@ public class Ride {
     @ManyToOne()
     @JsonIgnore
     private User user;
+
+	public Integer getRideId() {
+		return this.id;
+	}
 }
