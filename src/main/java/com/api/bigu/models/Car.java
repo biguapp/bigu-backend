@@ -17,7 +17,21 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @ManyToOne()
-    @JsonIgnore
-    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Integer userId;
+
+    @Column(name = "brand", nullable = false)
+    private String brand;
+
+    @Column(name = "model", nullable = false)
+    private String model;
+
+    @Column(name = "year", nullable = false)
+    private Integer year;
+
+    @Column(name = "color", nullable = false)
+    private String color;
+
+    @Column(name = "plate", nullable = false)
+    private String plate;
 }
