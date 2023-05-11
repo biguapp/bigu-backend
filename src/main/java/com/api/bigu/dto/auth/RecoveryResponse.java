@@ -9,15 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationResponse {
+public class RecoveryResponse {
 
     private String token;
 
-    public String getToken() {
-        return token;
-    }
+    private String message;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

@@ -34,10 +34,13 @@ public class User implements UserDetails {
     private String fullName;
 
     @Column(name = "email", nullable = false)
-    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.+[\\w-]$", message = "email not valid")
+    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
 
-    @Column(name="phone_number")
+    @Column(name="matricula")
+    private String matricula;
+
+    @Column(name="phone_number", nullable = false)
     private String phoneNumber;
 
     @Column(name = "password", nullable = false)
@@ -53,6 +56,17 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
+
+    @Builder.Default
+    private boolean accountNonLocked = true;
+
+    @Builder.Default
+    private int failedLoginAttempts = 0;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Car> cars;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,7 +90,19 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
+    }
+
+    public void loginFailed() {
+        failedLoginAttempts++;
+        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            accountNonLocked = false;
+        }
+    }
+
+    public void loginSucceeded() {
+        failedLoginAttempts = 0;
+        accountNonLocked = true;
     }
 
     @Override
@@ -96,8 +122,48 @@ public class User implements UserDetails {
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
 
+    public void addCar(Car car) {
+        this.cars.add(car);
+    }
+
+    public void removeCar(Car car) {
+        this.cars.remove(car);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(getUserId(), getCpfUser());
     }
+
+	public Integer getUserId() {
+		return this.userId;
+	}
+
+	public String getCpfUser() {
+		return this.cpfUser;
+	}
+
+	public String getFullName() {
+		return this.fullName;
+	}
+
+	public String getEmail() {
+		return this.email;
+	}
+
+	public String getPhoneNumber() {
+		return this.phoneNumber;
+	}
+
+	public Role getRole() {
+		return this.role;
+	}
+
+	public UserType getUserType() {
+		return this.userType;
+	}
+
+	public List<Address> getAddress() {
+		return this.address;
+	}
 }

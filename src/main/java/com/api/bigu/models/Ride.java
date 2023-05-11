@@ -35,6 +35,9 @@ public class Ride {
     @Column(name = "price", nullable = false)
     private float price;
 
+    @ManyToOne
+    private Car car;
+
     @ManyToOne()
     @JsonIgnore
     private User user;

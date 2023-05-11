@@ -22,6 +22,6 @@ public class AddressRequest {
     private String street;
     @NonNull
     private String number;
-    @NonNull
+
     private String complement;
 }

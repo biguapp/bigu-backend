@@ -9,14 +9,9 @@ import lombok.NonNull;
 @Data
 @Builder
 @AllArgsConstructor
-public class AuthenticationRequest {
+public class RecoveryRequest {
 
     @NonNull
-    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
+    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.+[\\w-]$", message = "email not valid")
     private String email;
-    @NonNull
-    private String password;
-
-
-
 }
