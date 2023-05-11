@@ -14,16 +14,14 @@ public class RegisterRequest {
 	private String fullName;
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "Email not valid")
     private String email;
-    private String matricula;
     private String phoneNumber;
     private String password;
     private String role;
     private String userType;
 
-    public RegisterRequest(String fullName, String email, String matricula, String phoneNumber, String password, String role, String userType) {
+    public RegisterRequest(String fullName, String email, String phoneNumber, String password, String role, String userType) {
     	this.fullName = fullName;
 		this.email = email;
-		this.matricula = matricula;
 		this.phoneNumber = phoneNumber;
 		this.password = password;
 		this.role = role;
@@ -77,14 +75,6 @@ public class RegisterRequest {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
-	}
-
-	public String getMatricula() {
-		return matricula;
-	}
-
-	public void setMatricula(String matricula) {
-		this.matricula = matricula;
 	}
 
 }

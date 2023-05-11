@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
     
-    @Column(name="matricula", nullable = false)
+    @Column(name="matricula")
     private String matricula;
 
     @Column(name="phone_number", nullable = false)

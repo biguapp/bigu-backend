@@ -1,6 +1,8 @@
 package com.api.bigu.config;
 
 import com.api.bigu.repositories.UserRepository;
+import com.api.bigu.services.EmailService;
+import com.api.bigu.services.JavaMailEmailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class ApplicationConfig {
 
     private final UserRepository userRepository;
+
+
+    @Bean
+    public EmailService emailService() {
+        return new JavaMailEmailService("your_email@gmail.com", "your_password", "smtp.gmail.com", 587);
+    }
 
     @Bean
     public UserDetailsService userDetailsService() {

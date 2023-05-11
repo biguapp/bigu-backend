@@ -20,7 +20,7 @@ public class RegisterTest {
 	@Test
 	public void cadastroSucesso() {
 		
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "120123456", "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "83991234567", "senha123", "USER", "RIDER");
 		authenticationService.register(registerRequest);
 		
 		
@@ -29,7 +29,7 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroEmailVazio() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", null, "120123456", "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", null, "83991234567", "senha123", "USER", "RIDER");
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
@@ -37,15 +37,7 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroEmailInvalido() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@gmail.com", "120123456", "83991234567", "senha123", "USER", "RIDER");
-		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
-		
-		assertNull(registerResponse);
-	}
-	
-	@Test
-	public void cadastroMatriculaVazio() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", null, "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@gmail.com", "83991234567", "senha123", "USER", "RIDER");
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
@@ -53,7 +45,7 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroTelefoneVazio() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "120123456", null, "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", null, "senha123", "USER", "RIDER");
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
