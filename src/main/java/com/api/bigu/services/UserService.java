@@ -1,9 +1,9 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.auth.AuthenticationRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.UserRepository;
@@ -26,7 +26,7 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public Integer buildUser(RegisterRequest requestUser){
+    public Integer buildUser(RegisterRequest requestUser) {
         User user = User.builder()
                 .fullName(requestUser.getFullName())
                 .email(requestUser.getEmail())
@@ -51,12 +51,13 @@ public class UserService {
 //        return user.getUserId();
 //    }
 
-    public Integer registerUser(User user){
+    public Integer registerUser(User user) {
         if (user != null) {
             userRepository.save(user);
         }
         return user.getUserId();
     }
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
@@ -74,17 +75,21 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public Optional<User> findUserByEmail(String userEmail) throws UserNotFoundException{
+    public Optional<User> findUserByEmail(String userEmail) {
         Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             return user;
         } else {
-            throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
+            try {
+                throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
+            } catch (UserNotFoundException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public void updateUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()){
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             userRepository.save(user);
         }
 
@@ -92,5 +97,21 @@ public class UserService {
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
+    }
+
+    public void addCarToUser(Integer userId, Car car) {
+        User user = userRepository.findById(userId).get();
+        List<Car> newCars = user.getCars();
+        newCars.add(car);
+        user.setCars(newCars);
+        this.updateUser(user);
+    }
+
+    public void removeCarFromUser(Integer userId, Integer carId) {
+        User user = userRepository.findById(userId).get();
+        List<Car> newCars = user.getCars();
+        newCars.remove(carId);
+        user.setCars(newCars);
+        this.updateUser(user);
     }
 }

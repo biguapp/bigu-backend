@@ -100,22 +100,14 @@ public class AuthenticationService {
     }
 
     public void incrementLoginAttempts(String email) {
-        try {
-            if (userService.findUserByEmail(email).isPresent()) {
-                userService.findUserByEmail(email).get().loginFailed();
-            }
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
+        if (userService.findUserByEmail(email).isPresent()) {
+            userService.findUserByEmail(email).get().loginFailed();
         }
     }
 
     public void resetLoginAttempts(String email) {
-        try {
-            if (userService.findUserByEmail(email).isPresent()) {
-                userService.findUserByEmail(email).get().loginFailed();
-            }
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
+        if (userService.findUserByEmail(email).isPresent()) {
+            userService.findUserByEmail(email).get().loginFailed();
         }
     }
 

@@ -1,7 +1,6 @@
 package com.api.bigu.dto.auth;
 
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

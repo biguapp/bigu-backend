@@ -3,12 +3,14 @@ package com.api.bigu.services;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.CarRepository;
-import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -20,13 +22,8 @@ public class CarService {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserRepository userRepository;
-
-
-    public Car findCarById(Integer carId) {
-        return carRepository.findById(carId)
-                .orElseThrow(RuntimeException::new);
+    public Optional<Car> findCarById(Integer carId) {
+        return carRepository.findById(carId);
     }
 
     public void deleteById(Integer carId) {
@@ -34,23 +31,17 @@ public class CarService {
     }
 
     public void addCarToUser(Integer userId, Car car) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(RuntimeException::new);
-        user.addCar(car);
-        car.setUserId(userId);
+        userService.addCarToUser(userId, car);
         carRepository.save(car);
-        userRepository.save(user);
     }
 
     public void removeCarFromUser(Integer userId, Integer carId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(RuntimeException::new);
-        user.removeCar(findCarById(carId));
+        userService.removeCarFromUser(userId, carId);
         carRepository.deleteById(carId);
-        userRepository.save(user);
     }
 
+    @SneakyThrows
     public List<Car> findCarsByUserId(Integer userId) {
-        return carRepository.findAllByUserId(userId);
+        return userService.findUserById(userId).getCars();
     }
 }
