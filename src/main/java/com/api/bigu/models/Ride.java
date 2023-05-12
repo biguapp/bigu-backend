@@ -23,7 +23,7 @@ public class Ride {
     @Column(name = "driver_id")
     private Integer driverId;
 
-    @ManyToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<User> members;
 
     @Column(name = "num_seats", nullable = false)

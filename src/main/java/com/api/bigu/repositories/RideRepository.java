@@ -10,6 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RideRepository extends JpaRepository<Ride, Integer> {
 
-    Optional<Ride> findByMembers(List<User> members);
+    //Optional<Ride> findByMembers(List<User> member);
 	
 }

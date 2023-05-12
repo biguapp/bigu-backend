@@ -37,20 +37,20 @@ public class RideController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
         }
     }
-
-    @GetMapping("/{memberId}")
-    public ResponseEntity<?> searchByMember(@PathVariable Integer memberId){
-        try{
-            Optional<Ride> rides = rideService.findByMember(memberId);
-            return ResponseEntity.ok(rides);
-        } catch (NullPointerException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não tem caronas registradas.", e);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
-        } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não existe.", e);
-        }
-    }
+// TODO
+//    @GetMapping("/{memberId}")
+//    public ResponseEntity<?> searchByMember(@PathVariable Integer memberId){
+//        try{
+//            Optional<Ride> rides = rideService.findByMember(memberId);
+//            return ResponseEntity.ok(rides);
+//        } catch (NullPointerException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não tem caronas registradas.", e);
+//        } catch (Exception e){
+//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+//        } catch (UserNotFoundException e) {
+//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não existe.", e);
+//        }
+//    }
 
 //TODO TERMINAR, DEU SONO
 //    @PostMapping("/{rideId}")

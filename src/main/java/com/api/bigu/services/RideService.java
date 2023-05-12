@@ -22,8 +22,8 @@ public class RideService {
 	 @Autowired
 	 private RideRepository rideRepository;
 	 
-	 @Autowired
-	 private UserService userService;
+//	 @Autowired
+//	 private UserService userService;
 	 
 	 public Integer registerRide(Ride ride) {
         if (ride != null) {
@@ -60,11 +60,11 @@ public class RideService {
 								// idcarona -> deletar carona pelo idcarona
 		
 	}
-
-	public Optional<Ride> findByMember(Integer memberId) throws UserNotFoundException {
-		 List<User> membro = null;
-		 membro.add(userService.findUserById(memberId).get());
-		 return rideRepository.findByMembers(membro);
-
-	}
+// TODO CONSERTAR
+//	public Optional<Ride> findByMember(Integer memberId) throws UserNotFoundException {
+//		 List<User> membro = null;
+//		 membro.add(userService.findUserById(memberId).get());
+//		 return rideRepository.findByMembers(membro);
+//
+//	}
 }
