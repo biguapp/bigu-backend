@@ -42,9 +42,4 @@ public class Address {
     @ManyToOne()
     @JsonIgnore
     private User user;
-
-    @ManyToOne()
-    @JsonIgnore
-    private Ride ride;
-
 }
