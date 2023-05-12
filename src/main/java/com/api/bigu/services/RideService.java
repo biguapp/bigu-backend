@@ -3,13 +3,13 @@ package com.api.bigu.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.api.bigu.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.RideRepository;
-import com.api.bigu.repositories.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class RideService {
 	 private RideRepository rideRepository;
 	 
 	 @Autowired
-	 private UserRepository userRepository;
+	 private UserService userService;
 	 
 	 public Integer registerRide(Ride ride) {
         if (ride != null) {
@@ -51,10 +51,20 @@ public class RideService {
 
     }
 
+//	public List<Ride> getRideByUser(Integer userId) throws UserNotFoundException {
+//
+//	}
+
 	public void deleteByUserId(Integer userId) { //deleta as caronas em que o user foi motorista ou passageiro
 		//iduser -> caronas participadas -> para cada: 
 								// idcarona -> deletar carona pelo idcarona
 		
 	}
-    
+
+	public Optional<Ride> findByMember(Integer memberId) throws UserNotFoundException {
+		 List<User> membro = null;
+		 membro.add(userService.findUserById(memberId).get());
+		 return rideRepository.findByMembers(membro);
+
+	}
 }
