@@ -1,12 +1,10 @@
 package com.api.bigu.services;
 
 import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
-import com.api.bigu.repositories.RideRepository;
 import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -67,10 +65,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserDTO findUserById(Integer userId) throws UserNotFoundException {
+    public Optional<User> findUserById(Integer userId) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            return new UserDTO(user);
+            return user;
         } else {
             throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
         }
