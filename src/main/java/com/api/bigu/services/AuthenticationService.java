@@ -8,6 +8,8 @@ import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -26,16 +28,20 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class AuthenticationService {
 
+	@Autowired
+    private EmailService emailService;
+	
+	@Autowired
+    private UserService userService;
+	
+	@Autowired
+    private PasswordEncoder passwordEncoder;
 
-    private final EmailService emailService;
-
-    private final UserService userService;
-
-    private final PasswordEncoder passwordEncoder;
-
-    private final JwtService jwtService;
-
-    private final AuthenticationManager authenticationManager;
+	@Autowired
+    private JwtService jwtService;
+	
+	@Autowired
+    private AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(registerRequest.getRole() == null) {
@@ -107,7 +113,7 @@ public class AuthenticationService {
 
     public void resetLoginAttempts(String email) {
         if (userService.findUserByEmail(email).isPresent()) {
-            userService.findUserByEmail(email).get().loginFailed();
+            userService.findUserByEmail(email).get().loginSucceeded();
         }
     }
 

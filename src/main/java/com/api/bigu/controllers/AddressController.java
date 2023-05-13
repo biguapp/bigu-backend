@@ -7,7 +7,6 @@ import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.services.AddressService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +18,12 @@ import java.util.List;
 @RequestMapping(value = "/addresses")
 public class AddressController {
 
-    @Autowired
+    final
     AddressService addressService;
+
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @GetMapping
     public List<Address> getAllAddresses() {
@@ -58,7 +61,7 @@ public class AddressController {
     }
 
     @PostMapping
-    public ResponseEntity<AddressResponse> createNewAddress(@Valid @RequestBody AddressRequest addressRequest) {
+    public ResponseEntity<AddressResponse> createNewAddress(@RequestBody @Valid AddressRequest addressRequest) {
         AddressResponse newAddress = addressService.createAddress(addressRequest);
 
         return new ResponseEntity<>(newAddress, HttpStatus.CREATED);

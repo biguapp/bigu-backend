@@ -1,7 +1,6 @@
 package com.api.bigu.services;
 
 import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
@@ -23,8 +22,12 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-
-    private final PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private RideService rideService;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public Integer buildUser(RegisterRequest requestUser) {
         User user = User.builder()
@@ -62,16 +65,20 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserDTO findUserById(Integer userId) throws UserNotFoundException {
+    public Optional<User> findUserById(Integer userId) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            return new UserDTO(user);
+            return user;
         } else {
             throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
         }
     }
 
     public void deleteById(Integer userId) {
+    	
+    	//deletamos as caronas em que o user foi motorista ou passageiro
+    	//rideService.deleteByUserId(userId);
+    	
         userRepository.deleteById(userId);
     }
 
