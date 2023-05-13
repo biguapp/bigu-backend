@@ -1,6 +1,8 @@
 package com.api.bigu.services;
 
 import com.api.bigu.dto.address.AddressDTO;
+import com.api.bigu.dto.address.AddressRequest;
+import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.repositories.AddressRepository;
@@ -19,7 +21,7 @@ public class AddressService {
     AddressRepository addressRepository;
 
     @Autowired
-    UserService userService;
+    AddressMapper addressMapper;
 
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
@@ -42,4 +44,11 @@ public class AddressService {
     }
 
 
+    public AddressResponse createAddress(AddressRequest addressRequest) {
+       Address newAddrress = addressMapper.toAddress(addressRequest);
+
+       Address addressCreated = addressRepository.save(newAddrress);
+
+       return addressMapper.toAddressResponse(addressCreated);
+    }
 }

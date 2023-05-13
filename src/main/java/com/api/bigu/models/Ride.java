@@ -1,6 +1,5 @@
 package com.api.bigu.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,6 +25,13 @@ public class Ride {
     @ManyToMany(cascade = CascadeType.ALL)
     private List<User> members;
 
+    @ManyToOne
+    @JoinColumn(name="start_address_id")
+    private Address startAddress;
+
+    @ManyToOne
+    @JoinColumn(name="destination_address_id")
+    private Address destinationAddress;
     @Column(name = "num_seats", nullable = false)
     private int numSeats;
 
@@ -45,6 +51,10 @@ public class Ride {
 
     @ManyToOne
     private Car car;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "description")
     private String description;
