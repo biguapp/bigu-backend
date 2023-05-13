@@ -18,6 +18,9 @@ public class AddressService {
     @Autowired
     AddressRepository addressRepository;
 
+    @Autowired
+    UserService userService;
+
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
     public AddressDTO getAddressByCEP(Long cep) throws AddressNotFoundException {

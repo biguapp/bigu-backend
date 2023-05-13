@@ -56,6 +56,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
+    
+    @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    private List<Ride> rides;
 
     @Builder.Default
     private boolean accountNonLocked = true;
@@ -122,48 +125,8 @@ public class User implements UserDetails {
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
 
-    public void addCar(Car car) {
-        this.cars.add(car);
-    }
-
-    public void removeCar(Car car) {
-        this.cars.remove(car);
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(getUserId(), getCpfUser());
     }
-
-	public Integer getUserId() {
-		return this.userId;
-	}
-
-	public String getCpfUser() {
-		return this.cpfUser;
-	}
-
-	public String getFullName() {
-		return this.fullName;
-	}
-
-	public String getEmail() {
-		return this.email;
-	}
-
-	public String getPhoneNumber() {
-		return this.phoneNumber;
-	}
-
-	public Role getRole() {
-		return this.role;
-	}
-
-	public UserType getUserType() {
-		return this.userType;
-	}
-
-	public List<Address> getAddress() {
-		return this.address;
-	}
 }

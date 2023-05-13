@@ -5,6 +5,8 @@ import com.api.bigu.models.User;
 import com.api.bigu.models.enums.UserType;
 import com.api.bigu.repositories.UserRepository;
 import com.api.bigu.services.AuthenticationService;
+import com.api.bigu.services.UserService;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -16,10 +18,10 @@ public class RegisterTest {
 	
 	AuthenticationService authenticationService;
 	UserRepository userRepository;
+	UserService userService;
 	
 	@Test
 	public void cadastroSucesso() {
-		
 		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "83991234567", "senha123", "USER", "RIDER");
 		authenticationService.register(registerRequest);
 		
@@ -49,6 +51,17 @@ public class RegisterTest {
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
+	}
+	
+	@Test
+	public void remocaoUsuarioSucesso() {
+		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "83991234567", "senha123", "USER", "RIDER");
+		authenticationService.register(registerRequest);
+		
+		Integer userId = userService.buildUser(registerRequest);
+		userService.deleteById(userId);
+		
+		assertFalse(userRepository.existsById(userId));
 	}
 	
 }
