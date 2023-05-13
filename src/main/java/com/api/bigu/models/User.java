@@ -28,12 +28,13 @@ public class User implements UserDetails {
     private Integer userId;
 
     @CPF
+    @Column(name = "cpf_user")
     private String cpfUser;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
 

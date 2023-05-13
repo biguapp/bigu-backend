@@ -51,11 +51,8 @@ public class UserService {
 //        return user.getUserId();
 //    }
 
-    public Integer registerUser(User user) {
-        if (user != null) {
-            userRepository.save(user);
-        }
-        return user.getUserId();
+    public User registerUser(User user) {
+        return userRepository.save(user);
     }
 
     public List<User> getAllUsers() {

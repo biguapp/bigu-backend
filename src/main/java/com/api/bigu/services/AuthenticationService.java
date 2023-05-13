@@ -50,8 +50,7 @@ public class AuthenticationService {
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
                 .build();
 
-        userService.registerUser(user);
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(userService.registerUser(user));
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
