@@ -56,7 +56,7 @@ public class BiguApplication {
 					.user(userService.findUserByEmail("driver@mail.ufcg.edu.br").get())
 					.brand("Chevrolet")
 					.model("Onix")
-					.year(2015)
+					.modelYear(2015)
 					.color("Preto")
 					.plate("KGU7E07")
 					.build();

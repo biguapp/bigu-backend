@@ -9,44 +9,42 @@ import java.util.stream.Collectors;
 
 public class CarDTO {
     private Integer id;
-    private User user;
+    private Integer userId;
     private String brand;
     private String model;
-    private Integer year;
+    private Integer modelYear;
     private String color;
     private String plate;
 
     public CarDTO() {
     }
 
-    public CarDTO(Integer id, User user, String brand, String model, Integer year, String color, String plate) {
+    public CarDTO(Integer id, Integer userId, String brand, String model, Integer modelYear, String color, String plate) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.brand = brand;
         this.model = model;
-        this.year = year;
+        this.modelYear = modelYear;
         this.color = color;
         this.plate = plate;
     }
 
     public CarDTO(Car car) {
         this.id = car.getId();
-        this.user = car.getUser();
+        this.userId = car.getUser().getUserId();
         this.brand = car.getBrand();
         this.model = car.getModel();
-        this.year = car.getYear();
+        this.modelYear = car.getModelYear();
         this.color = car.getColor();
         this.plate = car.getPlate();
     }
-
-    public User getUser() { return user;  }
 
     public Integer getId() {
         return id;
     }
 
     public Integer getUserId() {
-        return user.getUserId();
+        return userId;
     }
 
     public String getBrand() {
@@ -57,8 +55,8 @@ public class CarDTO {
         return model;
     }
 
-    public Integer getYear() {
-        return year;
+    public Integer getModelYear() {
+        return modelYear;
     }
 
     public String getColor() {
@@ -70,7 +68,7 @@ public class CarDTO {
     }
 
     public Car toEntity() {
-        return new Car(id, user, brand, model, year, color, plate);
+        return new Car(id, null, brand, model, modelYear, color, plate);
     }
 
     public static List<CarDTO> toDTOList(List<Car> carList) {
