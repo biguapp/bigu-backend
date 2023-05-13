@@ -42,6 +42,6 @@ public class CarService {
 
     @SneakyThrows
     public List<Car> findCarsByUserId(Integer userId) {
-        return userService.findUserById(userId).getCars();
+        return userService.findUserById(userId).get().getCars();
     }
 }

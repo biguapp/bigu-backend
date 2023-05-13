@@ -39,12 +39,9 @@ public class Address {
     @Column(name = "complement")
     private String complement;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
-
-    @ManyToOne()
-    @JsonIgnore
-    private Ride ride;
 
 }

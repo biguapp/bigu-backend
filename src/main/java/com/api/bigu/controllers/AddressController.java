@@ -1,19 +1,15 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.dto.address.AddressDTO;
-import com.api.bigu.dto.user.UserDTO;
+import com.api.bigu.dto.address.AddressRequest;
+import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
-import com.api.bigu.models.User;
 import com.api.bigu.services.AddressService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -22,8 +18,12 @@ import java.util.List;
 @RequestMapping(value = "/addresses")
 public class AddressController {
 
-    @Autowired
+    final
     AddressService addressService;
+
+    public AddressController(AddressService addressService) {
+        this.addressService = addressService;
+    }
 
     @GetMapping
     public List<Address> getAllAddresses() {
@@ -58,6 +58,13 @@ public class AddressController {
             // tratar outros tipos de exceção
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
+    }
+
+    @PostMapping
+    public ResponseEntity<AddressResponse> createNewAddress(@RequestBody @Valid AddressRequest addressRequest) {
+        AddressResponse newAddress = addressService.createAddress(addressRequest);
+
+        return new ResponseEntity<>(newAddress, HttpStatus.CREATED);
     }
 
 }

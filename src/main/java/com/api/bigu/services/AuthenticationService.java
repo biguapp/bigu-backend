@@ -113,7 +113,7 @@ public class AuthenticationService {
 
     public void resetLoginAttempts(String email) {
         if (userService.findUserByEmail(email).isPresent()) {
-            userService.findUserByEmail(email).get().loginFailed();
+            userService.findUserByEmail(email).get().loginSucceeded();
         }
     }
 
