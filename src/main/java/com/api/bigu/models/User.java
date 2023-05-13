@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -66,9 +67,6 @@ public class User implements UserDetails {
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Car> cars;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
@@ -123,13 +121,7 @@ public class User implements UserDetails {
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
 
-    public void addCar(Car car) {
-        this.cars.add(car);
-    }
 
-    public void removeCar(Car car) {
-        this.cars.remove(car);
-    }
 
     @Override
     public int hashCode() {

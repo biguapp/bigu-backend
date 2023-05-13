@@ -1,5 +1,6 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.car.CarDTO;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.CarRepository;
@@ -30,18 +31,15 @@ public class CarService {
         carRepository.deleteById(carId);
     }
 
-    public void addCarToUser(Integer userId, Car car) {
-        userService.addCarToUser(userId, car);
+    @SneakyThrows
+    public void addCarToUser(CarDTO carDTO) {
+        Car car = carDTO.toEntity();
+        car.setUser(userService.findUserById(carDTO.getUserId()));
         carRepository.save(car);
-    }
-
-    public void removeCarFromUser(Integer userId, Integer carId) {
-        userService.removeCarFromUser(userId, carId);
-        carRepository.deleteById(carId);
     }
 
     @SneakyThrows
     public List<Car> findCarsByUserId(Integer userId) {
-        return userService.findUserById(userId).getCars();
+        return carRepository.findAllByUser(userService.findUserById(userId));
     }
 }

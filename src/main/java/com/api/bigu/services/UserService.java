@@ -59,10 +59,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public UserDTO findUserById(Integer userId) throws UserNotFoundException {
+    public User findUserById(Integer userId) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            return new UserDTO(user);
+            return user.get();
         } else {
             throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
         }
@@ -94,21 +94,5 @@ public class UserService {
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
-    }
-
-    public void addCarToUser(Integer userId, Car car) {
-        User user = userRepository.findById(userId).get();
-        List<Car> newCars = user.getCars();
-        newCars.add(car);
-        user.setCars(newCars);
-        this.updateUser(user);
-    }
-
-    public void removeCarFromUser(Integer userId, Integer carId) {
-        User user = userRepository.findById(userId).get();
-        List<Car> newCars = user.getCars();
-        newCars.remove(carId);
-        user.setCars(newCars);
-        this.updateUser(user);
     }
 }

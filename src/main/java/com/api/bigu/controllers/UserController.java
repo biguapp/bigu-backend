@@ -28,7 +28,7 @@ public class UserController {
     public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
 
         try {
-            UserDTO usuario = userService.findUserById(userId);
+            UserDTO usuario = new UserDTO(userService.findUserById(userId));
             return ResponseEntity.ok(usuario);
 
         } catch (UserNotFoundException e) {
