@@ -1,5 +1,6 @@
 package com.api.bigu.controllers;
 
+import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.car.CarDTO;
 import com.api.bigu.models.User;
 import com.api.bigu.services.CarService;
@@ -17,21 +18,29 @@ public class CarController {
     @Autowired
     private CarService carService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<CarDTO>> findCarsByUserId(@PathVariable Integer userId) {
+    @Autowired
+    private JwtService jwtService;
+
+    @GetMapping("/")
+    public ResponseEntity<?> findCarsByUser(@RequestHeader("Authorization") String authorizationHeader) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
         return ResponseEntity.ok(dtoList);
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<Void> addCarToUser(@PathVariable Integer userId, @RequestBody CarDTO carDTO) {
-        carService.addCarToUser(userId, carDTO.toEntity());
+    @PostMapping("/")
+    public ResponseEntity<Void> addCarToUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CarDTO carDTO) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        carService.addCarToUser(carDTO);
         return ResponseEntity.created(null).build();
     }
 
-    @DeleteMapping("/{userId}/{carId}")
-    public ResponseEntity<Void> removeCarFromUser(@PathVariable Integer userId, @PathVariable Integer carId) {
-        carService.removeCarFromUser(userId, carId);
+    /*
+    @DeleteMapping("/{carId}")
+    public ResponseEntity<Void> removeCarFromUser(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer carId) {
+        carService.removeCarFromUser(jwtService.extractUserId(authorizationHeader), carId);
         return ResponseEntity.noContent().build();
     }
+
+     */
 }
