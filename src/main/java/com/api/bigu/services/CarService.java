@@ -42,4 +42,13 @@ public class CarService {
     public List<Car> findCarsByUserId(Integer userId) {
         return carRepository.findAllByUser(userService.findUserById(userId));
     }
+
+    @SneakyThrows
+    public void removeCarFromUser(Integer userId, Integer carId) {
+        User user = userService.findUserById(userId);
+        Car car = findCarById(carId).orElseThrow(() -> new Exception("Car not found"));
+        if (car.getUser().equals(user)) {
+            carRepository.delete(car);
+        }
+    }
 }

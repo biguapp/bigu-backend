@@ -22,25 +22,22 @@ public class CarController {
     private JwtService jwtService;
 
     @GetMapping("/")
-    public ResponseEntity<?> findCarsByUser(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
         return ResponseEntity.ok(dtoList);
     }
 
     @PostMapping("/")
-    public ResponseEntity<Void> addCarToUser(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CarDTO carDTO) {
+    public ResponseEntity<Void> addCar(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CarDTO carDTO) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         carService.addCarToUser(carDTO);
         return ResponseEntity.created(null).build();
     }
 
-    /*
     @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> removeCarFromUser(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer carId) {
-        carService.removeCarFromUser(jwtService.extractUserId(authorizationHeader), carId);
+    public ResponseEntity<Void> removeCar(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer carId) {
+        carService.removeCarFromUser(jwtService.extractUserId(jwtService.parse(authorizationHeader)), carId);
         return ResponseEntity.noContent().build();
     }
-
-     */
 }
