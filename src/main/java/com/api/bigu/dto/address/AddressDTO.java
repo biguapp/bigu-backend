@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class AddressDTO {
 
-
     public Long postalCode;
 
     public String state;
