@@ -37,7 +37,13 @@ public class LoginTest {
     @Rollback()
     public void loginSucesso() {
         // Arrange
-        RegisterRequest registerRequest = new RegisterRequest("Fulano de Tal", "fulano@ccc.ufcg.edu.br", "83996798478", "senhaCerta", "USER", "RIDER");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .fullName("Fulano de Tal")
+                .email("fulano@ccc.ufcg.edu.br")
+                .phoneNumber("83996798478")
+                .password("senhaCerta")
+                .role("USER")
+                .build();
         userService.buildUser(registerRequest);
 
         // Act
@@ -60,7 +66,13 @@ public class LoginTest {
     @Rollback()
     public void senhaErrada() {
         // Arrange
-        RegisterRequest registerRequest = new RegisterRequest("Fulano de Tal", "fulano@ccc.ufcg.edu.br", "83996798478", "senha123", "USER", "RIDER");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .fullName("Fulano de Tal")
+                .email("fulano@ccc.ufcg.edu.br")
+                .phoneNumber("83996798478")
+                .password("senha123")
+                .role("USER")
+                .build();
         userService.buildUser(registerRequest);
 
         // Act
@@ -87,7 +99,13 @@ public class LoginTest {
     @Rollback()
     public void loginBloqueioConta() {
         // Arrange
-        RegisterRequest registerRequest = new RegisterRequest("Fulano de Tal", "fulano@ccc.ufcg.edu.br", "83996798478", "senha123", "USER", "RIDER");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .fullName("Fulano de Tal")
+                .email("fulano@ccc.ufcg.edu.br")
+                .phoneNumber("83996798478")
+                .password("senha123")
+                .role("USER")
+                .build();
         authenticationService.register(registerRequest);
         boolean authenticated = true;
         AuthenticationResponse authenticationResponse = null;
@@ -116,7 +134,13 @@ public class LoginTest {
     @Rollback()
     public void recuperarSenha() {
         // Arrange
-        RegisterRequest registerRequest = new RegisterRequest("Fulano de Tal", "fulano@ccc.ufcg.edu.br", "83996798478", "senha123", "USER", "RIDER");
+        RegisterRequest registerRequest = RegisterRequest.builder()
+                .fullName("Fulano de Tal")
+                .email("fulano@ccc.ufcg.edu.br")
+                .phoneNumber("83996798478")
+                .password("senha123")
+                .role("USER")
+                .build();
         authenticationService.register(registerRequest);
 
         // Act
