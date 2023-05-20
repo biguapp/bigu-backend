@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/")
+@RequestMapping(value = "/api/v1/users")
 public class UserController {
 
     @Autowired
@@ -23,12 +23,12 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    @GetMapping
+    @GetMapping("/get-all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
 
         try {
@@ -44,7 +44,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/user/")
+    @GetMapping()
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
@@ -54,7 +54,7 @@ public class UserController {
         }
         }
 
-    @DeleteMapping("/user/")
+    @DeleteMapping()
     public ResponseEntity<Void> deleteSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         userService.deleteById(userId);
