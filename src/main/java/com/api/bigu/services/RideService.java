@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import java.util.List;
 import java.util.Optional;
 
+import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +23,8 @@ public class RideService {
 	 @Autowired
 	 private RideRepository rideRepository;
 	 
-//	 @Autowired
-//	 private UserService userService;
+	 @Autowired
+	 private UserService userService;
 	 
 	 public Integer registerRide(Ride ride) {
         if (ride != null) {
@@ -67,4 +68,23 @@ public class RideService {
 //		 return rideRepository.findByMembers(membro);
 //
 //	}
+
+    public List<User> getRideMembers(Integer rideId) throws RideNotFoundException {
+        Optional<Ride> ride = rideRepository.findRideById(rideId);
+        List<User> members = null;
+        if (ride.isPresent()) {
+            members = ride.get().getMembers();
+        }
+        return members;
+    }
+
+    public User getRideMember(Integer rideId, Integer userId) throws UserNotFoundException, RideNotFoundException {
+        List<User> members = this.getRideMembers(rideId);
+        for (User user : members) {
+            if (user.getUserId() == userId){
+                return user;
+            }
+        }
+        return null;
+    }
 }
