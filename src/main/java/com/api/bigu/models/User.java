@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -28,12 +29,13 @@ public class User implements UserDetails {
     private Integer userId;
 
     @CPF
+    @Column(name = "cpf_user")
     private String cpfUser;
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
 
@@ -56,7 +58,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Address> address;
-    
+
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
     private List<Ride> rides;
 
@@ -67,9 +69,6 @@ public class User implements UserDetails {
     private int failedLoginAttempts = 0;
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Car> cars;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -124,6 +123,8 @@ public class User implements UserDetails {
         if (!(o instanceof User user)) return false;
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
+
+
 
     @Override
     public int hashCode() {

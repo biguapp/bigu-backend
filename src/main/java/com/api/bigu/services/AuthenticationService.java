@@ -23,6 +23,8 @@ import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @Service
 @AllArgsConstructor
@@ -48,16 +50,18 @@ public class AuthenticationService {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
         }
 
-        var user = User.builder()
+        var user = userService.registerUser(User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
-                .build();
+                .build());
 
-        userService.registerUser(user);
-        var jwtToken = jwtService.generateToken(user);
+        var claims = new HashMap<String, Integer>();
+        claims.put("uid", user.getUserId());
+
+        var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

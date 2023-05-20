@@ -1,5 +1,6 @@
 package com.api.bigu.controllers;
 
+import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
@@ -13,18 +14,21 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
 
         try {
@@ -40,10 +44,20 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Integer userId) {
-        userService.deleteById(userId);
+    @GetMapping("/user/")
+    public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try {
+            return ResponseEntity.ok(new UserDTO(userService.findUserById(userId)));
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error retrieving user", e);
+        }
+        }
 
+    @DeleteMapping("/user/")
+    public ResponseEntity<Void> deleteSelf(@RequestHeader("Authorization") String authorizationHeader) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        userService.deleteById(userId);
         return ResponseEntity.noContent().build();
     }
 }

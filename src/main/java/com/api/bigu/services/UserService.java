@@ -1,6 +1,7 @@
 package com.api.bigu.services;
 
 import com.api.bigu.dto.auth.RegisterRequest;
+import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
@@ -22,10 +23,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
-    
+
     @Autowired
     private RideService rideService;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -54,31 +55,28 @@ public class UserService {
 //        return user.getUserId();
 //    }
 
-    public Integer registerUser(User user) {
-        if (user != null) {
-            userRepository.save(user);
-        }
-        return user.getUserId();
+    public User registerUser(User user) {
+        return userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public Optional<User> findUserById(Integer userId) throws UserNotFoundException {
+    public User findUserById(Integer userId) throws UserNotFoundException {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
-            return user;
+            return user.get();
         } else {
             throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
         }
     }
 
     public void deleteById(Integer userId) {
-    	
+
     	//deletamos as caronas em que o user foi motorista ou passageiro
     	//rideService.deleteByUserId(userId);
-    	
+
         userRepository.deleteById(userId);
     }
 
@@ -104,21 +102,5 @@ public class UserService {
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
-    }
-
-    public void addCarToUser(Integer userId, Car car) {
-        User user = userRepository.findById(userId).get();
-        List<Car> newCars = user.getCars();
-        newCars.add(car);
-        user.setCars(newCars);
-        this.updateUser(user);
-    }
-
-    public void removeCarFromUser(Integer userId, Integer carId) {
-        User user = userRepository.findById(userId).get();
-        List<Car> newCars = user.getCars();
-        newCars.remove(carId);
-        user.setCars(newCars);
-        this.updateUser(user);
     }
 }

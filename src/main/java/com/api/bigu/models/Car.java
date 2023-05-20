@@ -25,8 +25,8 @@ public class Car {
     @Column(name = "model", nullable = false)
     private String model;
 
-    @Column(name = "year", nullable = false)
-    private Integer year;
+    @Column(name = "modelYear", nullable = false)
+    private Integer modelYear;
 
     @Column(name = "color", nullable = false)
     private String color;
@@ -62,12 +62,12 @@ public class Car {
         this.model = model;
     }
 
-    public Integer getYear() {
-        return year;
+    public Integer getModelYear() {
+        return modelYear;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setModelYear(Integer modelYear) {
+        this.modelYear = modelYear;
     }
 
     public String getColor() {
