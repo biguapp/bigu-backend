@@ -62,6 +62,12 @@ public class User implements UserDetails {
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
     private List<Ride> rides;
 
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "recipient")
+    private List<Message> receivedMessages;
+
     @Builder.Default
     private boolean accountNonLocked = true;
 
