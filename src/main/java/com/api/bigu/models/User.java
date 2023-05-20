@@ -124,8 +124,6 @@ public class User implements UserDetails {
         return Objects.equals(getUserId(), user.getUserId()) && Objects.equals(getCpfUser(), user.getCpfUser());
     }
 
-
-
     @Override
     public int hashCode() {
         return Objects.hash(getUserId(), getCpfUser());
