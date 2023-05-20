@@ -1,5 +1,6 @@
 package com.api.bigu.config;
 
+import com.api.bigu.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -19,8 +20,16 @@ public class JwtService {
 
     private static final String SECRET_KEY = "5367566B5970337336763979244226452948404D6251655468576D5A71347437";
 
+    public String parse(String token) {
+        return token.replaceAll("Bearer ", "");
+    }
+
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public Integer extractUserId(String token) {
+        return extractAllClaims(token).get("uid", Integer.class);
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -32,7 +41,7 @@ public class JwtService {
         return generateToken(new HashMap<>(), userDetails);
     }
 
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateToken(Map<String, Integer> extraClaims, UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -56,7 +65,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) {
+    public Claims extractAllClaims(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
