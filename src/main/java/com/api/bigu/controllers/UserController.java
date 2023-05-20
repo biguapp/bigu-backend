@@ -32,14 +32,13 @@ public class UserController {
     public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
 
         try {
-            UserDTO usuario = new UserDTO(userService.findUserById(userId));
-            return ResponseEntity.ok(usuario);
+            UserDTO user = new UserDTO(userService.findUserById(userId));
+            return ResponseEntity.ok(user);
 
         } catch (UserNotFoundException e) {
             // tratar o caso em que o usuário não é encontrado
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
         } catch (Exception e) {
-            // tratar outros tipos de exceção
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
     }
@@ -59,5 +58,15 @@ public class UserController {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         userService.deleteById(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{userEmail}")
+    public ResponseEntity<?> searchByEmail(@PathVariable String userEmail) {
+        try {
+            UserDTO user = new UserDTO(userService.findUserByEmail(userEmail));
+            return ResponseEntity.ok(user);
+        } catch (NullPointerException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
+        }
     }
 }
