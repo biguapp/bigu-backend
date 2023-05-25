@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -67,15 +69,16 @@ public class RideController {
         }
     }
 
-//TODO TERMINAR
-//    @PostMapping("/{rideId}")
-//    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
-//        try{
-//            //Ride ride = new Ride(rideDTO...)
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
-//        }
-//    }
+
+    @PostMapping("/{rideId}")
+    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
+        try{
+           Ride ride = new Ride(rideDTO);
+           return ResponseEntity.ok(rideService.registerRide(ride));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        }
+	}
 
 
 }

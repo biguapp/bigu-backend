@@ -6,6 +6,8 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.api.bigu.dto.ride.RideDTO;
+
 @Getter
 @Setter
 @Builder
@@ -32,6 +34,7 @@ public class Ride {
     @ManyToOne
     @JoinColumn(name="destination_address_id")
     private Address destinationAddress;
+    
     @Column(name = "num_seats", nullable = false)
     private int numSeats;
 
@@ -52,9 +55,9 @@ public class Ride {
     @ManyToOne
     private Car car;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JoinColumn(name = "user_id")
+    //private User user;
 
     @Column(name = "description")
     private String description;
@@ -70,9 +73,61 @@ public class Ride {
 //    @Column(name = "destination_address", nullable = false)
 //    private Address destinationAddress;
 
-    //TODO criar construtor adequado
+    public Ride(RideDTO rideDTO) {
+		this.id = rideDTO.getId();
+		this.driverId = rideDTO.getDriverId();
+		this.members = rideDTO.getMembers();
+		this.startAddress = rideDTO.getStartAddress();
+		this.destinationAddress = rideDTO.getDestinationAddress();
+		this.numSeats = rideDTO.getNumSeats();
+		this.goingToCollege = rideDTO.isGoingToCollege();
+		this.distance = rideDTO.getDistance();
+		this.price = rideDTO.getPrice();
+		this.scheduledTime = rideDTO.getScheduledTime();
+		this.car = rideDTO.getCar();
+		this.description = rideDTO.getDescription();
+		this.toWomen = rideDTO.isToWomen();
+	}
+
+	//TODO criar construtor adequado
 	public Integer getRideId() {
 		return this.id;
+	}
+
+	public List<User> getMembers() {
+		return this.members;
+	}
+
+	public int getNumSeats() {
+		return this.numSeats;
+	}
+
+	public boolean isGoingToCollege() {
+		return this.goingToCollege;
+	}
+
+	public float getDistance() {
+		return this.distance;
+	}
+
+	public float getPrice() {
+		return this.price;
+	}
+
+	public LocalDateTime getScheduledTime() {
+		return this.scheduledTime;
+	}
+
+	public Car getCar() {
+		return this.car;
+	}
+
+	public boolean isToWomen() {
+		return this.toWomen;
+	}
+
+	public String getDescription() {
+		return this.description;
 	}
 
 
