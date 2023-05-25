@@ -10,7 +10,5 @@ import java.util.List;
 public interface MessageRepository extends JpaRepository<Message, Integer> {
     List<Message> findByRecipient(User recipient);
 
-    List<Message> findChatHistory(User user1, User user2);
-
     List<Message> findBySender(User sender);
 }

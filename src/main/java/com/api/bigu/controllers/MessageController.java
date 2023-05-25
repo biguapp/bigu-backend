@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/messages")
@@ -67,7 +69,7 @@ public class MessageController {
     }
 
     @GetMapping("/history/{user1Id}/{user2Id}")
-    public ResponseEntity<List<Message>> getChatHistory(
+    public ResponseEntity<?> getChatHistory(
             @PathVariable Integer user1Id,
             @PathVariable Integer user2Id
     ) {
@@ -85,7 +87,7 @@ public class MessageController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + user2Id + " not found.", e);
         }
 
-        List<Message> chatHistory = messageService.getChatHistory(user1, user2);
+        Map<LocalDateTime, Message> chatHistory = messageService.getChatHistory(user1, user2);
 
         return ResponseEntity.ok(chatHistory);
     }

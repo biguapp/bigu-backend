@@ -1,6 +1,8 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.dto.ride.RideDTO;
+import com.api.bigu.exceptions.RideNotFoundException;
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.services.RideService;

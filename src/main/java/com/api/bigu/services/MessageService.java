@@ -6,7 +6,9 @@ import com.api.bigu.repositories.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MessageService {
@@ -35,7 +37,23 @@ public class MessageService {
         return messageRepository.findBySender(sender);
     }
 
-    public List<Message> getChatHistory(User user1, User user2) {
-        return messageRepository.findChatHistory(user1, user2);
+    public Map<LocalDateTime, Message> getChatHistory(User user1, User user2) {
+        List<Message> aux1 = messageRepository.findBySender(user1);
+        List<Message> aux2 = messageRepository.findBySender(user2);
+        HashMap<LocalDateTime, Message> saida = new HashMap<>();
+        for (Message message : aux1
+             ) {
+            if (message.getRecipient() == user2){
+                saida.put(message.getSentAt(), message);
+            }
+        }
+        for (Message message : aux2
+        ) {
+            if (message.getRecipient() == user1){
+                saida.put(message.getSentAt(), message);
+            }
+        }
+
+        return saida;
     }
 }
