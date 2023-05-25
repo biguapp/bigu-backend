@@ -67,7 +67,7 @@ public class RideController {
         }
     }
 
-//TODO TERMINAR, DEU SONO
+//TODO TERMINAR
 //    @PostMapping("/{rideId}")
 //    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
 //        try{

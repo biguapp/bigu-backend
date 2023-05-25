@@ -53,17 +53,6 @@ public class BiguApplication {
 			System.err.println("User 2 registered");
 			System.err.println("User 2 token: " + authService.register(rider).getToken());
 
-			var car1 = Car.builder()
-					.user(userService.findUserByEmail("driver@mail.ufcg.edu.br").get())
-					.brand("Chevrolet")
-					.model("Onix")
-					.modelYear(2015)
-					.color("Preto")
-					.plate("KGU7E07")
-					.build();
-
-			//carService.addCarToUser(userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId(), car1);
-
 
 		};
 	}

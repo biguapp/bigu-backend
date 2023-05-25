@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -28,26 +29,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
-
-        try {
-            UserDTO user = new UserDTO(userService.findUserById(userId));
-            return ResponseEntity.ok(user);
-
-        } catch (UserNotFoundException e) {
-            // tratar o caso em que o usuário não é encontrado
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
-        }
-    }
-
-    @GetMapping()
+    @GetMapping("/self")
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
-            return ResponseEntity.ok(new UserDTO(userService.findUserById(userId)));
+            return ResponseEntity.ok(new UserDTO(Optional.ofNullable(userService.findUserById(userId))));
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error retrieving user", e);
         }
@@ -60,13 +46,28 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{userEmail}")
+    @GetMapping("/mail/{userEmail}")
     public ResponseEntity<?> searchByEmail(@PathVariable String userEmail) {
         try {
             UserDTO user = new UserDTO(userService.findUserByEmail(userEmail));
             return ResponseEntity.ok(user);
         } catch (NullPointerException e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
+        }
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
+
+        try {
+            UserDTO user = new UserDTO(Optional.ofNullable(userService.findUserById(userId)));
+            return ResponseEntity.ok(user);
+
+        } catch (UserNotFoundException e) {
+            // tratar o caso em que o usuário não é encontrado
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
     }
 }
