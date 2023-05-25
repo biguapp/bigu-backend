@@ -1,6 +1,5 @@
 package com.api.bigu.config;
 
-import com.api.bigu.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

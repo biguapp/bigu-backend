@@ -1,0 +1,10 @@
+
+g	java:S112["FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8™¼öÓƒ1
+m
+java:S3655h"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(Ã‘ó¹8¬¼öÓƒ1
+X	java:S125-"<This block of commented-out lines of code should be removed.(é„ˆœ8µ¼öÓƒ1
+]	java:S125N"<This block of commented-out lines of code should be removed.(“ğ«Ëşÿÿÿÿ8¸¼öÓƒ1
+\
+java:S1128":Remove this unused import 'com.api.bigu.dto.user.UserDTO'.(ÃÍå«ûÿÿÿÿ8¿¼öÓƒ1
+V
+java:S1128"4Remove this unused import 'com.api.bigu.models.Car'.(²§Úñúÿÿÿÿ8¿¼öÓƒ1

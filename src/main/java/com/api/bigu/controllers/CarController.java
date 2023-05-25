@@ -2,9 +2,7 @@ package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.car.CarDTO;
-import com.api.bigu.models.User;
 import com.api.bigu.services.CarService;
-import com.api.bigu.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/cars")
+@RequestMapping(value = "/api/v1/cars")
 public class CarController {
 
     @Autowired
@@ -21,14 +19,14 @@ public class CarController {
     @Autowired
     private JwtService jwtService;
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
         return ResponseEntity.ok(dtoList);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<Void> addCar(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CarDTO carDTO) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         carService.addCarToUser(carDTO);

@@ -1,8 +1,6 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.dto.ride.RideDTO;
-import com.api.bigu.exceptions.RideNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.services.RideService;
@@ -10,14 +8,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
 

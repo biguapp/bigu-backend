@@ -15,7 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/addresses")
+@RequestMapping(value = "/api/v1/addresses")
 public class AddressController {
 
     final
