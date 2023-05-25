@@ -22,7 +22,13 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroSucesso() {
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = RegisterRequest.builder()
+				.fullName("Beltrano da Silva")
+				.email("beltrano@ccc.ufcg.edu.br")
+				.phoneNumber("83991234567")
+				.password("senha123")
+				.role("USER")
+				.build();
 		authenticationService.register(registerRequest);
 		
 		
@@ -31,7 +37,13 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroEmailVazio() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", null, "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = RegisterRequest.builder()
+				.fullName("Beltrano da Silva")
+				.email(null)
+				.phoneNumber("83991234567")
+				.password("senha123")
+				.role("USER")
+				.build();
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
@@ -39,7 +51,13 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroEmailInvalido() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@gmail.com", "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = RegisterRequest.builder()
+				.fullName("Beltrano da Silva")
+				.email("beltrano@gmail.com")
+				.phoneNumber("83991234567")
+				.password("senha123")
+				.role("USER")
+				.build();
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
@@ -47,7 +65,13 @@ public class RegisterTest {
 	
 	@Test
 	public void cadastroTelefoneVazio() { //falha
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", null, "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = RegisterRequest.builder()
+				.fullName("Beltrano da Silva")
+				.email("beltrano@ccc.ufcg.edu.br")
+				.phoneNumber(null)
+				.password("senha123")
+				.role("USER")
+				.build();
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
 		
 		assertNull(registerResponse);
@@ -55,7 +79,13 @@ public class RegisterTest {
 	
 	@Test
 	public void remocaoUsuarioSucesso() {
-		RegisterRequest registerRequest = new RegisterRequest("Beltrano da Silva", "beltrano@ccc.ufcg.edu.br", "83991234567", "senha123", "USER", "RIDER");
+		RegisterRequest registerRequest = RegisterRequest.builder()
+				.fullName("Beltrano da Silva")
+				.email("beltrano@ccc.ufcg.edu.br")
+				.phoneNumber("83991234567")
+				.password("senha123")
+				.role("USER")
+				.build();
 		authenticationService.register(registerRequest);
 		
 		Integer userId = userService.buildUser(registerRequest);

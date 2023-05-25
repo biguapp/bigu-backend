@@ -1,0 +1,21 @@
+
+m
+java:S1104"RMake userId a static final constant or non-public and provide accessors if needed.(ºù²Şşÿÿÿÿ
+n
+java:S1104"SMake cpfUser a static final constant or non-public and provide accessors if needed.(ºûåúÿÿÿÿ
+j
+java:S1104"TMake fullName a static final constant or non-public and provide accessors if needed.(ùßŞ
+l
+java:S1104"QMake email a static final constant or non-public and provide accessors if needed.(¾Æ†Ëıÿÿÿÿ
+m
+java:S1104"WMake phoneNumber a static final constant or non-public and provide accessors if needed.(Ò€æ¨
+k
+java:S1104"PMake role a static final constant or non-public and provide accessors if needed.(Ì»ì“ÿÿÿÿÿ
+j
+java:S1104"TMake userType a static final constant or non-public and provide accessors if needed.(ßâ¦¥
+i
+java:S1104"SMake address a static final constant or non-public and provide accessors if needed.(ûÉÛ
+œ
+java:S1186*"€Add a nested comment explaining why this method is empty, throw an UnsupportedOperationException or complete the implementation.(ÛÖ©üıÿÿÿÿ
+V
+java:S1128"4Remove this unused import 'com.api.bigu.models.Car'.(²§Úñúÿÿÿÿ8¯Ê«ˆ„1

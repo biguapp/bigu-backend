@@ -1,18 +1,20 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.dto.auth.*;
+import com.api.bigu.exceptions.BadRequestExceptionHandler;
 import com.api.bigu.exceptions.EmailException;
+import com.api.bigu.exceptions.RegisterException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.services.AuthenticationService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -26,7 +28,12 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody @Valid RegisterRequest registerRequest
     ) {
-        return ResponseEntity.ok(authenticationService.register(registerRequest));
+        try {
+            return ResponseEntity.ok(authenticationService.register(registerRequest));
+        } catch (IllegalArgumentException | TransactionSystemException e) {
+            e.printStackTrace();
+            throw new RegisterException(e.getMessage());
+        }
     }
 
     @PostMapping("/authenticate")

@@ -1,28 +1,20 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.auth.*;
 import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.auth.*;
 import com.api.bigu.exceptions.EmailException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import java.util.HashMap;
 
 @Service
 @AllArgsConstructor
@@ -48,16 +40,18 @@ public class AuthenticationService {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
         }
 
-        var user = User.builder()
+        var user = userService.registerUser(User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
-                .build();
+                .build());
 
-        userService.registerUser(user);
-        var jwtToken = jwtService.generateToken(user);
+        var claims = new HashMap<String, Integer>();
+        claims.put("uid", user.getUserId());
+
+        var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
@@ -76,7 +70,11 @@ public class AuthenticationService {
         if (!user.getPassword().equals(authenticationRequest.getPassword())) {
             incrementLoginAttempts(authenticationRequest.getEmail());
         } else { resetLoginAttempts(authenticationRequest.getEmail()); }
-        var jwtToken = jwtService.generateToken(user);
+
+        var claims = new HashMap<String, Integer>();
+        claims.put("uid", user.getUserId());
+
+        var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();

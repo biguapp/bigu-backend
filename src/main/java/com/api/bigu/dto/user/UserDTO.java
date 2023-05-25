@@ -28,29 +28,18 @@ public class UserDTO {
 
     public List<Address> address;
 
-    public List<Car> cars;
-
-    public UserDTO(@NonNull User user) {
-        this.userId = user.getUserId();
-        this.cpfUser = user.getCpfUser();
-        this.fullName = user.getFullName();
-        this.email = user.getEmail();
-        this.phoneNumber = user.getPhoneNumber();
-        this.role = user.getRole();
-        this.userType = user.getUserType();
-        this.address = user.getAddress();
-        this.cars = user.getCars();
-    }
-
-    public List<Car> getCars() {
-        return cars;
-    }
-
-    public void setCars(List<Car> cars) {
-        this.cars = cars;
-    }
-
     public UserDTO(Optional<User> user) {
+        if (user.isPresent()) {
+            User usuario = user.get();
+            this.userId = usuario.getUserId();
+            this.cpfUser = usuario.getCpfUser();
+            this.fullName = usuario.getFullName();
+            this.email = usuario.getEmail();
+            this.phoneNumber = usuario.getPhoneNumber();
+            this.role = usuario.getRole();
+            this.userType = usuario.getUserType();
+            this.address = usuario.getAddress();
+        }
     }
 
     public Integer getUserId() {

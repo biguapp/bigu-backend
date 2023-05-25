@@ -1,79 +1,35 @@
 package com.api.bigu.dto.auth;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Data
 @Builder
-@NoArgsConstructor
+@AllArgsConstructor
 public class RegisterRequest {
-	
+
+    @NonNull
+    @Schema(example = "Ada Lovelace")
 	private String fullName;
-    @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "Email not valid")
+
+    @NonNull
+    @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$", message = "email not valid")
+    @Schema(example = "aluno@ccc.ufcg.edu.br")
     private String email;
+
+    @NonNull
+    @Schema(example = "(DD)90000-0000")
     private String phoneNumber;
+
+    @NonNull
     private String password;
+
+    @Schema(example = "user")
     private String role;
-    private String userType;
-
-    public RegisterRequest(String fullName, String email, String phoneNumber, String password, String role, String userType) {
-    	this.fullName = fullName;
-		this.email = email;
-		this.phoneNumber = phoneNumber;
-		this.password = password;
-		this.role = role;
-		this.userType = userType;
-	}
-    
-	public String getFullName() {
-		return fullName;
-	}
-	
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
-	}
-	
-	
-	public String getEmail() {
-		return email;
-	}
-	
-	public void setEmail(String email) {
-		this.fullName = email;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getRole() {
-		return role;
-	}
-
-	public void setRole(String role) {
-		this.role = role;
-	}
-
-	public String getUserType() {
-		return userType;
-	}
-
-	public void setUserType(String userType) {
-		this.userType = userType;
-	}
+//    private String userType;
 
 }

@@ -4,19 +4,22 @@ import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Ride;
+import com.api.bigu.models.User;
 import com.api.bigu.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
 
@@ -37,22 +40,34 @@ public class RideController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
         }
     }
-// TODO
-//    @GetMapping("/{memberId}")
-//    public ResponseEntity<?> searchByMember(@PathVariable Integer memberId){
-//        try{
-//            Optional<Ride> rides = rideService.findByMember(memberId);
-//            return ResponseEntity.ok(rides);
-//        } catch (NullPointerException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não tem caronas registradas.", e);
-//        } catch (Exception e){
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
-//        } catch (UserNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não existe.", e);
-//        }
-//    }
 
-//TODO TERMINAR, DEU SONO
+    @GetMapping("/{rideId}/members")
+    public ResponseEntity<?> getRideMembers(@PathVariable Integer rideId){
+        try{
+            List<User> members = rideService.getRideMembers(rideId);
+            return ResponseEntity.ok(members);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+        } catch (RideNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+        }
+    }
+
+    @GetMapping("/{rideId}/{memberId}")
+    public ResponseEntity<?> getRideMember(@PathVariable Integer rideId, @PathVariable Integer memberId){
+        try{
+            User member = rideService.getRideMember(rideId, memberId);
+            return ResponseEntity.ok(member);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado.", e);
+        } catch (RideNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+        }
+    }
+
+//TODO TERMINAR
 //    @PostMapping("/{rideId}")
 //    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
 //        try{
