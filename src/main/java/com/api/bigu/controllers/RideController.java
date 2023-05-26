@@ -88,16 +88,18 @@ public class RideController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
         }
         Ride ride = null;
-        if (jwtService.isTokenValid(authorizationHeader, driver)) {
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
             try {
                 ride = rideMapper.toRide(rideRequest);
                 Integer carId = rideRequest.getCarId();
                 ride.setCar(carService.findCarById(carId).get());
+
                 List<User> members = new ArrayList<>();
                 members.add(driver);
                 ride.setMembers(members);
+
             } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+               throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
             }
         }
         return ResponseEntity.ok(rideMapper.toRideResponse(rideService.registerRide(ride)));

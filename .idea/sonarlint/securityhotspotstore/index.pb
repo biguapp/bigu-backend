@@ -1,10 +1,6 @@
 
 g
 7src/main/java/com/api/bigu/services/AddressService.java,5/5/556d4d219746d222473453c0276068c2ef941f24
-c
-3src/main/java/com/api/bigu/services/CarService.java,4/d/4dd86e79f3cc34a13c50c9e02e38d251a8918715
-j
-:src/main/java/com/api/bigu/controllers/RideController.java,d/3/d3808e3cb5d3b61b457d7293f54fd48aca74ffdc
 k
 ;src/main/java/com/api/bigu/controllers/HelloController.java,c/f/cf3174a3fca7741bd7cdda0e935d06cfc94c435e
 l
@@ -57,13 +53,7 @@ j
 .project,f/8/f8b41ce76d7b80d2b47e91b5f92c15f00eccf187
 e
 5src/main/java/com/api/bigu/models/enums/UserType.java,6/c/6c3fcbe80f3447cb10bc06931b33e7d471f592b1
-a
-1src/main/java/com/api/bigu/config/JwtService.java,d/4/d411e60af6f47b3f21036f0a3642d7d3e2c4ea01
 n
 >src/main/java/com/api/bigu/config/JwtAuthenticationFilter.java,0/9/09ddb973620519c53f61965de85082bfd72d3236
 `
 0src/main/java/com/api/bigu/dto/user/UserDTO.java,d/9/d9c509cb3d61786d05c9e6f62604b7d2f3127110
-[
-+src/main/java/com/api/bigu/models/User.java,0/c/0ca63862950cf16dd2ed0b3c464ecd567b26933d
-d
-4src/main/java/com/api/bigu/services/UserService.java,4/c/4c8d6db56f34bc5f31defbb86f9f1614b4fe134a

@@ -2,14 +2,14 @@ package com.api.bigu.services;
 
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.models.Address;
 import com.api.bigu.models.Ride;
-import com.api.bigu.repositories.RideRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class RideMapper {
 
+    @Autowired
     AddressMapper addressMapper;
 
     public Ride toRide(RideRequest rideRequest) {
