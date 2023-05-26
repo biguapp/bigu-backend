@@ -1,6 +1,7 @@
 package com.api.bigu;
 
 import com.api.bigu.models.Car;
+import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.services.CarService;
@@ -20,7 +21,7 @@ public class BiguApplication {
 
 	@Bean
 	public CommandLineRunner commandLineRunner(
-			AuthenticationService authService, CarService carService, UserService userService
+			AuthenticationService authService, CarRepository carRepository, UserService userService
 	) {
 		return args -> {
 			var admin = RegisterRequest.builder()
@@ -53,6 +54,16 @@ public class BiguApplication {
 			System.err.println("User 2 registered");
 			System.err.println("User 2 token: " + authService.register(rider).getToken());
 
+			var car = Car.builder()
+					.brand("Ford")
+					.plate("KGU7E07")
+					.color("Prata")
+					.model("Mustang")
+					.user(userService.findUserByEmail("driver@mail.ufcg.edu.br").get())
+					.modelYear(2023)
+					.build();
+			carRepository.save(car);
+			System.err.println("Car 1 registered");
 
 		};
 	}

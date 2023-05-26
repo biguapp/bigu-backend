@@ -64,7 +64,6 @@ public class UserController {
             return ResponseEntity.ok(user);
 
         } catch (UserNotFoundException e) {
-            // tratar o caso em que o usuário não é encontrado
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);

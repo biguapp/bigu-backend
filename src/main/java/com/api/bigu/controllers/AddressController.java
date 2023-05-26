@@ -44,7 +44,7 @@ public class AddressController {
         }
     }
 
-    @GetMapping("/{addressCEP/{cep}}")
+    @GetMapping("/addressCEP/{cep}")
     public ResponseEntity<AddressDTO> searchByCEP(@PathVariable Long cep) {
 
         try {

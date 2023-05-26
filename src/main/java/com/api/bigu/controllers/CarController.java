@@ -2,6 +2,7 @@ package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.car.CarDTO;
+import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,12 @@ public class CarController {
 
     @Autowired
     private JwtService jwtService;
+
+    @Autowired
+    private CarRepository carRepository;
+
+    @GetMapping("/getall")
+    public ResponseEntity<?> getAll(){ return ResponseEntity.ok(carRepository.findAll());}
 
     @GetMapping
     public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) {

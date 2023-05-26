@@ -19,7 +19,7 @@ public class Ride {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer rideId;
 
     @Column(name = "driver_id")
     private Integer driverId;
@@ -40,7 +40,6 @@ public class Ride {
 
     @Column(name = "to_college")
     private boolean goingToCollege; // indo para uf (true) ou saindo dela (false)?
-    //TODO setar endereços de acordo com boolean acima
 
     @Column(name = "distance", nullable = false)
     private float distance;
@@ -50,14 +49,10 @@ public class Ride {
 
     @Column(name = "time", nullable = false)
     private LocalDateTime scheduledTime; // LocalDateTime dataHora =
-                                        // LocalDateTime.of(AAAA, MM, DD, HH, MM, SS);
+                                         // LocalDateTime.of(AAAA, MM, DD, HH, MM, SS);
 
     @ManyToOne
     private Car car;
-
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "user_id")
-    //private User user;
 
     @Column(name = "description")
     private String description;
@@ -65,16 +60,8 @@ public class Ride {
     @Column(name = "women_only")
     private boolean toWomen;
 
-    //TODO correção do relacionamento com endereço
-    //TODO setar distance de acordo com endereços (maps api?)
-//    @Column(name = "start_address", nullable = false)
-//    private Address startAddress;
-//
-//    @Column(name = "destination_address", nullable = false)
-//    private Address destinationAddress;
-
     public Ride(RideDTO rideDTO) {
-		this.id = rideDTO.getId();
+		this.rideId = rideDTO.getId();
 		this.driverId = rideDTO.getDriverId();
 		this.members = rideDTO.getMembers();
 		this.startAddress = rideDTO.getStartAddress();
@@ -88,47 +75,5 @@ public class Ride {
 		this.description = rideDTO.getDescription();
 		this.toWomen = rideDTO.isToWomen();
 	}
-
-	//TODO criar construtor adequado
-	public Integer getRideId() {
-		return this.id;
-	}
-
-	public List<User> getMembers() {
-		return this.members;
-	}
-
-	public int getNumSeats() {
-		return this.numSeats;
-	}
-
-	public boolean isGoingToCollege() {
-		return this.goingToCollege;
-	}
-
-	public float getDistance() {
-		return this.distance;
-	}
-
-	public float getPrice() {
-		return this.price;
-	}
-
-	public LocalDateTime getScheduledTime() {
-		return this.scheduledTime;
-	}
-
-	public Car getCar() {
-		return this.car;
-	}
-
-	public boolean isToWomen() {
-		return this.toWomen;
-	}
-
-	public String getDescription() {
-		return this.description;
-	}
-
 
 }
