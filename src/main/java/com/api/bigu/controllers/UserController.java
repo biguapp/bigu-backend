@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -24,31 +25,24 @@ public class UserController {
     private JwtService jwtService;
 
     @GetMapping("/get-all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
-
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String authorizationHeader) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        User admin = null;
         try {
-            UserDTO usuario = new UserDTO(userService.findUserById(userId));
-            return ResponseEntity.ok(usuario);
-
+            admin = userService.findUserById(userId);
         } catch (UserNotFoundException e) {
-            // tratar o caso em que o usuário não é encontrado
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
-        } catch (Exception e) {
-            // tratar outros tipos de exceção
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+            throw new RuntimeException(e);
         }
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
+            return ResponseEntity.ok(userService.getAllUsers());
+        } else throw new RuntimeException("Nao é admin");
     }
 
-    @GetMapping()
+    @GetMapping("/self")
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
-            return ResponseEntity.ok(new UserDTO(userService.findUserById(userId)));
+            return ResponseEntity.ok(new UserDTO(Optional.ofNullable(userService.findUserById(userId))));
         } catch (UserNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Error retrieving user", e);
         }
@@ -59,5 +53,29 @@ public class UserController {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         userService.deleteById(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/mail/{userEmail}")
+    public ResponseEntity<?> searchByEmail(@PathVariable String userEmail) {
+        try {
+            UserDTO user = new UserDTO(userService.findUserByEmail(userEmail));
+            return ResponseEntity.ok(user);
+        } catch (NullPointerException e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
+        }
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDTO> searchById(@PathVariable Integer userId) {
+
+        try {
+            UserDTO user = new UserDTO(Optional.ofNullable(userService.findUserById(userId)));
+            return ResponseEntity.ok(user);
+
+        } catch (UserNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado", e);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        }
     }
 }

@@ -30,25 +30,25 @@ public class AddressController {
         return addressService.getAllAddresses();
     }
 
-    @GetMapping("/addressId")
-    public ResponseEntity<AddressDTO> searchById(@PathVariable Integer addressId){
+    @GetMapping("/addressId/{addressId}")
+    public ResponseEntity<?> searchById(@PathVariable Integer addressId){
         try {
-            AddressDTO address = addressService.getAddressById(addressId);
+            AddressResponse address = addressService.getAddressById(addressId);
             return ResponseEntity.ok(address);
         } catch (AddressNotFoundException e){
             // tratar o caso em que o endereço não é encontrado
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado", e);
         } catch (Exception e) {
-            // tratar outros tipos de exceção
+            // tratar outras categorias de exceção
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
     }
 
-    @GetMapping("/{addressCEP}")
-    public ResponseEntity<AddressDTO> searchByCEP(@PathVariable Long cep) {
+    @GetMapping("/addressCEP/{cep}")
+    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable Long cep) {
 
         try {
-            AddressDTO address = addressService.getAddressByCEP(cep);
+            AddressResponse address = addressService.getAddressByCEP(cep);
             return ResponseEntity.ok(address);
 
         } catch (AddressNotFoundException e) {

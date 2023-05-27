@@ -6,15 +6,16 @@ import com.api.bigu.exceptions.EmailException;
 import com.api.bigu.exceptions.RegisterException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.services.AuthenticationService;
-import jakarta.validation.ConstraintViolationException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -31,7 +32,6 @@ public class AuthenticationController {
         try {
             return ResponseEntity.ok(authenticationService.register(registerRequest));
         } catch (IllegalArgumentException | TransactionSystemException e) {
-            e.printStackTrace();
             throw new RegisterException(e.getMessage());
         }
     }
@@ -42,8 +42,8 @@ public class AuthenticationController {
     ) {
         try {
             return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RegisterException(e.getMessage());
         }
     }
 
@@ -53,10 +53,19 @@ public class AuthenticationController {
             ) {
         try {
             return ResponseEntity.ok(authenticationService.recover(recoveryRequest));
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException | EmailException e) {
             throw new RuntimeException(e);
-        } catch (EmailException e) {
-            throw new RuntimeException(e);
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request) {
+        try {
+            String token = request.getHeader("Authorization");
+            authenticationService.addToBlackList(token);
+            return ResponseEntity.ok("Logout realizado com sucesso");
+        } catch (Exception e) {
+            throw new RegisterException(e.getMessage());
         }
     }
 }

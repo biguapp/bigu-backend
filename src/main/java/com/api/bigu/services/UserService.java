@@ -25,9 +25,6 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private RideService rideService;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Integer buildUser(RegisterRequest requestUser) {

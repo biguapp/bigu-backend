@@ -43,6 +43,7 @@ public class AuthenticationService {
         var user = userService.registerUser(User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
+                .sex(registerRequest.getSex())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
@@ -57,7 +58,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException, BadCredentialsException {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -130,5 +131,9 @@ public class AuthenticationService {
         String subject = "Confirmation code for your account";
         String body = "Your confirmation code is: " + code;
         emailService.sendEmail(to, subject, body);
+    }
+
+    public void addToBlackList(String token) {
+        jwtService.addToBlacklist(token);
     }
 }

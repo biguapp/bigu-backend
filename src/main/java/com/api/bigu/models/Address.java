@@ -17,8 +17,11 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer addressId;
 
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
     @Column(name = "postal_code", nullable = false)
-    private Long postalCode;
+    private String postalCode;
 
     @Column(name = "state", nullable = false)
     private String state;
@@ -39,9 +42,7 @@ public class Address {
     @Column(name = "complement")
     private String complement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+    @Column(name = "user_id")
+    private Integer userId;
 
 }
