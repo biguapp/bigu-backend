@@ -31,9 +31,9 @@ public class AddressController {
     }
 
     @GetMapping("/addressId/{addressId}")
-    public ResponseEntity<AddressDTO> searchById(@PathVariable Integer addressId){
+    public ResponseEntity<?> searchById(@PathVariable Integer addressId){
         try {
-            AddressDTO address = addressService.getAddressById(addressId);
+            AddressResponse address = addressService.getAddressById(addressId);
             return ResponseEntity.ok(address);
         } catch (AddressNotFoundException e){
             // tratar o caso em que o endereço não é encontrado
@@ -45,10 +45,10 @@ public class AddressController {
     }
 
     @GetMapping("/addressCEP/{cep}")
-    public ResponseEntity<AddressDTO> searchByCEP(@PathVariable Long cep) {
+    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable Long cep) {
 
         try {
-            AddressDTO address = addressService.getAddressByCEP(cep);
+            AddressResponse address = addressService.getAddressByCEP(cep);
             return ResponseEntity.ok(address);
 
         } catch (AddressNotFoundException e) {

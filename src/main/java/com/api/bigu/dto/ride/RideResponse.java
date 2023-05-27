@@ -31,7 +31,7 @@ public class RideResponse {
 
     private float price;
 
-    private boolean toWemen;
+    private boolean toWomen;
 
     private Integer carId;
 

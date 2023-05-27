@@ -91,9 +91,9 @@ public class RideController {
         if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
             try {
                 ride = rideMapper.toRide(rideRequest);
+                if (driver.getSex() == "M") ride.setToWomen(false);
                 Integer carId = rideRequest.getCarId();
                 ride.setCar(carService.findCarById(carId).get());
-
                 List<User> members = new ArrayList<>();
                 members.add(driver);
                 ride.setMembers(members);

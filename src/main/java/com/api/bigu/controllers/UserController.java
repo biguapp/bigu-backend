@@ -25,8 +25,17 @@ public class UserController {
     private JwtService jwtService;
 
     @GetMapping("/get-all")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String authorizationHeader) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        User admin = null;
+        try {
+            admin = userService.findUserById(userId);
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
+            return ResponseEntity.ok(userService.getAllUsers());
+        } else throw new RuntimeException("Nao é admin");
     }
 
     @GetMapping("/self")

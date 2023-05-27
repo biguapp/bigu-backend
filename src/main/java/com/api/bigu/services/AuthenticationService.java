@@ -43,6 +43,7 @@ public class AuthenticationService {
         var user = userService.registerUser(User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
+                .sex(registerRequest.getSex())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))

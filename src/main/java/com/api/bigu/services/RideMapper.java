@@ -22,7 +22,7 @@ public class RideMapper {
                 .price(rideRequest.getPrice())
                 .scheduledTime(rideRequest.getDateTime())
                 .description(rideRequest.getDescription())
-                .toWomen(rideRequest.isToWemen())
+                .toWomen(rideRequest.isToWomen())
                 .build();
     }
 
@@ -35,7 +35,7 @@ public class RideMapper {
                 .dateTime(rideCreated.getScheduledTime())
                 .numSeats(rideCreated.getNumSeats())
                 .price(rideCreated.getPrice())
-                .toWemen(rideCreated.isToWomen())
+                .toWomen(rideCreated.isToWomen())
                 .carId(rideCreated.getCar().getId())
                 .description(rideCreated.getDescription())
                 .build();

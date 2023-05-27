@@ -25,22 +25,31 @@ public class AddressService {
 
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
-    public AddressDTO getAddressByCEP(Long cep) throws AddressNotFoundException {
-        Optional<Address> address = addressRepository.findByPostalCode(cep);
-        if (address.isPresent()){
-            return new AddressDTO(address);
+    public AddressResponse getAddressByCEP(Long cep) throws AddressNotFoundException {
+        Address address = addressRepository.findByPostalCode(cep).get();
+        if (addressRepository.findByPostalCode(cep).isPresent()){
+            return addressMapper.toAddressResponse(address);
         } else {
             throw new AddressNotFoundException("O endereço com CEP " + cep + " não existe.");
         }
     }
 
-    public AddressDTO getAddressById(Integer addressId) throws AddressNotFoundException {
-        Optional<Address> address = addressRepository.findById(addressId);
-        if (address.isPresent()){
-            return new AddressDTO(address);
+    public AddressResponse getAddressById(Integer addressId) throws AddressNotFoundException {
+        Address address = addressRepository.findById(addressId).get();
+        if (addressRepository.findById(addressId).isPresent()){
+            return addressMapper.toAddressResponse(address);
         } else {
             throw new AddressNotFoundException("O endereço com Id " + addressId + " não existe.");
         }
+    }
+
+    public AddressResponse getAddressByNickname(String nickname, Integer userId) throws AddressNotFoundException {
+        List<Address> addresses = addressRepository.findAll();
+        for (Address address: addresses
+             ) {
+            if ((address.getNickname() == nickname) && (address.getUserId() == userId)) return addressMapper.toAddressResponse(address);
+        }
+        throw new AddressNotFoundException("O usuário não tem um endereço '" + nickname + "' cadastrado.");
     }
 
 

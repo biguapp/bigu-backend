@@ -1,5 +1,6 @@
 package com.api.bigu.models;
 
+import com.api.bigu.models.enums.Addresses;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.models.enums.UserType;
 import jakarta.persistence.*;
@@ -10,10 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
@@ -25,8 +23,6 @@ import java.util.Objects;
 @Table(name= "TB_USER")
 public class User implements UserDetails {
 
-
-    // TODO criar atributo sexo
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
@@ -37,6 +33,9 @@ public class User implements UserDetails {
 
     @Column(name = "full_name", nullable = false)
     private String fullName;
+
+    @Column(name = "sex", nullable = false)
+    private String sex;
 
     @Column(name = "email", nullable = false, unique = true)
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
@@ -55,12 +54,12 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name="user_type")
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+//    @Column(name="user_type")
+//    @Enumerated(EnumType.STRING)
+//    private UserType userType;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> address;
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    private Map<String, Address> addresses;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
     private List<Ride> rides;

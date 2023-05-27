@@ -12,7 +12,11 @@ import lombok.NonNull;
 public class AddressRequest {
 
     @NonNull
-    private Long postalCode;
+    @Schema(example = "Casa")
+    private String nickname;
+
+    @NonNull
+    private String postalCode;
 
     @NonNull
     @Schema(example = "PB")

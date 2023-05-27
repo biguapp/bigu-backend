@@ -39,7 +39,7 @@ public class RideRequest {
     private float price;
 
     @NonNull
-    private boolean toWemen;
+    private boolean toWomen;
 
     @NonNull
     private Integer carId;

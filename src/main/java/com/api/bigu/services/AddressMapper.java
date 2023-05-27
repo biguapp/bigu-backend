@@ -11,6 +11,7 @@ public class AddressMapper {
     public Address toAddress(AddressRequest addressRequest) {
         return Address.builder()
                 .postalCode(addressRequest.getPostalCode())
+                .nickname(addressRequest.getNickname())
                 .state(addressRequest.getState())
                 .city(addressRequest.getCity())
                 .district(addressRequest.getDistrict())
@@ -22,6 +23,7 @@ public class AddressMapper {
 
     public AddressResponse toAddressResponse(Address addressCreated) {
         return AddressResponse.builder()
+                .nickname(addressCreated.getNickname())
                 .postalCode(addressCreated.getPostalCode())
                 .state(addressCreated.getState())
                 .city(addressCreated.getCity())
