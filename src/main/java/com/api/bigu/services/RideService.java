@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.exceptions.CarNotFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class RideService {
     @Autowired
     private RideMapper rideMapper;
 
-    public User getDriver(Integer userId) throws UserNotFoundException {
+    public User getDriver(Integer userId) throws UserNotFoundException, CarNotFoundException {
         User user;
         user = userService.findUserById(userId);
         if (carService.findCarsByUserId(userId).isEmpty()) {
@@ -46,7 +47,7 @@ public class RideService {
         } else return user;
     }
 
-    public RideResponse createRide(RideRequest rideRequest, User driver) {
+    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException {
         Ride ride = rideMapper.toRide(rideRequest);
         Integer carId = rideRequest.getCarId();
         List<User> members = new ArrayList<>();
@@ -108,11 +109,11 @@ public class RideService {
     public User getRideMember(Integer rideId, Integer userId) throws UserNotFoundException, RideNotFoundException {
         List<User> members = this.getRideMembers(rideId);
         for (User user : members) {
-            if (user.getUserId() == userId) {
+            if (Objects.equals(user.getUserId(), userId)) {
                 return user;
             }
         }
-        return null;
+        return null; //todo: implement exception
     }
 
     private Ride registerRide(Ride ride) {

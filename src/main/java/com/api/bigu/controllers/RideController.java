@@ -4,7 +4,9 @@ import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.exceptions.CarNotFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
+import com.api.bigu.exceptions.UserBlockedException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
@@ -85,20 +87,22 @@ public class RideController {
     @PostMapping()
     public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) throws UserNotFoundException {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        User driver = rideService.getDriver(userId);
-        if (driver == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
-        }
+        RideResponse rideResponse;
 
-        RideResponse rideResponse = null;
-        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
-            try {
-                rideResponse = rideService.createRide(rideRequest, driver);
-
-            } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        try {
+            User driver = rideService.getDriver(userId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                throw new UserNotFoundException("O token de usuário não foi reconhecido");
             }
+            rideResponse = rideService.createRide(rideRequest, driver);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        } catch (CarNotFoundException cnfe) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
+        } catch (UserNotFoundException unfe) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não está autenticado");
         }
+
         return ResponseEntity.ok(rideResponse);
     }
 
