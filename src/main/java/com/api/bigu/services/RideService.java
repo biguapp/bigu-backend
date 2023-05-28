@@ -1,8 +1,13 @@
 package com.api.bigu.services;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.exceptions.CarNotFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +36,10 @@ public class RideService {
     @Autowired
     private CarService carService;
 
-    public User getDriver(Integer userId) throws UserNotFoundException {
+    @Autowired
+    private RideMapper rideMapper;
+
+    public User getDriver(Integer userId) throws UserNotFoundException, CarNotFoundException {
         User user;
         user = userService.findUserById(userId);
         if (carService.findCarsByUserId(userId).isEmpty()) {
@@ -39,8 +47,18 @@ public class RideService {
         } else return user;
     }
 
-    public Ride registerRide(Ride ride) {
-        return rideRepository.save(ride);
+    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException {
+        Ride ride = rideMapper.toRide(rideRequest);
+        Integer carId = rideRequest.getCarId();
+        List<User> members = new ArrayList<>();
+
+        if (Objects.equals(driver.getSex(), "M")) ride.setToWomen(false);
+
+        ride.setCar(carService.findCarById(carId).get());
+        members.add(driver);
+        ride.setMembers(members);
+
+        return rideMapper.toRideResponse(registerRide(ride));
     }
 
     public Optional<Ride> findRideById(Integer rideId) {
@@ -91,10 +109,14 @@ public class RideService {
     public User getRideMember(Integer rideId, Integer userId) throws UserNotFoundException, RideNotFoundException {
         List<User> members = this.getRideMembers(rideId);
         for (User user : members) {
-            if (user.getUserId() == userId) {
+            if (Objects.equals(user.getUserId(), userId)) {
                 return user;
             }
         }
-        return null;
+        return null; //todo: implement exception
+    }
+
+    private Ride registerRide(Ride ride) {
+        return rideRepository.save(ride);
     }
 }

@@ -54,9 +54,9 @@ public class AddressService {
 
 
     public AddressResponse createAddress(AddressRequest addressRequest) {
-       Address newAddrress = addressMapper.toAddress(addressRequest);
+       Address newAddress = addressMapper.toAddress(addressRequest);
 
-       Address addressCreated = addressRepository.save(newAddrress);
+       Address addressCreated = addressRepository.save(newAddress);
 
        return addressMapper.toAddressResponse(addressCreated);
     }

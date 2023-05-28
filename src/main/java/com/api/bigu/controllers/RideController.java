@@ -3,7 +3,10 @@ package com.api.bigu.controllers;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.exceptions.CarNotFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
+import com.api.bigu.exceptions.UserBlockedException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
@@ -20,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/rides")
@@ -83,27 +87,24 @@ public class RideController {
     @PostMapping()
     public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) throws UserNotFoundException {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        User driver = rideService.getDriver(userId);
-        if (driver == null){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
-        }
-        Ride ride = null;
-        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
-            try {
-                ride = rideMapper.toRide(rideRequest);
-                if (driver.getSex() == "M") ride.setToWomen(false);
-                Integer carId = rideRequest.getCarId();
-                ride.setCar(carService.findCarById(carId).get());
-                List<User> members = new ArrayList<>();
-                members.add(driver);
-                ride.setMembers(members);
+        RideResponse rideResponse;
 
-            } catch (Exception e) {
-               throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        try {
+            User driver = rideService.getDriver(userId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                throw new UserNotFoundException("O token de usuário não foi reconhecido");
             }
+            rideResponse = rideService.createRide(rideRequest, driver);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        } catch (CarNotFoundException cnfe) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
+        } catch (UserNotFoundException unfe) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não está autenticado");
         }
-        return ResponseEntity.ok(rideMapper.toRideResponse(rideService.registerRide(ride)));
-	}
+
+        return ResponseEntity.ok(rideResponse);
+    }
 
 
 }
