@@ -3,6 +3,7 @@ package com.api.bigu.models;
 import com.api.bigu.models.enums.Addresses;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.models.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -59,6 +60,7 @@ public class User implements UserDetails {
 //    private UserType userType;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "addresses")
     private Map<String, Address> addresses;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)

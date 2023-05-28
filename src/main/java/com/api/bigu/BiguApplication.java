@@ -81,7 +81,10 @@ public class BiguApplication {
 					.number("882")
 					.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
 					.build();
+			userService.addAddressToUser(addressUFCG, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
 			addressRepository.save(addressUFCG);
+
+
 
 			var address = Address.builder()
 					.nickname("Casa")
@@ -93,6 +96,7 @@ public class BiguApplication {
 					.number("284")
 					.userId(userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId())
 					.build();
+			userService.addAddressToUser(address, userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId());
 			addressRepository.save(address);
 
 

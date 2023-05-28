@@ -2,6 +2,8 @@ package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.car.CarDTO;
+import com.api.bigu.exceptions.CarNotFoundException;
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,7 @@ public class CarController {
     public ResponseEntity<?> getAll(){ return ResponseEntity.ok(carRepository.findAll());}
 
     @GetMapping
-    public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) throws UserNotFoundException, CarNotFoundException {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
         return ResponseEntity.ok(dtoList);
