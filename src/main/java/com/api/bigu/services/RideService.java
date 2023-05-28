@@ -8,6 +8,7 @@ import java.util.Optional;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.exceptions.CarNotFoundException;
+import com.api.bigu.exceptions.NoCarsFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,11 +40,11 @@ public class RideService {
     @Autowired
     private RideMapper rideMapper;
 
-    public User getDriver(Integer userId) throws UserNotFoundException, CarNotFoundException {
+    public User getDriver(Integer userId) throws UserNotFoundException, NoCarsFoundException, CarNotFoundException {
         User user;
         user = userService.findUserById(userId);
         if (carService.findCarsByUserId(userId).isEmpty()) {
-            return null;
+            throw new NoCarsFoundException();
         } else return user;
     }
 
@@ -61,8 +62,14 @@ public class RideService {
         return rideMapper.toRideResponse(registerRide(ride));
     }
 
-    public Optional<Ride> findRideById(Integer rideId) {
-        return rideRepository.findById(rideId);
+    public Ride findRideById(Integer rideId) throws RideNotFoundException {
+
+        if (rideRepository.findById(rideId).isPresent()) {
+            return rideRepository.findById(rideId).get();
+        }
+        else {
+            throw new RideNotFoundException();
+        }
     }
 
     public void deleteRideById(Integer rideId) {

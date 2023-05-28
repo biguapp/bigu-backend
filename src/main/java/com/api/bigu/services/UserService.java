@@ -82,16 +82,12 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public Optional<User> findUserByEmail(String userEmail) {
+    public Optional<User> findUserByEmail(String userEmail) throws UserNotFoundException {
         Optional<User> user = userRepository.findByEmail(userEmail);
         if (user.isPresent()) {
             return user;
         } else {
-            try {
-                throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
-            } catch (UserNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
         }
     }
 

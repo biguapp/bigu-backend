@@ -1,5 +1,6 @@
 package com.api.bigu;
 
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
 import com.api.bigu.repositories.AddressRepository;
@@ -8,6 +9,7 @@ import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.services.CarService;
 import com.api.bigu.services.UserService;
+import com.api.bigu.util.errors.UserError;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -59,47 +61,55 @@ public class BiguApplication {
 			System.err.println("User 2 registered");
 			System.err.println("User 2 token: " + authService.register(rider).getToken());
 
-			var car = Car.builder()
-					.brand("Ford")
-					.plate("KGU7E07")
-					.color("Prata")
-					.model("Mustang")
-					.user(userService.findUserByEmail("driver@mail.ufcg.edu.br").get())
-					.modelYear(2023)
-					.build();
-			carRepository.save(car);
 
-			System.err.println("Car 1 registered");
+			try {
+				Car car = Car.builder()
+						.brand("Ford")
+						.plate("KGU7E07")
+						.color("Prata")
+						.model("Mustang")
+						.user(userService.findUserByEmail("driver@mail.ufcg.edu.br").get())
+						.modelYear(2023)
+						.build();
+				carRepository.save(car);
 
-			var addressUFCG = Address.builder()
-					.nickname("UFCG")
-					.postalCode("58429900")
-					.state("PB")
-					.city("Campina Grande")
-					.district("Universitário")
-					.street("Rua Aprígio Veloso")
-					.number("882")
-					.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
-					.build();
-			userService.addAddressToUser(addressUFCG, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
-			addressRepository.save(addressUFCG);
+				System.err.println("Car 1 registered");
 
-
-
-			var address = Address.builder()
-					.nickname("Casa")
-					.postalCode("58433264")
-					.state("PB")
-					.city("Campina Grande")
-					.district("Malvinas")
-					.street("Rua Exemplo")
-					.number("284")
-					.userId(userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId())
-					.build();
-			userService.addAddressToUser(address, userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId());
-			addressRepository.save(address);
+				Address addressUFCG = Address.builder()
+						.nickname("UFCG")
+						.postalCode("58429900")
+						.state("PB")
+						.city("Campina Grande")
+						.district("Universitário")
+						.street("Rua Aprígio Veloso")
+						.number("882")
+						.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
+						.build();
+				userService.addAddressToUser(addressUFCG, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
+				addressRepository.save(addressUFCG);
 
 
+				Address address = null;
+				try {
+					address = Address.builder()
+							.nickname("Casa")
+							.postalCode("58433264")
+							.state("PB")
+							.city("Campina Grande")
+							.district("Malvinas")
+							.street("Rua Exemplo")
+							.number("284")
+							.userId(userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId())
+							.build();
+				} catch (UserNotFoundException e) {
+					throw new RuntimeException(e);
+				}
+				userService.addAddressToUser(address, userService.findUserByEmail("driver@mail.ufcg.edu.br").get().getUserId());
+				addressRepository.save(address);
+
+			} catch (UserNotFoundException uNFE) {
+				UserError.userNotFoundError();
+			}
 
 		};
 	}

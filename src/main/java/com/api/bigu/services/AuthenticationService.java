@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.HashMap;
 
 @Service
@@ -58,7 +59,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -81,7 +82,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public RecoveryResponse recover(RecoveryRequest recoveryRequest) throws UserNotFoundException, EmailException {
+    public RecoveryResponse recover(RecoveryRequest recoveryRequest) throws UserNotFoundException, MessagingException {
         var user = userService.findUserByEmail(recoveryRequest.getEmail())
                 .orElseThrow();
 
@@ -104,13 +105,13 @@ public class AuthenticationService {
                 .build();
     }
 
-    public void incrementLoginAttempts(String email) {
+    public void incrementLoginAttempts(String email) throws UserNotFoundException {
         if (userService.findUserByEmail(email).isPresent()) {
             userService.findUserByEmail(email).get().loginFailed();
         }
     }
 
-    public void resetLoginAttempts(String email) {
+    public void resetLoginAttempts(String email) throws UserNotFoundException {
         if (userService.findUserByEmail(email).isPresent()) {
             userService.findUserByEmail(email).get().loginSucceeded();
         }
@@ -124,10 +125,10 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         }
         user.loginFailed();
-        userService.updateUser(user);
+        //userService.updateUser(user);
     }
 
-    public void sendConfirmationEmail(String to, String code) throws EmailException {
+    public void sendConfirmationEmail(String to, String code) throws MessagingException {
         String subject = "Confirmation code for your account";
         String body = "Your confirmation code is: " + code;
         emailService.sendEmail(to, subject, body);

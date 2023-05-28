@@ -4,16 +4,16 @@ import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.exceptions.CarNotFoundException;
-import com.api.bigu.exceptions.RideNotFoundException;
-import com.api.bigu.exceptions.UserBlockedException;
-import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.services.CarService;
 import com.api.bigu.services.RideMapper;
 import com.api.bigu.services.RideService;
 import com.api.bigu.services.UserService;
+import com.api.bigu.util.errors.CarError;
+import com.api.bigu.util.errors.RideError;
+import com.api.bigu.util.errors.UserError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,10 +50,10 @@ public class RideController {
     @GetMapping("/{rideId}")
     public ResponseEntity<?> searchById(@PathVariable Integer rideId){
         try{
-            RideDTO ride = new RideDTO(rideService.findRideById(rideId).get());
+            RideResponse ride = rideMapper.toRideResponse(rideService.findRideById(rideId));
             return ResponseEntity.ok(ride);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+        } catch (RideNotFoundException e) {
+            return RideError.rideNotFoundError();
         }
     }
 
@@ -62,10 +62,8 @@ public class RideController {
         try{
             List<User> members = rideService.getRideMembers(rideId);
             return ResponseEntity.ok(members);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
         } catch (RideNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+            return RideError.rideNotFoundError();
         }
     }
 
@@ -74,37 +72,33 @@ public class RideController {
         try{
             User member = rideService.getRideMember(rideId, memberId);
             return ResponseEntity.ok(member);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
         } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado.", e);
+            return UserError.userNotFoundError();
         } catch (RideNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+            return RideError.rideNotFoundError();
         }
     }
 
 
     @PostMapping()
-    public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) throws UserNotFoundException {
-        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        RideResponse rideResponse;
-
+    public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) {
         try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(userId);
+
             if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
-                throw new UserNotFoundException("O token de usuário não foi reconhecido");
+                return UserError.userBlockedError();
             }
-            rideResponse = rideService.createRide(rideRequest, driver);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
-        } catch (CarNotFoundException cnfe) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não tem carros cadastrados");
-        } catch (UserNotFoundException unfe) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O usuário não está autenticado");
+
+            return ResponseEntity.ok(rideService.createRide(rideRequest, driver));
+
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
         }
-
-        return ResponseEntity.ok(rideResponse);
     }
-
-
 }
+

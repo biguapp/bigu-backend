@@ -2,6 +2,7 @@ package com.api.bigu.services;
 
 import com.api.bigu.dto.car.CarDTO;
 import com.api.bigu.exceptions.CarNotFoundException;
+import com.api.bigu.exceptions.NoCarsFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
@@ -38,7 +39,10 @@ public class CarService {
         return car;
     }
 
-    public void deleteById(Integer carId) {
+    public void deleteById(Integer carId) throws CarNotFoundException {
+        if (!carRepository.existsById(carId)) {
+            throw new CarNotFoundException();
+        }
         carRepository.deleteById(carId);
     }
 
@@ -50,18 +54,17 @@ public class CarService {
     }
 
     //@SneakyThrows
-    public List<Car> findCarsByUserId(Integer userId) throws CarNotFoundException, UserNotFoundException {
+    public List<Car> findCarsByUserId(Integer userId) throws UserNotFoundException, NoCarsFoundException {
         List<Car> cars = carRepository.findAllByUser(userService.findUserById(userId));
 
-        if (cars.isEmpty()) throw new CarNotFoundException();
+        if (cars.isEmpty()) throw new NoCarsFoundException();
 
         return cars;
     }
 
-    @SneakyThrows
-    public void removeCarFromUser(Integer userId, Integer carId) {
+    public void removeCarFromUser(Integer userId, Integer carId) throws UserNotFoundException, CarNotFoundException {
         User user = userService.findUserById(userId);
-        Car car = findCarById(carId).orElseThrow(() -> new Exception("Car not found"));
+        Car car = findCarById(carId).orElseThrow(CarNotFoundException::new);
         if (car.getUser().equals(user)) {
             carRepository.delete(car);
         }

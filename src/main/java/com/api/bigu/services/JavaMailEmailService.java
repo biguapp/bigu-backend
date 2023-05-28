@@ -4,6 +4,7 @@ import com.api.bigu.exceptions.EmailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -43,8 +44,7 @@ public class JavaMailEmailService implements EmailService{
     }
 
     @Override
-    public void sendEmail(String to, String subject, String body) throws EmailException {
-        try {
+    public void sendEmail(String to, String subject, String body) throws MessagingException {
             Session session = Session.getInstance(properties);
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
@@ -52,10 +52,6 @@ public class JavaMailEmailService implements EmailService{
             message.setSubject(subject);
             message.setText(body);
             Transport.send(message);
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
-        } catch (javax.mail.MessagingException e) {
-            throw new RuntimeException(e);
-        }
+        
     }
 }
