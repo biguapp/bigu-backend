@@ -86,7 +86,8 @@ public class RideService {
         }
     }
 
-    public void deleteRideById(Integer rideId) {
+    public void deleteRideById(Integer rideId) throws RideNotFoundException {
+        rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
         rideRepository.deleteById(rideId);
     }
 
