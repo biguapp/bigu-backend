@@ -19,10 +19,10 @@ public class RideRequest {
     private boolean goingToCollege;
 
     @NonNull
-    private AddressRequest start;
+    private Integer startAddressId;
 
     @NonNull
-    private AddressRequest destination;
+    private Integer destinationAddressId;
 
     @NonNull
     private LocalDateTime dateTime;

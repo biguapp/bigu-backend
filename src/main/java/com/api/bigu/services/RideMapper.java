@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.models.Ride;
+import com.api.bigu.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -10,12 +11,15 @@ import org.springframework.stereotype.Component;
 public class RideMapper {
 
     @Autowired
+    AddressRepository addressRepository;
+
+    @Autowired
     AddressMapper addressMapper;
 
     public Ride toRide(RideRequest rideRequest) {
         return Ride.builder()
-                .startAddress(addressMapper.toAddress(rideRequest.getStart()))
-                .destinationAddress(addressMapper.toAddress(rideRequest.getDestination()))
+                .startAddress(addressRepository.findById(rideRequest.getStartAddressId()).get())
+                .destinationAddress(addressRepository.findById(rideRequest.getDestinationAddressId()).get())
                 .numSeats(rideRequest.getNumSeats())
                 .goingToCollege(rideRequest.isGoingToCollege())
                 .price(rideRequest.getPrice())
