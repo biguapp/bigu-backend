@@ -75,18 +75,47 @@ public class BiguApplication {
 
 				System.err.println("Car 1 registered");
 
-				Address addressUFCG = Address.builder()
-						.nickname("UFCG")
+				Address addressUFCG1 = Address.builder()
+						.nickname("UFCG - Frente")
 						.postalCode("58429900")
 						.state("PB")
 						.city("Campina Grande")
 						.district("Universitário")
 						.street("Rua Aprígio Veloso")
 						.number("882")
+						.complement("Entrada principal da UFCG")
 						.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
 						.build();
-				userService.addAddressToUser(addressUFCG, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
-				addressRepository.save(addressUFCG);
+				userService.addAddressToUser(addressUFCG1, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
+				addressRepository.save(addressUFCG1);
+
+				Address addressUFCG2 = Address.builder()
+						.nickname("UFCG - CEEI")
+						.postalCode("58429900")
+						.state("PB")
+						.city("Campina Grande")
+						.district("Universitário")
+						.street("Rua Aprígio Veloso")
+						.number("882")
+						.complement("Entrada do Centro de Engenharia Elétrica e Informática")
+						.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
+						.build();
+				userService.addAddressToUser(addressUFCG2, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
+				addressRepository.save(addressUFCG2);
+
+				Address addressUFCG3 = Address.builder()
+						.nickname("UFCG - Humanas")
+						.postalCode("58429900")
+						.state("PB")
+						.city("Campina Grande")
+						.district("Universitário")
+						.street("Rua Aprígio Veloso")
+						.number("882")
+						.complement("Entrada por trás do bloco BG")
+						.userId(userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId())
+						.build();
+				userService.addAddressToUser(addressUFCG3, userService.findUserByEmail("admin@mail.ufcg.edu.br").get().getUserId());
+				addressRepository.save(addressUFCG3);
 
 
 				Address address = null;
