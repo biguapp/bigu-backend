@@ -85,14 +85,17 @@ public class AuthenticationService {
     }
 
     public RecoveryResponse recover(String userEmail) throws UserNotFoundException, MessagingException {
-        var user = userService.findUserByEmail(userEmail)
+        User user = userService.findUserByEmail(userEmail)
                 .orElseThrow();
 
-        var jwtToken = jwtService.generateToken(user);
-        var recoveryLink = "https://example.com/recover?token=" + jwtToken;
+        String jwtToken = jwtService.generateToken(user);
+        
+        userService.updateResetPasswordToken(jwtToken, userEmail);
+        
+        String recoveryLink = "https://example.com/recover?token=" + jwtToken;
 
-        var subject = "BIGU - Recuperação de senha";
-        var body = "Olá " + user.getFullName() + ",\n\n" +
+        String subject = "BIGU - Recuperação de senha";
+        String body = "Olá " + user.getFullName() + ",\n\n" +
                 "Recebemos uma solicitação de recuperação de senha para sua conta em nosso sistema. " +
                 "Clique no link abaixo para criar uma nova senha:\n\n" +
                 recoveryLink + "\n\n" +

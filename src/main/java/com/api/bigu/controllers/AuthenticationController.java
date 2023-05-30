@@ -7,6 +7,7 @@ import com.api.bigu.exceptions.RegisterException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.services.AuthenticationService;
+import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,9 @@ public class AuthenticationController {
 	
 	@Autowired
     AuthenticationService authenticationService;
+	
+	@Autowired
+	UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(
@@ -64,6 +68,23 @@ public class AuthenticationController {
             throw new RuntimeException(e);
         }
     }
+    
+    
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> processResetPassword(HttpServletRequest request) throws UserNotFoundException {
+    	String token = request.getParameter("token");
+    	String password = request.getParameter("password");
+    	
+    	try {
+	    	User user = userService.findUserByResetPasswordToken(token).get();
+	    	userService.updatePassword(user, password);
+	    	return ResponseEntity.ok("Senha modificada com sucesso");
+    	} catch (UserNotFoundException unfe) {
+            return UserError.userNotFoundError();
+    	}
+    	
+    }
+    
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
