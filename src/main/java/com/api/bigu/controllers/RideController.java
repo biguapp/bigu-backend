@@ -147,9 +147,21 @@ public class RideController {
     @DeleteMapping("delete-ride/{rideId}")
     public ResponseEntity<?> cancelRide(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId) {
         try {
-            rideService.deleteRideById(rideId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (RideNotFoundException rNFE) {
+            Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(driverId);
+
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                rideService.deleteRideById(rideId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else return UserError.userBlockedError();
+
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (RideNotFoundException e) {
             return RideError.rideNotFoundError();
         }
     }
