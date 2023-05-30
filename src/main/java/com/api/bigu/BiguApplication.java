@@ -41,14 +41,14 @@ public class BiguApplication {
 
 			var driver = RegisterRequest.builder()
 					.fullName("Driver")
-					.email("driver@mail.ufcg.edu.br")
+					.email("italo.ramalho@ccc.ufcg.edu.br")
 					.sex("F")
 					.phoneNumber("222222222")
 					.password("1234")
 					.role("USER")
 					.build();
 			System.err.println("User 1 registered");
-			System.err.println("User token: " + authService.register(driver).getToken());
+			System.err.println("User 1 token: " + authService.register(driver).getToken());
 
 			var rider = RegisterRequest.builder()
 					.fullName("Rider")

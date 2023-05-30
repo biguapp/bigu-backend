@@ -15,10 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.TransactionSystemException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 
@@ -56,10 +53,10 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(
-            @RequestBody @Valid RecoveryRequest recoveryRequest
+            @RequestParam String userEmail
             ) {
         try {
-            return ResponseEntity.ok(authenticationService.recover(recoveryRequest));
+            return ResponseEntity.ok(authenticationService.recover(userEmail));
         } catch (UserNotFoundException unfe) {
             return UserError.userNotFoundError();
         } catch (MessagingException e) { //TODO: lidar com MessagingException
