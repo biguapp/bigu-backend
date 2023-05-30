@@ -8,12 +8,13 @@ import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
+import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -24,6 +25,9 @@ public class AddressService {
 
     @Autowired
     AddressRepository addressRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     AddressMapper addressMapper;
@@ -50,6 +54,9 @@ public class AddressService {
 
     public List<Address> getAddressesByUserId(Integer userId) throws UserNotFoundException, AddressNotFoundException {
         User user = userService.findUserById(userId);
+        System.out.println("------ ENTROU ------");
+        System.out.println(user);
+        System.out.println(user.getAddresses());
         if (user.getAddresses().isEmpty()){
             throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
         }
@@ -67,11 +74,22 @@ public class AddressService {
     }
 
 
-    public AddressResponse createAddress(AddressRequest addressRequest) {
-       Address newAddress = addressMapper.toAddress(addressRequest);
+    public AddressResponse createAddress(Integer userId, AddressRequest address) throws UserNotFoundException {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
-       Address addressCreated = addressRepository.save(newAddress);
+        String addressKey = generateAddressKey();
+        Address newAddress = addressMapper.toAddress(address);
 
-       return addressMapper.toAddressResponse(addressCreated);
+        user.setAddress(newAddress.getNickname(), newAddress);
+
+        Address addressCreated = addressRepository.save(newAddress);
+        userRepository.save(user);
+        System.out.println(userRepository.findAll());
+        return addressMapper.toAddressResponse(addressCreated);
+    }
+
+    private String generateAddressKey() {
+        return UUID.randomUUID().toString();
     }
 }
