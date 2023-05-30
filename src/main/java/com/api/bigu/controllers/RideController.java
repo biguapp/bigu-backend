@@ -143,5 +143,17 @@ public class RideController {
             return RideError.rideNotFoundError();
         }
     }
+
+    @DeleteMapping("delete-ride/{rideId}")
+    public ResponseEntity<?> cancelRide(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId) {
+        try {
+            rideService.deleteRideById(rideId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
+        }
+    }
+
+
 }
 
