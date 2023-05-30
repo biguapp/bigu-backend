@@ -55,7 +55,7 @@ public class RideController {
         try{
             RideResponse ride = rideMapper.toRideResponse(rideService.findRideById(rideId));
             return ResponseEntity.ok(ride);
-        } catch (RideNotFoundException e) {
+        } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
         }
     }
@@ -65,7 +65,7 @@ public class RideController {
         try{
             List<User> members = rideService.getRideMembers(rideId);
             return ResponseEntity.ok(members);
-        } catch (RideNotFoundException e) {
+        } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
         }
     }
@@ -75,9 +75,9 @@ public class RideController {
         try{
             User member = rideService.getRideMember(rideId, memberId);
             return ResponseEntity.ok(member);
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
-        } catch (RideNotFoundException e) {
+        } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
         }
     }
@@ -115,11 +115,11 @@ public class RideController {
 
             return ResponseEntity.ok(rideService.requestRide(userId, candidateRequest));
 
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
-        } catch (AddressNotFoundException e){
+        } catch (AddressNotFoundException aNFE){
             return AddressError.addressNotFoundError();
-        } catch (RideIsFullException e) {
+        } catch (RideIsFullException rIFE) {
             return RideError.rideIsFullError();
         }
 
@@ -139,7 +139,7 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException nCFE) {
             return CarError.noCarsFoundError();
-        } catch (RideNotFoundException e) {
+        } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
         }
     }

@@ -44,7 +44,7 @@ public class UserController {
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
-            return ResponseEntity.ok(new UserDTO(Optional.ofNullable(userService.findUserById(userId))));
+            return ResponseEntity.ok(new UserDTO(userService.findUserById(userId)));
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         }
@@ -60,7 +60,7 @@ public class UserController {
     @GetMapping("/mail/{userEmail}")
     public ResponseEntity<?> searchByEmail(@PathVariable String userEmail) {
         try {
-            UserDTO user = new UserDTO(userService.findUserByEmail(userEmail));
+            UserDTO user = new UserDTO(userService.findUserByEmail(userEmail).get());
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e){
             return UserError.userNotFoundError();
@@ -70,7 +70,7 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<?> searchById(@PathVariable Integer userId) {
         try {
-            UserDTO user = new UserDTO(Optional.ofNullable(userService.findUserById(userId)));
+            UserDTO user = new UserDTO(userService.findUserById(userId));
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();

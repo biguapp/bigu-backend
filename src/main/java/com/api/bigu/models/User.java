@@ -63,6 +63,10 @@ public class User implements UserDetails {
     @Column(name = "addresses")
     private Map<String, Address> addresses;
 
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "cars")
+    private Map<String, Car> cars;
+
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
     private List<Ride> rides;
 

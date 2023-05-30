@@ -78,18 +78,14 @@ public class AddressService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Usuário não encontrado"));
 
-        String addressKey = generateAddressKey();
         Address newAddress = addressMapper.toAddress(address);
+        newAddress.setUserId(userId);
 
-        user.setAddress(newAddress.getNickname(), newAddress);
+        user.getAddresses().put(newAddress.getNickname(), newAddress);
 
         Address addressCreated = addressRepository.save(newAddress);
         userRepository.save(user);
         System.out.println(userRepository.findAll());
         return addressMapper.toAddressResponse(addressCreated);
-    }
-
-    private String generateAddressKey() {
-        return UUID.randomUUID().toString();
     }
 }

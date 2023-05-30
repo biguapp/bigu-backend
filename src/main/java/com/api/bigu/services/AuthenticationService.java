@@ -2,6 +2,7 @@ package com.api.bigu.services;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
+import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.EmailException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
@@ -78,18 +79,19 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
+                .userDTO(new UserDTO(userService.findUserByEmail(authenticationRequest.getEmail()).get()))
                 .token(jwtToken)
                 .build();
     }
 
-    public RecoveryResponse recover(RecoveryRequest recoveryRequest) throws UserNotFoundException, MessagingException {
-        var user = userService.findUserByEmail(recoveryRequest.getEmail())
+    public RecoveryResponse recover(String userEmail) throws UserNotFoundException, MessagingException {
+        var user = userService.findUserByEmail(userEmail)
                 .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
         var recoveryLink = "https://example.com/recover?token=" + jwtToken;
 
-        var subject = "Recuperação de senha";
+        var subject = "BIGU - Recuperação de senha";
         var body = "Olá " + user.getFullName() + ",\n\n" +
                 "Recebemos uma solicitação de recuperação de senha para sua conta em nosso sistema. " +
                 "Clique no link abaixo para criar uma nova senha:\n\n" +
@@ -100,8 +102,8 @@ public class AuthenticationService {
 
         emailService.sendEmail(user.getEmail(), subject, body);
 
-        return RecoveryResponse.builder()
-                .message("Um e-mail com instruções de recuperação foi enviado para " + user.getEmail())
+        return new RecoveryResponse().builder()
+                .message("Email enviado.")
                 .build();
     }
 

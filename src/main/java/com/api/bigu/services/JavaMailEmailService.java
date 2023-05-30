@@ -17,13 +17,13 @@ import java.util.Properties;
 @Component
 public class JavaMailEmailService implements EmailService{
 
-//    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username}")
     private final String username;
-//    @Value("${spring.mail.password}")
+    @Value("${spring.mail.password}")
     private final String password;
-//    @Value("${spring.mail.host}")
+    @Value("${spring.mail.host}")
     private final String host;
-//    @Value("${spring.mail.port}")
+    @Value("${spring.mail.port}")
     private final int port;
 
     private final Properties properties;
@@ -51,7 +51,7 @@ public class JavaMailEmailService implements EmailService{
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             message.setText(body);
-            Transport.send(message);
+            Transport.send(message, username, password);
         
     }
 }
