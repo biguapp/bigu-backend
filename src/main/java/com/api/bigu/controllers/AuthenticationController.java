@@ -11,6 +11,7 @@ import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -53,7 +54,7 @@ public class AuthenticationController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(
-            @RequestParam String userEmail
+            @RequestParam @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$", message = "email not valid") String userEmail
             ) {
         try {
             return ResponseEntity.ok(authenticationService.recover(userEmail));

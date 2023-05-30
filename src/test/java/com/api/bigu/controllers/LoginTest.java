@@ -146,10 +146,9 @@ public class LoginTest {
         authenticationService.register(registerRequest);
 
         // Act
-        RecoveryRequest recoveryRequest = new RecoveryRequest(registerRequest.getEmail());
         RecoveryResponse recoveryResponse;
         try {
-            recoveryResponse = authenticationService.recover(recoveryRequest);
+            recoveryResponse = authenticationService.recover(registerRequest.getEmail());
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
         } catch (MessagingException e) {
