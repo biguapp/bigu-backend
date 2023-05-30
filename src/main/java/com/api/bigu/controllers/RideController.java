@@ -1,16 +1,16 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.candidate.CandidateRequest;
+import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
-import com.api.bigu.services.CarService;
-import com.api.bigu.services.RideMapper;
-import com.api.bigu.services.RideService;
-import com.api.bigu.services.UserService;
+import com.api.bigu.services.*;
+import com.api.bigu.util.errors.AddressError;
 import com.api.bigu.util.errors.CarError;
 import com.api.bigu.util.errors.RideError;
 import com.api.bigu.util.errors.UserError;
@@ -29,6 +29,9 @@ import java.util.Objects;
 @RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
+
+    @Autowired
+    CandidateMapper candidateMapper;
 
     @Autowired
     RideService rideService;
@@ -86,7 +89,7 @@ public class RideController {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(userId);
 
-            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+            if (!(jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver))) {
                 return UserError.userBlockedError();
             }
 
@@ -98,6 +101,46 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException nCFE) {
             return CarError.noCarsFoundError();
+        }
+    }
+
+    @PutMapping("/request-ride")
+    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest){
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(candidateRequest.getAuthorizationHeader()));
+            User rider = rideService.getRider(userId, candidateRequest.getAddressId());
+            if (!(jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider))) {
+                return UserError.userBlockedError();
+            }
+
+            return ResponseEntity.ok(rideService.requestRide(userId, candidateRequest));
+
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        } catch (AddressNotFoundException e){
+            return AddressError.addressNotFoundError();
+        } catch (RideIsFullException e) {
+            return RideError.rideIsFullError();
+        }
+
+    }
+
+    @PutMapping("/answer-candidate")
+    public ResponseEntity<?> answerCandidate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateResponse candidateResponse){
+        try {
+            Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(driverId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                return ResponseEntity.ok(rideService.acceptCandidate(candidateResponse));
+            } else return UserError.userBlockedError();
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (RideNotFoundException e) {
+            return RideError.rideNotFoundError();
         }
     }
 }

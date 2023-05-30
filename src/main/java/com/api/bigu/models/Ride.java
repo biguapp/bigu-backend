@@ -27,6 +27,9 @@ public class Ride {
     @ManyToMany(cascade = CascadeType.ALL)
     private List<User> members;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    private List<Candidate> candidates;
+
     @ManyToOne
     @JoinColumn(name="start_address_id")
     private Address startAddress;

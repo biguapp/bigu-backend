@@ -14,7 +14,6 @@ public class RideMapper {
 
     public Ride toRide(RideRequest rideRequest) {
         return Ride.builder()
-                .driverId(rideRequest.getDriverId())
                 .startAddress(addressMapper.toAddress(rideRequest.getStart()))
                 .destinationAddress(addressMapper.toAddress(rideRequest.getDestination()))
                 .numSeats(rideRequest.getNumSeats())
@@ -30,6 +29,7 @@ public class RideMapper {
         return RideResponse.builder()
                 .goingToCollege(rideCreated.isGoingToCollege())
                 .members(rideCreated.getMembers())
+                .candidates(rideCreated.getCandidates())
                 .start(addressMapper.toAddressResponse(rideCreated.getStartAddress()))
                 .destination(addressMapper.toAddressResponse(rideCreated.getDestinationAddress()))
                 .dateTime(rideCreated.getScheduledTime())

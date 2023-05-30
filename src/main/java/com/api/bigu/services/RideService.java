@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.api.bigu.dto.candidate.CandidateRequest;
+import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.exceptions.CarNotFoundException;
-import com.api.bigu.exceptions.NoCarsFoundException;
-import com.api.bigu.exceptions.RideNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.exceptions.*;
+import com.api.bigu.models.Candidate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +27,12 @@ import static com.api.bigu.models.enums.UserType.DRIVER;
 @Transactional
 @RequiredArgsConstructor
 public class RideService {
+
+    @Autowired
+    private CandidateMapper candidateMapper;
+
+    @Autowired
+    private AddressService addressService;
 
     @Autowired
     private RideRepository rideRepository;
@@ -46,6 +52,14 @@ public class RideService {
         if (carService.findCarsByUserId(userId).isEmpty()) {
             throw new NoCarsFoundException();
         } else return user;
+    }
+
+    public User getRider(Integer userId, Integer addressId) throws UserNotFoundException, AddressNotFoundException {
+        User user;
+        user = userService.findUserById(userId);
+        if (user.getAddresses().containsKey(addressService.getAddressById(addressId).getNickname())){
+            return user;
+        } else throw new AddressNotFoundException("Endereço não encontrado.");
     }
 
     public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException {
@@ -119,11 +133,35 @@ public class RideService {
             if (Objects.equals(user.getUserId(), userId)) {
                 return user;
             }
-        }
-        return null; //todo: implement exception
+        } throw new UserNotFoundException("Usuário não está na carona.");
     }
 
     private Ride registerRide(Ride ride) {
         return rideRepository.save(ride);
+    }
+
+    public RideResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException {
+        Candidate candidate = candidateMapper.toCandidate(userId, candidateRequest);
+        Ride ride = rideRepository.findById(candidateRequest.getRideId()).get();
+        if (ride.getNumSeats() > ride.getMembers().size() - 1) {
+            ride.getCandidates().add(candidate);
+        } else throw new RideIsFullException("A carona está cheia.");
+        return rideMapper.toRideResponse(ride);
+    }
+
+    public RideResponse acceptCandidate(CandidateResponse candidateResponse) throws RideNotFoundException, UserNotFoundException {
+        Ride ride = rideRepository.findById(candidateResponse.getRideId()).get();
+        for (Candidate candidate: ride.getCandidates()) {
+            if (candidate.getUserId().equals(candidateResponse.getUserId())){
+                if (candidateResponse.isAccepted()){
+                    ride.getMembers().add(userService.findUserById(candidate.getUserId()));
+                    ride.getCandidates().remove(candidate);
+                } else {
+                    ride.getCandidates().remove(candidate);
+                }
+
+            }
+        }
+        return rideMapper.toRideResponse(ride);
     }
 }

@@ -16,9 +16,6 @@ import java.time.LocalDateTime;
 public class RideRequest {
 
     @NonNull
-    private Integer driverId;
-
-    @NonNull
     private boolean goingToCollege;
 
     @NonNull
