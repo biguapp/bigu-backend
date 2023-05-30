@@ -1,24 +1,29 @@
 package com.api.bigu.controllers;
 
+import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.candidate.CandidateRequest;
+import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.dto.ride.RideDTO;
-import com.api.bigu.exceptions.RideNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
-import com.api.bigu.services.RideService;
+import com.api.bigu.services.*;
+import com.api.bigu.util.errors.AddressError;
+import com.api.bigu.util.errors.CarError;
+import com.api.bigu.util.errors.RideError;
+import com.api.bigu.util.errors.UserError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/rides")
@@ -26,7 +31,19 @@ import java.util.List;
 public class RideController {
 
     @Autowired
+    CandidateMapper candidateMapper;
+
+    @Autowired
     RideService rideService;
+
+    @Autowired
+    CarService carService;
+
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    RideMapper rideMapper;
 
     @GetMapping
     public List<Ride> getAllRides() {
@@ -36,10 +53,10 @@ public class RideController {
     @GetMapping("/{rideId}")
     public ResponseEntity<?> searchById(@PathVariable Integer rideId){
         try{
-            RideDTO ride = new RideDTO(rideService.findRideById(rideId).get());
+            RideResponse ride = rideMapper.toRideResponse(rideService.findRideById(rideId));
             return ResponseEntity.ok(ride);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
         }
     }
 
@@ -48,10 +65,8 @@ public class RideController {
         try{
             List<User> members = rideService.getRideMembers(rideId);
             return ResponseEntity.ok(members);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
-        } catch (RideNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
         }
     }
 
@@ -60,25 +75,73 @@ public class RideController {
         try{
             User member = rideService.getRideMember(rideId, memberId);
             return ResponseEntity.ok(member);
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
-        } catch (UserNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado.", e);
-        } catch (RideNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Carona não encontrada.", e);
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
         }
     }
 
 
-    @PostMapping("/{rideId}")
-    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
-        try{
-           Ride ride = new Ride(rideDTO);
-           return ResponseEntity.ok(rideService.registerRide(ride));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+    @PostMapping()
+    public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) {
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(userId);
+
+            if (!(jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver))) {
+                return UserError.userBlockedError();
+            }
+
+            return ResponseEntity.ok(rideService.createRide(rideRequest, driver));
+
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
         }
-	}
+    }
 
+    @PutMapping("/request-ride")
+    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest){
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(candidateRequest.getAuthorizationHeader()));
+            User rider = rideService.getRider(userId, candidateRequest.getAddressId());
+            if (!(jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider))) {
+                return UserError.userBlockedError();
+            }
 
+            return ResponseEntity.ok(rideService.requestRide(userId, candidateRequest));
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (AddressNotFoundException aNFE){
+            return AddressError.addressNotFoundError();
+        } catch (RideIsFullException rIFE) {
+            return RideError.rideIsFullError();
+        }
+
+    }
+
+    @PutMapping("/answer-candidate")
+    public ResponseEntity<?> answerCandidate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateResponse candidateResponse){
+        try {
+            Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(driverId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                return ResponseEntity.ok(rideService.acceptCandidate(candidateResponse));
+            } else return UserError.userBlockedError();
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
+        }
+    }
 }
+

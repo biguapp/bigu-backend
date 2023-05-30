@@ -17,8 +17,11 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer addressId;
 
+    @Column(name = "nickname", nullable = false)
+    private String nickname;
+
     @Column(name = "postal_code", nullable = false)
-    private Long postalCode;
+    private String postalCode;
 
     @Column(name = "state", nullable = false)
     private String state;
@@ -39,81 +42,7 @@ public class Address {
     @Column(name = "complement")
     private String complement;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
-
-	public Integer getAddressId() {
-		return addressId;
-	}
-
-	public void setAddressId(Integer addressId) {
-		this.addressId = addressId;
-	}
-
-	public Long getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(Long postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getDistrict() {
-		return district;
-	}
-
-	public void setDistrict(String district) {
-		this.district = district;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
-	}
-
-	public String getComplement() {
-		return complement;
-	}
-
-	public void setComplement(String complement) {
-		this.complement = complement;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
+    @Column(name = "user_id")
+    private Integer userId;
 
 }

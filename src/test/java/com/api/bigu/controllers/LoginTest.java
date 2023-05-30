@@ -16,6 +16,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.mail.MessagingException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @RunWith(SpringRunner.class)
@@ -144,13 +146,12 @@ public class LoginTest {
         authenticationService.register(registerRequest);
 
         // Act
-        RecoveryRequest recoveryRequest = new RecoveryRequest(registerRequest.getEmail());
         RecoveryResponse recoveryResponse;
         try {
-            recoveryResponse = authenticationService.recover(recoveryRequest);
+            recoveryResponse = authenticationService.recover(registerRequest.getEmail());
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
-        } catch (EmailException e) {
+        } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
 

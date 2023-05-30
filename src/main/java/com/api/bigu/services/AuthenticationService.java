@@ -2,6 +2,7 @@ package com.api.bigu.services;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
+import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.EmailException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.mail.MessagingException;
 import java.util.HashMap;
 
 @Service
@@ -43,6 +45,7 @@ public class AuthenticationService {
         var user = userService.registerUser(User.builder()
                 .fullName(registerRequest.getFullName())
                 .email(registerRequest.getEmail())
+                .sex(registerRequest.getSex())
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
@@ -57,7 +60,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException, BadCredentialsException {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
@@ -76,18 +79,19 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
+                .userDTO(new UserDTO(userService.findUserByEmail(authenticationRequest.getEmail()).get()))
                 .token(jwtToken)
                 .build();
     }
 
-    public RecoveryResponse recover(RecoveryRequest recoveryRequest) throws UserNotFoundException, EmailException {
-        var user = userService.findUserByEmail(recoveryRequest.getEmail())
+    public RecoveryResponse recover(String userEmail) throws UserNotFoundException, MessagingException {
+        var user = userService.findUserByEmail(userEmail)
                 .orElseThrow();
 
         var jwtToken = jwtService.generateToken(user);
         var recoveryLink = "https://example.com/recover?token=" + jwtToken;
 
-        var subject = "Recuperação de senha";
+        var subject = "BIGU - Recuperação de senha";
         var body = "Olá " + user.getFullName() + ",\n\n" +
                 "Recebemos uma solicitação de recuperação de senha para sua conta em nosso sistema. " +
                 "Clique no link abaixo para criar uma nova senha:\n\n" +
@@ -98,18 +102,18 @@ public class AuthenticationService {
 
         emailService.sendEmail(user.getEmail(), subject, body);
 
-        return RecoveryResponse.builder()
-                .message("Um e-mail com instruções de recuperação foi enviado para " + user.getEmail())
+        return new RecoveryResponse().builder()
+                .message("Email enviado.")
                 .build();
     }
 
-    public void incrementLoginAttempts(String email) {
+    public void incrementLoginAttempts(String email) throws UserNotFoundException {
         if (userService.findUserByEmail(email).isPresent()) {
             userService.findUserByEmail(email).get().loginFailed();
         }
     }
 
-    public void resetLoginAttempts(String email) {
+    public void resetLoginAttempts(String email) throws UserNotFoundException {
         if (userService.findUserByEmail(email).isPresent()) {
             userService.findUserByEmail(email).get().loginSucceeded();
         }
@@ -123,12 +127,16 @@ public class AuthenticationService {
             throw new RuntimeException(e);
         }
         user.loginFailed();
-        userService.updateUser(user);
+        //userService.updateUser(user);
     }
 
-    public void sendConfirmationEmail(String to, String code) throws EmailException {
+    public void sendConfirmationEmail(String to, String code) throws MessagingException {
         String subject = "Confirmation code for your account";
         String body = "Your confirmation code is: " + code;
         emailService.sendEmail(to, subject, body);
+    }
+
+    public void addToBlackList(String token) {
+        jwtService.addToBlacklist(token);
     }
 }

@@ -1,8 +1,10 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
@@ -23,6 +25,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AddressMapper addressMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -77,25 +82,26 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public Optional<User> findUserByEmail(String userEmail) {
+    public Optional<User> findUserByEmail(String userEmail) throws UserNotFoundException {
         Optional<User> user = userRepository.findByEmail(userEmail);
         if (user.isPresent()) {
             return user;
         } else {
-            try {
-                throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
-            } catch (UserNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
         }
     }
 
-    public void updateUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            userRepository.save(user);
-        }
-
+    public void addAddressToUser(Address address, Integer userId){
+        User user = userRepository.findById(userId).get();
+        user.getAddresses().put(address.getNickname(), address);
     }
+
+//    public void updateUser(User user) {
+//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//            userRepository.save(user);
+//        }
+//
+//    }
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();

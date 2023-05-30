@@ -1,5 +1,6 @@
 package com.api.bigu.dto.auth;
 
+import com.api.bigu.dto.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,6 @@ public class AuthenticationResponse {
 
     private String token;
 
-    public String getToken() {
-        return token;
-    }
+    private UserDTO userDTO;
 
-    public void setToken(String token) {
-        this.token = token;
-    }
 }

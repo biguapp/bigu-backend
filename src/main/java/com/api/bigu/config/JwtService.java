@@ -9,15 +9,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
 public class JwtService {
 
     private static final String SECRET_KEY = "5367566B5970337336763979244226452948404D6251655468576D5A71347437";
+
+    private Set<String> invalidTokens = new HashSet<>();
 
     public String parse(String token) {
         return token.replaceAll("Bearer ", "");
@@ -76,5 +76,13 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public void addToBlacklist(String token) {
+        invalidTokens.add(this.parse(token));
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        return invalidTokens.contains(token);
     }
 }

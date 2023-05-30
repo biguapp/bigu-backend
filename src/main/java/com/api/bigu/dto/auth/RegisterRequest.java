@@ -17,6 +17,10 @@ public class RegisterRequest {
 	private String fullName;
 
     @NonNull
+    @Schema(example = "M")
+    private String sex;
+
+    @NonNull
     @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$", message = "email not valid")
     @Schema(example = "aluno@ccc.ufcg.edu.br")
     private String email;
@@ -30,6 +34,5 @@ public class RegisterRequest {
 
     @Schema(example = "user")
     private String role;
-//    private String userType;
 
 }
