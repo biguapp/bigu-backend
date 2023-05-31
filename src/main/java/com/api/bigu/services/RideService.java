@@ -86,7 +86,8 @@ public class RideService {
         }
     }
 
-    public void deleteRideById(Integer rideId) {
+    public void deleteRideById(Integer rideId) throws RideNotFoundException {
+        rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
         rideRepository.deleteById(rideId);
     }
 
@@ -155,11 +156,8 @@ public class RideService {
             if (candidate.getUserId().equals(candidateResponse.getUserId())){
                 if (candidateResponse.isAccepted()){
                     ride.getMembers().add(userService.findUserById(candidate.getUserId()));
-                    ride.getCandidates().remove(candidate);
-                } else {
-                    ride.getCandidates().remove(candidate);
                 }
-
+                ride.getCandidates().remove(candidate);
             }
         }
         return rideMapper.toRideResponse(ride);
