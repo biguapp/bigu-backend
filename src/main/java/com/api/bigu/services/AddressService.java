@@ -57,9 +57,9 @@ public class AddressService {
         System.out.println("------ ENTROU ------");
         System.out.println(user);
         System.out.println(user.getAddresses());
-        if (user.getAddresses().isEmpty()){
-            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
-        }
+//        if (user.getAddresses().isEmpty()){
+//            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
+//        }
         List<Address> addresses = user.getAddresses().values().stream().toList();
         return addresses;
     }

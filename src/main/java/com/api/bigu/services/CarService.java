@@ -61,7 +61,7 @@ public class CarService {
     //@SneakyThrows
     public List<Car> findCarsByUserId(Integer userId) throws UserNotFoundException, NoCarsFoundException {
         List<Car> cars = userService.findUserById(userId).getCars().values().stream().toList();
-        if (cars.isEmpty()) throw new NoCarsFoundException();
+//        if (cars.isEmpty()) throw new NoCarsFoundException();
         return cars;
     }
 
