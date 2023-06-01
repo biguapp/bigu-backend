@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp target/classes:target/dependency/* com.api.bigu.BiguApplication
+web: java -jar target/bigu-0.0.1-SNAPSHOT.jar
