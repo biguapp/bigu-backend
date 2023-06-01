@@ -20,6 +20,9 @@ public class Candidate {
     @Column(name= "user_id")
     private Integer userId;
 
+    @Column(name = "ride_id")
+    private Integer rideId;
+
     @Column(name= "address_id")
     private Integer addressId;
 }
