@@ -3,9 +3,9 @@ package com.api.bigu.controllers;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.candidate.CandidateRequest;
 import com.api.bigu.dto.candidate.CandidateResponse;
-import com.api.bigu.dto.ride.RideDTO;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
@@ -17,11 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/v1/rides")
@@ -44,8 +42,19 @@ public class RideController {
     RideMapper rideMapper;
 
     @GetMapping
-    public List<Ride> getAllRides() {
-        return rideService.getAllRides();
+    public ResponseEntity<?> getAllRides(@RequestHeader("Authorization") String authorizationHeader) {
+        List<RideResponse> allRides = new ArrayList<>();
+        try{
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+            allRides = rideService.getAllRides();
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+        return ResponseEntity.ok(allRides);
     }
 
     @GetMapping("/{rideId}")
@@ -61,7 +70,7 @@ public class RideController {
     @GetMapping("/{rideId}/members")
     public ResponseEntity<?> getRideMembers(@PathVariable Integer rideId){
         try{
-            List<User> members = rideService.getRideMembers(rideId);
+            List<UserResponse> members = rideService.getRideMembers(rideId);
             return ResponseEntity.ok(members);
         } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
@@ -71,7 +80,7 @@ public class RideController {
     @GetMapping("/{rideId}/{memberId}")
     public ResponseEntity<?> getRideMember(@PathVariable Integer rideId, @PathVariable Integer memberId){
         try{
-            User member = rideService.getRideMember(rideId, memberId);
+            UserResponse member = rideService.getRideMember(rideId, memberId);
             return ResponseEntity.ok(member);
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();

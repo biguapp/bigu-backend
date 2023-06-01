@@ -6,8 +6,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.api.bigu.dto.ride.RideDTO;
-
 @Getter
 @Setter
 @Builder
@@ -62,21 +60,4 @@ public class Ride {
 
     @Column(name = "women_only")
     private boolean toWomen;
-
-    public Ride(RideDTO rideDTO) {
-		this.rideId = rideDTO.getId();
-		this.driverId = rideDTO.getDriverId();
-		this.members = rideDTO.getMembers();
-		this.startAddress = rideDTO.getStartAddress();
-		this.destinationAddress = rideDTO.getDestinationAddress();
-		this.numSeats = rideDTO.getNumSeats();
-		this.goingToCollege = rideDTO.isGoingToCollege();
-		this.distance = rideDTO.getDistance();
-		this.price = rideDTO.getPrice();
-		this.scheduledTime = rideDTO.getScheduledTime();
-		this.car = rideDTO.getCar();
-		this.description = rideDTO.getDescription();
-		this.toWomen = rideDTO.isToWomen();
-	}
-
 }

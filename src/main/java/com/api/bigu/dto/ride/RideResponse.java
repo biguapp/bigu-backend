@@ -6,6 +6,7 @@ import com.api.bigu.dto.user.UserResponse;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -17,7 +18,7 @@ public class RideResponse {
 
     private UserResponse driver;
 
-//    private List<Candidate> candidates;
+    private List<UserResponse> riders;
 
     private AddressResponse start;
 
