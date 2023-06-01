@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,6 +32,16 @@ public class AddressService {
 
     @Autowired
     AddressMapper addressMapper;
+
+    public List<Address> getAllCollegeAddresses() throws AddressNotFoundException {
+        List<Address> collegeAddresses = new ArrayList<>();
+        for (Address address: getAllAddresses()) {
+            if (address.getNickname().contains("UFCG")){
+                collegeAddresses.add(address);
+            }
+        }
+        return collegeAddresses;
+    }
 
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
