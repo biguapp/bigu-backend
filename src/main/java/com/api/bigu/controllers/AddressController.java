@@ -1,7 +1,6 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.address.AddressDTO;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
@@ -73,7 +72,7 @@ public class AddressController {
         return addressService.getAllAddresses();
     }
 
-    @GetMapping("/addressId/{addressId}")
+    @GetMapping("/{addressId}")
     public ResponseEntity<?> searchById(@PathVariable Integer addressId){
         try {
             AddressResponse address = addressService.getAddressById(addressId);
@@ -102,8 +101,8 @@ public class AddressController {
     }
 
 
-    @GetMapping("/addressCEP/{cep}")
-    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable Long cep) {
+    @GetMapping("/cep/{cep}")
+    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable String cep) {
 
         try {
             AddressResponse address = addressService.getAddressByCEP(cep);

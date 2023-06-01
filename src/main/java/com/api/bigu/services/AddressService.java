@@ -1,6 +1,5 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.address.AddressDTO;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
@@ -45,7 +44,7 @@ public class AddressService {
 
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
-    public AddressResponse getAddressByCEP(Long cep) throws AddressNotFoundException {
+    public AddressResponse getAddressByCEP(String cep) throws AddressNotFoundException {
         Address address = addressRepository.findByPostalCode(cep).get();
         if (addressRepository.findByPostalCode(cep).isPresent()){
             return addressMapper.toAddressResponse(address);
