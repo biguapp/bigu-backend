@@ -78,7 +78,7 @@ public class BiguApplication {
                     .modelYear("2023")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail("driver@mail.ufcg.edu.br").get().getUserId(), car);
+                carService.addCarToUser(userRepository.findByEmail(driver.getEmail()).get().getUserId(), car);
             } catch (UserNotFoundException e) {
                 throw new NullPointerException("Usuário não encontrado.");
             }
@@ -120,8 +120,7 @@ public class BiguApplication {
                     .build();
             addressRepository.save(addressUFCG3);
 
-
-            Address address = Address.builder()
+            Address addressDriver = Address.builder()
                     .nickname("Casa")
                     .postalCode("58433264")
                     .state("PB")
@@ -131,8 +130,21 @@ public class BiguApplication {
                     .number("284")
                     .userId(userRepository.findByEmail(driver.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(address, userRepository.findByEmail(driver.getEmail()).get().getUserId());
-            addressRepository.save(address);
+            userService.addAddressToUser(addressDriver, userRepository.findByEmail(driver.getEmail()).get().getUserId());
+            addressRepository.save(addressDriver);
+
+            Address addressRider = Address.builder()
+                    .nickname("Trabalho")
+                    .postalCode("58400165")
+                    .state("PB")
+                    .city("Campina Grande")
+                    .district("Centro")
+                    .street("Rua Teste")
+                    .number("123")
+                    .userId(userRepository.findByEmail(rider.getEmail()).get().getUserId())
+                    .build();
+            userService.addAddressToUser(addressRider, userRepository.findByEmail(rider.getEmail()).get().getUserId());
+            addressRepository.save(addressRider);
 
         };
     }
