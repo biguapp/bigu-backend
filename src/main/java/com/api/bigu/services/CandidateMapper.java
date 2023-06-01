@@ -14,13 +14,14 @@ public class CandidateMapper {
     public Candidate toCandidate(Integer userId, CandidateRequest candidateRequest) throws AddressNotFoundException {
         return Candidate.builder()
                 .userId(userId)
+                .rideId(candidateRequest.getRideId())
                 .addressId(candidateRequest.getAddressId())
                 .build();
     }
 
     public CandidateResponse toCandidateResponse(Candidate candidateCreated){
         return CandidateResponse.builder()
-                .candidateId(candidateCreated.getId())
+                .candidateId(candidateCreated.getCandidateId())
                 .userId(candidateCreated.getUserId())
                 .rideId(candidateCreated.getRideId())
                 .addressId(candidateCreated.getAddressId())
