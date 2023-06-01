@@ -15,14 +15,14 @@ public class CarDTO {
     private Integer userId;
     private String brand;
     private String model;
-    private Integer modelYear;
+    private String modelYear;
     private String color;
     private String plate;
 
     public CarDTO() {
     }
 
-    public CarDTO(Integer id, Integer userId, String brand, String model, Integer modelYear, String color, String plate) {
+    public CarDTO(Integer id, Integer userId, String brand, String model, String modelYear, String color, String plate) {
         this.id = id;
         this.userId = userId;
         this.brand = brand;

@@ -19,7 +19,7 @@ public class CarRequest {
 
     @NonNull
     @Schema(example = "2023")
-    private Integer modelYear;
+    private String modelYear;
 
     @NonNull
     private String color;

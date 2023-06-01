@@ -15,7 +15,7 @@ public class CarResponse {
 
     private String model;
 
-    private Integer modelYear;
+    private String modelYear;
 
     private String color;
 

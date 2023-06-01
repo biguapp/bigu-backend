@@ -26,7 +26,7 @@ public class Car {
     private String model;
 
     @Column(name = "modelYear", nullable = false)
-    private Integer modelYear;
+    private String modelYear;
 
     @Column(name = "color", nullable = false)
     private String color;
