@@ -1,7 +1,7 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.user.UserDTO;
+import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.services.UserService;
@@ -49,7 +49,7 @@ public class UserController {
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
-            return ResponseEntity.ok(new UserDTO(userService.findUserById(userId)));
+            return ResponseEntity.ok(userService.findUserById(userId));
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         }
@@ -63,24 +63,36 @@ public class UserController {
     }
 
     @GetMapping("/mail/{userEmail}")
-    public ResponseEntity<?> searchByEmail(@PathVariable String userEmail) {
+    public ResponseEntity<?> searchByEmail(@RequestHeader("Authorization") String authorizationHeader, @PathVariable String userEmail) {
+        UserResponse user = new UserResponse();
         try {
-            UserDTO user = new UserDTO(userService.findUserByEmail(userEmail).get());
+            Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User admin = userService.findUserById(adminId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
+                user = userService.toResponse(userService.findUserByEmail(userEmail));
+            }
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e){
             return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<?> searchById(@PathVariable Integer userId) {
+    public ResponseEntity<?> searchById(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer userId) {
+        UserResponse user = new UserResponse();
         try {
-            UserDTO user = new UserDTO(userService.findUserById(userId));
+            Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User admin = userService.findUserById(adminId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
+                user = userService.toResponse(userService.findUserById(userId));
+            }
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 }

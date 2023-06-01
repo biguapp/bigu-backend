@@ -1,9 +1,11 @@
 package com.api.bigu.services;
 
 import com.api.bigu.dto.address.AddressResponse;
+import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.dto.user.UserDTO;
+import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
@@ -22,6 +24,9 @@ import java.util.Optional;
 @Transactional
 @RequiredArgsConstructor
 public class UserService {
+
+    @Autowired
+    UserMapper userMapper;
 
     @Autowired
     private UserRepository userRepository;
@@ -66,12 +71,12 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
-        }
+        User user = userRepository.findById(userId).get();
+        return user;
+    }
+
+    public UserResponse toResponse(User user) {
+        return userMapper.toUserResponse(user);
     }
 
     public void deleteById(Integer userId) {
@@ -82,13 +87,9 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public Optional<User> findUserByEmail(String userEmail) throws UserNotFoundException {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()) {
-            return user;
-        } else {
-            throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
-        }
+    public User findUserByEmail(String userEmail) throws UserNotFoundException {
+        User user = userRepository.findByEmail(userEmail).get();
+        return user;
     }
 
     public void addAddressToUser(Address address, Integer userId){
@@ -128,13 +129,10 @@ public class UserService {
             throw new UserNotFoundException("O usuário não foi encontrado.");
         }
     }
-    
-    public void updatePassword(User user, String newPassword) {
-    	String encodedPassword = passwordEncoder.encode(newPassword);
-    	
-    	user.setPassword(encodedPassword);
-    	user.setResetPasswordToken(null);
-    	
-    	userRepository.save(user);
+
+    public void updatePassword(Integer userId, String encodedNewPassword) {
+        User user = userRepository.findById(userId).get();
+        user.setPassword(encodedNewPassword);
+        System.err.println(user.getPassword());
     }
 }
