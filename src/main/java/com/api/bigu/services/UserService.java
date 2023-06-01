@@ -106,4 +106,35 @@ public class UserService {
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
     }
+    
+    public void updateResetPasswordToken(String token, String email) throws UserNotFoundException {
+    	
+    	Optional<User> user = userRepository.findByEmail(email);
+    	
+    	if (user.isPresent()) {
+            user.get().setResetPasswordToken(token);
+            userRepository.save(user.get());
+        } else {
+            throw new UserNotFoundException("O usuário com email " + email + " não foi encontrado.");
+        }
+    }
+    
+    public Optional<User> findUserByResetPasswordToken(String token) throws UserNotFoundException {
+    	Optional<User> user = userRepository.findByResetPasswordToken(token);
+    	
+    	if (user.isPresent()) {
+            return user;
+        } else {
+            throw new UserNotFoundException("O usuário não foi encontrado.");
+        }
+    }
+    
+    public void updatePassword(User user, String newPassword) {
+    	String encodedPassword = passwordEncoder.encode(newPassword);
+    	
+    	user.setPassword(encodedPassword);
+    	user.setResetPasswordToken(null);
+    	
+    	userRepository.save(user);
+    }
 }

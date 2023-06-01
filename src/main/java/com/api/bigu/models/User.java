@@ -50,6 +50,9 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "resetPasswordToken")
+    private String resetPasswordToken;
 
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -94,7 +97,11 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    @Override
+    public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
     public String getUsername() {
         return this.email;
     }
@@ -131,7 +138,15 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
+    public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
