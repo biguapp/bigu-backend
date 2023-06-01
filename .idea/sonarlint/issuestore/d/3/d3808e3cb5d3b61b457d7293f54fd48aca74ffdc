@@ -1,0 +1,19 @@
+
+u
+java:S11924"ZDefine a constant instead of duplicating this literal "Erro interno no servidor." 3 times.(¶ä¼†ûÿÿÿÿ
+W
+java:S4973^"<Strings and Boxed types should be compared using "equals()".(¦ªýîúÿÿÿÿ
+f
+java:S3655`"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(Î‚ÕÇ
+f
+java:S36551"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(ÙÀÖò
+A
+java:S1452/"&Remove usage of generic wildcard type.(¼ñ…±ýÿÿÿÿ
+A
+java:S14529"&Remove usage of generic wildcard type.(ñþ…³þÿÿÿÿ
+A
+java:S1452E"&Remove usage of generic wildcard type.(Öòè’øÿÿÿÿ
+A
+java:S1452T"&Remove usage of generic wildcard type.(âƒ­þÿÿÿÿ
+Y
+java:S1128">Remove this unused import 'com.api.bigu.services.UserService'.(ÿˆÀæûÿÿÿÿ

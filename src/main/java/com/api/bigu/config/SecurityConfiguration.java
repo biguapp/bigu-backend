@@ -48,7 +48,7 @@ public class SecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/api/v1/hello/user").hasAuthority(Role.USER.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/hello/admin").hasAuthority(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/users/get-all").hasAuthority(Role.ADMIN.name())
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
 
             .and()
                 .sessionManagement()

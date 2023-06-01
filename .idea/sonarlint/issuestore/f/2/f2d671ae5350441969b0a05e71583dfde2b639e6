@@ -1,0 +1,22 @@
+
+g	java:S112D"FDefine and throw a dedicated exception instead of using a generic one.(Ò‚Òéüÿÿÿÿ8ÅéÖí…1
+m
+java:S3655O"PCall "Optional#isPresent()" or "!Optional#isEmpty()" before accessing the value.(¥ÏÚú8úÅÿù†1
+H
+java:S1452$"&Remove usage of generic wildcard type.(ê€Üíùÿÿÿÿ8Æÿù†1
+H
+java:S1452/"&Remove usage of generic wildcard type.(×§Œ‘üÿÿÿÿ8†Æÿù†1
+H
+java:S1452<"&Remove usage of generic wildcard type.(³úÀŒıÿÿÿÿ8ŠÆÿù†1
+T
+java:S1135C"2Complete the task associated to this TODO comment.(—äğ§ıÿÿÿÿ8‹Æÿù†1
+H
+java:S1452J"&Remove usage of generic wildcard type.(×¤ê²ùÿÿÿÿ8Æÿù†1
+H
+java:S1452Z"&Remove usage of generic wildcard type.(Î·Š«şÿÿÿÿ8’Æÿù†1
+q
+java:S1128"ORemove this unused import 'com.api.bigu.exceptions.BadRequestExceptionHandler'.(ÁÁººùÿÿÿÿ8‚Üí…1
+e
+java:S1128"CRemove this unused import 'com.api.bigu.exceptions.EmailException'.(®ã±åüÿÿÿÿ8•Æÿù†1
+h
+java:S1128"FRemove this unused import 'com.api.bigu.exceptions.RegisterException'.(ß¥¡èøÿÿÿÿ8•Æÿù†1
