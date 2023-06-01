@@ -10,10 +10,8 @@ import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.services.*;
-import com.api.bigu.util.errors.AddressError;
-import com.api.bigu.util.errors.CarError;
-import com.api.bigu.util.errors.RideError;
-import com.api.bigu.util.errors.UserError;
+import com.api.bigu.util.errors.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,15 +83,11 @@ public class RideController {
 
     @PostMapping()
     public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) {
+        RideResponse rideResponse = new RideResponse();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(userId);
-
-            if (!(jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver))) {
-                return UserError.userBlockedError();
-            }
-
-            return ResponseEntity.ok(rideService.createRide(rideRequest, driver));
+            rideResponse = rideService.createRide(rideRequest, driver);
 
         } catch (CarNotFoundException cNFE) {
             return CarError.carNotFoundError();
@@ -101,28 +95,32 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException nCFE) {
             return CarError.noCarsFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
+        return ResponseEntity.ok(rideResponse);
     }
 
     @PutMapping("/request-ride")
-    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest){
+    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest) {
+        CandidateResponse candidateResponse = new CandidateResponse();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(candidateRequest.getAuthorizationHeader()));
-            User rider = rideService.getRider(userId, candidateRequest.getAddressId());
-            if (!(jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider))) {
-                return UserError.userBlockedError();
+            User rider = rideService.getUser(userId);
+            if (jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider)) {
+                candidateResponse = rideService.requestRide(userId, candidateRequest);
             }
-
-            return ResponseEntity.ok(rideService.requestRide(userId, candidateRequest));
 
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
-        } catch (AddressNotFoundException aNFE){
-            return AddressError.addressNotFoundError();
         } catch (RideIsFullException rIFE) {
             return RideError.rideIsFullError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        } catch (AddressNotFoundException e) {
+            return AddressError.addressNotFoundError();
         }
-
+        return ResponseEntity.ok(candidateResponse);
     }
 
     @PutMapping("/answer-candidate")
@@ -164,6 +162,20 @@ public class RideController {
         } catch (RideNotFoundException e) {
             return RideError.rideNotFoundError();
         }
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader){
+        List<RideResponse> availableRides = new ArrayList<>();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+            availableRides = rideService.findAvailableRides(userId);
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        }
+        return ResponseEntity.ok(availableRides);
     }
 
 
