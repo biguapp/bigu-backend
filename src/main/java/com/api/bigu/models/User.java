@@ -71,6 +71,7 @@ public class User implements UserDetails {
     private Map<String, Car> cars;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Ride> rides;
 
     @OneToMany(mappedBy = "sender")

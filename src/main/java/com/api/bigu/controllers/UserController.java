@@ -5,7 +5,10 @@ import com.api.bigu.dto.user.UserDTO;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.services.UserService;
+import com.api.bigu.util.errors.AuthError;
+import com.api.bigu.util.errors.CustomErrorType;
 import com.api.bigu.util.errors.UserError;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +38,10 @@ public class UserController {
             } else {
                 return UserError.userNotAnAdministrator();
             }
-        } catch (UserNotFoundException e) {
+        } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
