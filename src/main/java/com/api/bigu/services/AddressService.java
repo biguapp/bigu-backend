@@ -1,6 +1,5 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.address.AddressDTO;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
@@ -13,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,9 +32,19 @@ public class AddressService {
     @Autowired
     AddressMapper addressMapper;
 
+    public List<Address> getAllCollegeAddresses() throws AddressNotFoundException {
+        List<Address> collegeAddresses = new ArrayList<>();
+        for (Address address: getAllAddresses()) {
+            if (address.getNickname().contains("UFCG")){
+                collegeAddresses.add(address);
+            }
+        }
+        return collegeAddresses;
+    }
+
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
-    public AddressResponse getAddressByCEP(Long cep) throws AddressNotFoundException {
+    public AddressResponse getAddressByCEP(String cep) throws AddressNotFoundException {
         Address address = addressRepository.findByPostalCode(cep).get();
         if (addressRepository.findByPostalCode(cep).isPresent()){
             return addressMapper.toAddressResponse(address);
@@ -57,9 +67,9 @@ public class AddressService {
         System.out.println("------ ENTROU ------");
         System.out.println(user);
         System.out.println(user.getAddresses());
-        if (user.getAddresses().isEmpty()){
-            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
-        }
+//        if (user.getAddresses().isEmpty()){
+//            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
+//        }
         List<Address> addresses = user.getAddresses().values().stream().toList();
         return addresses;
     }

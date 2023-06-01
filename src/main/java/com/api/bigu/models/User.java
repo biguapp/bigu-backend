@@ -71,13 +71,8 @@ public class User implements UserDetails {
     private Map<String, Car> cars;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Ride> rides;
-
-    @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages;
-
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> receivedMessages;
 
     @Builder.Default
     private boolean accountNonLocked = true;

@@ -1,4 +1,4 @@
 package com.api.bigu.exceptions;
 
-public class UserBlockedException {
+public class UserBlockedException extends Throwable {
 }

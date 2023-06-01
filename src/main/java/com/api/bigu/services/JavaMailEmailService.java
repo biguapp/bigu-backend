@@ -28,10 +28,10 @@ public class JavaMailEmailService implements EmailService{
 
     private final Properties properties;
 
-    public JavaMailEmailService(@Value("my_email@ccc.ufcg.edu.br") String username,
-                                @Value("my.password") String password,
-                                @Value("smtp.gmail.com") String host,
-                                @Value("587") int port) {
+    public JavaMailEmailService(@Value("${spring.mail.username}") String username,
+                                @Value("${spring.mail.password}") String password,
+                                @Value("${spring.mail.host}") String host,
+                                @Value("${spring.mail.port}") int port) {
         this.username = username;
         this.password = password;
         this.host = host;

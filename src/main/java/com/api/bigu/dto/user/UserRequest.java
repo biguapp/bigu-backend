@@ -2,13 +2,12 @@ package com.api.bigu.dto.user;
 
 
 import com.api.bigu.models.User;
-import lombok.Getter;
-import lombok.Setter;
-import java.util.Optional;
+import lombok.*;
 
-@Getter
-@Setter
-public class UserDTO {
+@Data
+@Builder
+@AllArgsConstructor
+public class UserRequest{
 
     public Integer userId;
 
@@ -20,7 +19,7 @@ public class UserDTO {
 
     public String phoneNumber;
 
-    public UserDTO(User usuario) {
+    public UserRequest(User usuario) {
             this.userId = usuario.getUserId();
             this.fullName = usuario.getFullName();
             this.sex = usuario.getSex();

@@ -1,7 +1,6 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.car.CarDTO;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.car.CarResponse;
 import com.api.bigu.exceptions.CarNotFoundException;
@@ -36,8 +35,8 @@ public class CarController {
     @GetMapping
     public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) throws UserNotFoundException, NoCarsFoundException {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        List<CarDTO> dtoList = CarDTO.toDTOList(carService.findCarsByUserId(userId));
-        return ResponseEntity.ok(dtoList);
+        List<CarResponse> carList = carService.findCarsByUserId(userId);
+        return ResponseEntity.ok(carList);
     }
 
     @PostMapping
@@ -50,9 +49,9 @@ public class CarController {
         }
     }
 
-    @DeleteMapping("/{carId}")
-    public ResponseEntity<Void> removeCar(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer carId) throws UserNotFoundException, CarNotFoundException {
+    @DeleteMapping
+    public ResponseEntity<?> removeCar(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Integer carId) throws UserNotFoundException, CarNotFoundException {
         carService.removeCarFromUser(jwtService.extractUserId(jwtService.parse(authorizationHeader)), carId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Carro removido.");
     }
 }

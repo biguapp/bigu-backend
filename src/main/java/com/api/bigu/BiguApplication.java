@@ -49,7 +49,7 @@ public class BiguApplication {
 
             var driver = RegisterRequest.builder()
                     .fullName("Driver")
-                    .email("italo.ramalho@ccc.ufcg.edu.br")
+                    .email("driver@mail.ufcg.edu.br")
                     .sex("F")
                     .phoneNumber("222222222")
                     .password("1234")
@@ -75,12 +75,12 @@ public class BiguApplication {
                     .plate("KGU7E07")
                     .color("Prata")
                     .model("Mustang")
-                    .modelYear(2023)
+                    .modelYear("2023")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail("italo.ramalho@ccc.ufcg.edu.br").get().getUserId(), car);
+                carService.addCarToUser(userRepository.findByEmail(driver.getEmail()).get().getUserId(), car);
             } catch (UserNotFoundException e) {
-                throw new RuntimeException(e);
+                throw new NullPointerException("Usuário não encontrado.");
             }
             System.err.println("Car 1 registered");
 
@@ -93,9 +93,7 @@ public class BiguApplication {
                     .street("Rua Aprígio Veloso")
                     .number("882")
                     .complement("Entrada principal da UFCG")
-                    .userId(userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId())
                     .build();
-            userService.addAddressToUser(addressUFCG1, userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId());
             addressRepository.save(addressUFCG1);
 
             Address addressUFCG2 = Address.builder()
@@ -107,9 +105,7 @@ public class BiguApplication {
                     .street("Rua Aprígio Veloso")
                     .number("882")
                     .complement("Entrada do Centro de Engenharia Elétrica e Informática")
-                    .userId(userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId())
                     .build();
-            userService.addAddressToUser(addressUFCG2, userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId());
             addressRepository.save(addressUFCG2);
 
             Address addressUFCG3 = Address.builder()
@@ -121,13 +117,10 @@ public class BiguApplication {
                     .street("Rua Aprígio Veloso")
                     .number("882")
                     .complement("Entrada por trás do bloco BG")
-                    .userId(userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId())
                     .build();
-            userService.addAddressToUser(addressUFCG3, userRepository.findByEmail("admin@mail.ufcg.edu.br").get().getUserId());
             addressRepository.save(addressUFCG3);
 
-
-            Address address = Address.builder()
+            Address addressDriver = Address.builder()
                     .nickname("Casa")
                     .postalCode("58433264")
                     .state("PB")
@@ -135,10 +128,23 @@ public class BiguApplication {
                     .district("Malvinas")
                     .street("Rua Exemplo")
                     .number("284")
-                    .userId(userRepository.findByEmail("italo.ramalho@ccc.ufcg.edu.br").get().getUserId())
+                    .userId(userRepository.findByEmail(driver.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(address, userRepository.findByEmail("italo.ramalho@ccc.ufcg.edu.br").get().getUserId());
-            addressRepository.save(address);
+            userService.addAddressToUser(addressDriver, userRepository.findByEmail(driver.getEmail()).get().getUserId());
+            addressRepository.save(addressDriver);
+
+            Address addressRider = Address.builder()
+                    .nickname("Trabalho")
+                    .postalCode("58400165")
+                    .state("PB")
+                    .city("Campina Grande")
+                    .district("Centro")
+                    .street("Rua Teste")
+                    .number("123")
+                    .userId(userRepository.findByEmail(rider.getEmail()).get().getUserId())
+                    .build();
+            userService.addAddressToUser(addressRider, userRepository.findByEmail(rider.getEmail()).get().getUserId());
+            addressRepository.save(addressRider);
 
         };
     }

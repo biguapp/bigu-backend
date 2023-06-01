@@ -1,15 +1,18 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.address.AddressDTO;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.User;
 import com.api.bigu.services.AddressService;
+import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AddressError;
+import com.api.bigu.util.errors.AuthError;
 import com.api.bigu.util.errors.UserError;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,9 @@ public class AddressController {
 
     @Autowired
     AddressService addressService;
+
+    @Autowired
+    UserService userService;
 
     @Autowired
     JwtService jwtService;
@@ -47,13 +53,17 @@ public class AddressController {
 
     @GetMapping("/get-ufcg")
     public ResponseEntity<?> getUfcgAddresses(@RequestHeader("Authorization") String authorizationHeader) {
-        Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
-            return ResponseEntity.ok(addressService.getAddressesByUserId(adminId));
-        } catch (UserNotFoundException e) {
-            return UserError.userNotFoundError();
+            Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User admin = userService.findUserById(adminId);
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin);
+            return ResponseEntity.ok(addressService.getAllCollegeAddresses());
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
         }
     }
 
@@ -62,7 +72,7 @@ public class AddressController {
         return addressService.getAllAddresses();
     }
 
-    @GetMapping("/addressId/{addressId}")
+    @GetMapping("/{addressId}")
     public ResponseEntity<?> searchById(@PathVariable Integer addressId){
         try {
             AddressResponse address = addressService.getAddressById(addressId);
@@ -91,8 +101,8 @@ public class AddressController {
     }
 
 
-    @GetMapping("/addressCEP/{cep}")
-    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable Long cep) {
+    @GetMapping("/cep/{cep}")
+    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable String cep) {
 
         try {
             AddressResponse address = addressService.getAddressByCEP(cep);
