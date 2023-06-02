@@ -36,6 +36,10 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll())
 
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(AntPathRequestMatcher.antMatcher("/swagger-ui.html/**"))
+                    .permitAll())
+
             .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/auth/**")
@@ -43,6 +47,7 @@ public class SecurityConfiguration {
 
                 .requestMatchers(HttpMethod.GET, "/api/v1/hello/user").hasAuthority(Role.USER.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/hello/admin").hasAuthority(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.GET, "/api/v1/users/get-all").hasAuthority(Role.ADMIN.name())
                 .anyRequest().permitAll()
 
             .and()

@@ -1,8 +1,13 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.address.AddressResponse;
+import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.dto.user.UserDTO;
+import com.api.bigu.dto.user.EditUserRequest;
+import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.exceptions.WrongPasswordException;
+import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
@@ -22,10 +27,13 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
+    UserMapper userMapper;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private RideService rideService;
+    private AddressMapper addressMapper;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -64,12 +72,12 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) throws UserNotFoundException {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            return user.get();
-        } else {
-            throw new UserNotFoundException("O usuário com Id " + userId + " não foi encontrado.");
-        }
+        User user = userRepository.findById(userId).get();
+        return user;
+    }
+
+    public UserResponse toResponse(User user) {
+        return userMapper.toUserResponse(user);
     }
 
     public void deleteById(Integer userId) {
@@ -80,27 +88,61 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public Optional<User> findUserByEmail(String userEmail) {
-        Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()) {
-            return user;
-        } else {
-            try {
-                throw new UserNotFoundException("O usuário com email " + userEmail + " não foi encontrado.");
-            } catch (UserNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+    public User findUserByEmail(String userEmail) throws UserNotFoundException {
+        User user = userRepository.findByEmail(userEmail).get();
+        return user;
     }
 
-    public void updateUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-            userRepository.save(user);
-        }
-
+    public void addAddressToUser(Address address, Integer userId){
+        User user = userRepository.findById(userId).get();
+        user.getAddresses().put(address.getNickname(), address);
     }
+
+//    public void updateUser(User user) {
+//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+//            userRepository.save(user);
+//        }
+//
+//    }
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
+    }
+    
+    public void updateResetPasswordToken(String token, String email) throws UserNotFoundException {
+    	
+    	Optional<User> user = userRepository.findByEmail(email);
+    	
+    	if (user.isPresent()) {
+            user.get().setResetPasswordToken(token);
+            userRepository.save(user.get());
+        } else {
+            throw new UserNotFoundException("O usuário com email " + email + " não foi encontrado.");
+        }
+    }
+    
+    public Optional<User> findUserByResetPasswordToken(String token) throws UserNotFoundException {
+    	Optional<User> user = userRepository.findByResetPasswordToken(token);
+    	
+    	if (user.isPresent()) {
+            return user;
+        } else {
+            throw new UserNotFoundException("O usuário não foi encontrado.");
+        }
+    }
+
+    public void updatePassword(Integer userId, String encodedNewPassword) {
+        User user = userRepository.findById(userId).get();
+        user.setPassword(encodedNewPassword);
+        System.err.println(user.getPassword());
+    }
+
+    public UserResponse editProfile(Integer userId, EditUserRequest editUserRequest) {
+        User user = userRepository.findById(userId).get();
+        user.setFullName(editUserRequest.getFullName());
+        user.setEmail(editUserRequest.getEmail());
+        user.setPhoneNumber(editUserRequest.getPhoneNumber());
+        user.setMatricula(editUserRequest.getMatricula());
+        return toResponse(user);
     }
 }

@@ -4,6 +4,7 @@ import com.api.bigu.exceptions.EmailException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -16,21 +17,21 @@ import java.util.Properties;
 @Component
 public class JavaMailEmailService implements EmailService{
 
-//    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username}")
     private final String username;
-//    @Value("${spring.mail.password}")
+    @Value("${spring.mail.password}")
     private final String password;
-//    @Value("${spring.mail.host}")
+    @Value("${spring.mail.host}")
     private final String host;
-//    @Value("${spring.mail.port}")
+    @Value("${spring.mail.port}")
     private final int port;
 
     private final Properties properties;
 
-    public JavaMailEmailService(@Value("my_email@ccc.ufcg.edu.br") String username,
-                                @Value("my.password") String password,
-                                @Value("smtp.gmail.com") String host,
-                                @Value("587") int port) {
+    public JavaMailEmailService(@Value("${spring.mail.username}") String username,
+                                @Value("${spring.mail.password}") String password,
+                                @Value("${spring.mail.host}") String host,
+                                @Value("${spring.mail.port}") int port) {
         this.username = username;
         this.password = password;
         this.host = host;
@@ -43,19 +44,14 @@ public class JavaMailEmailService implements EmailService{
     }
 
     @Override
-    public void sendEmail(String to, String subject, String body) throws EmailException {
-        try {
+    public void sendEmail(String to, String subject, String body) throws MessagingException {
             Session session = Session.getInstance(properties);
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             message.setText(body);
-            Transport.send(message);
-        } catch (AddressException e) {
-            throw new RuntimeException(e);
-        } catch (javax.mail.MessagingException e) {
-            throw new RuntimeException(e);
-        }
+            Transport.send(message, username, password);
+        
     }
 }

@@ -1,7 +1,9 @@
 package com.api.bigu.models;
 
+import com.api.bigu.models.enums.Addresses;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.models.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -10,13 +12,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Getter
 @Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +35,9 @@ public class User implements UserDetails {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
+    @Column(name = "sex", nullable = false)
+    private String sex;
+
     @Column(name = "email", nullable = false, unique = true)
     @Pattern(regexp = "[\\w-.]+@([\\w-])+.ufcg.edu.br$", message = "email not valid")
     private String email;
@@ -47,19 +50,28 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "resetPasswordToken")
+    private String resetPasswordToken;
 
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name="user_type")
-    @Enumerated(EnumType.STRING)
-    private UserType userType;
+//    @Column(name="user_type")
+//    @Enumerated(EnumType.STRING)
+//    private UserType userType;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> address;
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "addresses")
+    private Map<String, Address> addresses;
+
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "cars")
+    private Map<String, Car> cars;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Ride> rides;
 
     @Builder.Default
@@ -80,7 +92,11 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    @Override
+    public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
     public String getUsername() {
         return this.email;
     }
@@ -117,7 +133,15 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
+    public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;
@@ -126,6 +150,6 @@ public class User implements UserDetails {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUserId(), getCpfUser());
+        return Objects.hash(this.getUserId(), this.getCpfUser());
     }
 }

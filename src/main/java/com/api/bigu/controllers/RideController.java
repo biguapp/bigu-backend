@@ -1,66 +1,192 @@
 package com.api.bigu.controllers;
 
-import com.api.bigu.dto.ride.RideDTO;
-import com.api.bigu.exceptions.RideNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.candidate.CandidateRequest;
+import com.api.bigu.dto.candidate.CandidateResponse;
+import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Ride;
-import com.api.bigu.services.RideService;
+import com.api.bigu.models.User;
+import com.api.bigu.services.*;
+import com.api.bigu.util.errors.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
 
     @Autowired
+    CandidateMapper candidateMapper;
+
+    @Autowired
     RideService rideService;
 
+    @Autowired
+    CarService carService;
+
+    @Autowired
+    JwtService jwtService;
+
+    @Autowired
+    RideMapper rideMapper;
+
     @GetMapping
-    public List<Ride> getAllRides() {
-        return rideService.getAllRides();
+    public ResponseEntity<?> getAllRides(@RequestHeader("Authorization") String authorizationHeader) {
+        List<RideResponse> allRides = new ArrayList<>();
+        try{
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+            allRides = rideService.getAllRides();
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+        return ResponseEntity.ok(allRides);
     }
 
     @GetMapping("/{rideId}")
     public ResponseEntity<?> searchById(@PathVariable Integer rideId){
         try{
-            RideDTO ride = new RideDTO(rideService.findRideById(rideId).get());
+            RideResponse ride = rideMapper.toRideResponse(rideService.findRideById(rideId));
             return ResponseEntity.ok(ride);
-        } catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
         }
     }
-// TODO
-//    @GetMapping("/{memberId}")
-//    public ResponseEntity<?> searchByMember(@PathVariable Integer memberId){
-//        try{
-//            Optional<Ride> rides = rideService.findByMember(memberId);
-//            return ResponseEntity.ok(rides);
-//        } catch (NullPointerException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não tem caronas registradas.", e);
-//        } catch (Exception e){
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor.", e);
-//        } catch (UserNotFoundException e) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Esse passageiro não existe.", e);
-//        }
-//    }
 
-//TODO TERMINAR, DEU SONO
-//    @PostMapping("/{rideId}")
-//    public ResponseEntity<?> createRide(@RequestBody RideDTO rideDTO){
-//        try{
-//            //Ride ride = new Ride(rideDTO...)
-//        } catch (Exception e) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
-//        }
-//    }
+    @GetMapping("/{rideId}/members")
+    public ResponseEntity<?> getRideMembers(@PathVariable Integer rideId){
+        try{
+            List<UserResponse> members = rideService.getRideMembers(rideId);
+            return ResponseEntity.ok(members);
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
+        }
+    }
+
+    @GetMapping("/{rideId}/{memberId}")
+    public ResponseEntity<?> getRideMember(@PathVariable Integer rideId, @PathVariable Integer memberId){
+        try{
+            UserResponse member = rideService.getRideMember(rideId, memberId);
+            return ResponseEntity.ok(member);
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
+        }
+    }
+
+
+    @PostMapping()
+    public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) {
+        RideResponse rideResponse = new RideResponse();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(userId);
+            rideResponse = rideService.createRide(rideRequest, driver);
+
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+        return ResponseEntity.ok(rideResponse);
+    }
+
+    @PutMapping("/request-ride")
+    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest) {
+        CandidateResponse candidateResponse = new CandidateResponse();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(candidateRequest.getAuthorizationHeader()));
+            User rider = rideService.getUser(userId);
+            if (jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider)) {
+                candidateResponse = rideService.requestRide(userId, candidateRequest);
+            }
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (RideIsFullException rIFE) {
+            return RideError.rideIsFullError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        } catch (AddressNotFoundException e) {
+            return AddressError.addressNotFoundError();
+        }
+        return ResponseEntity.ok(candidateResponse);
+    }
+
+    @PutMapping("/answer-candidate")
+    public ResponseEntity<?> answerCandidate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateResponse candidateResponse){
+        try {
+            Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(driverId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                return ResponseEntity.ok(rideService.acceptCandidate(candidateResponse));
+            } else return UserError.userBlockedError();
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
+        }
+    }
+
+    @DeleteMapping("delete-ride/{rideId}")
+    public ResponseEntity<?> cancelRide(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId) {
+        try {
+            Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User driver = rideService.getDriver(driverId);
+
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
+                rideService.deleteRideById(rideId);
+                return new ResponseEntity<>(HttpStatus.OK);
+            } else return UserError.userBlockedError();
+
+        } catch (CarNotFoundException cNFE) {
+            return CarError.carNotFoundError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        } catch (NoCarsFoundException nCFE) {
+            return CarError.noCarsFoundError();
+        } catch (RideNotFoundException e) {
+            return RideError.rideNotFoundError();
+        }
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader){
+        List<RideResponse> availableRides = new ArrayList<>();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+            availableRides = rideService.findAvailableRides(userId);
+
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        }
+        return ResponseEntity.ok(availableRides);
+    }
 
 
 }
+

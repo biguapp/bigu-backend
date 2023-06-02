@@ -1,12 +1,20 @@
 package com.api.bigu.controllers;
 
-import com.api.bigu.dto.address.AddressDTO;
+import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
+import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.User;
 import com.api.bigu.services.AddressService;
+import com.api.bigu.services.UserService;
+import com.api.bigu.util.errors.AddressError;
+import com.api.bigu.util.errors.AuthError;
+import com.api.bigu.util.errors.UserError;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,56 +23,104 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/addresses")
+@RequestMapping(value = "/api/v1/addresses")
 public class AddressController {
 
-    final
+    @Autowired
     AddressService addressService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    JwtService jwtService;
 
     public AddressController(AddressService addressService) {
         this.addressService = addressService;
     }
 
-    @GetMapping
+//    @GetMapping("/")
+//    public ResponseEntity<?> getAllAddressesOfUser(@RequestHeader("Authorization") String authorizationHeader) {
+//        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+//        try {
+//            return ResponseEntity.ok(addressService.getAddressesByUserId(userId));
+//        } catch (UserNotFoundException e) {
+//            return UserError.userNotFoundError();
+//        } catch (AddressNotFoundException e) {
+//            return AddressError.addressNotFoundError();
+//        }
+//    }
+
+    @GetMapping("/get-ufcg")
+    public ResponseEntity<?> getUfcgAddresses(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User admin = userService.findUserById(adminId);
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin);
+            return ResponseEntity.ok(addressService.getAllCollegeAddresses());
+        } catch (AddressNotFoundException e) {
+            return AddressError.addressNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        } catch (UserNotFoundException uNFE) {
+            return UserError.userNotFoundError();
+        }
+    }
+
+    @GetMapping("/get-all")
     public List<Address> getAllAddresses() {
         return addressService.getAllAddresses();
     }
 
-    @GetMapping("/addressId")
-    public ResponseEntity<AddressDTO> searchById(@PathVariable Integer addressId){
+    @GetMapping("/{addressId}")
+    public ResponseEntity<?> searchById(@PathVariable Integer addressId){
         try {
-            AddressDTO address = addressService.getAddressById(addressId);
+            AddressResponse address = addressService.getAddressById(addressId);
             return ResponseEntity.ok(address);
         } catch (AddressNotFoundException e){
             // tratar o caso em que o endereço não é encontrado
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado", e);
         } catch (Exception e) {
-            // tratar outros tipos de exceção
+            // tratar outras categorias de exceção
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
     }
 
-    @GetMapping("/{addressCEP}")
-    public ResponseEntity<AddressDTO> searchByCEP(@PathVariable Long cep) {
+    @GetMapping()
+    public ResponseEntity<?> searchByUserId(@RequestHeader("Authorization") String authorizationHeader){
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            List<Address> addresses = addressService.getAddressesByUserId(userId);
+            System.out.println(addresses);
+            return ResponseEntity.ok(addresses);
+        } catch (AddressNotFoundException e){
+            return AddressError.addressNotFoundError();
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        }
+    }
+
+
+    @GetMapping("/cep/{cep}")
+    public ResponseEntity<AddressResponse> searchByCEP(@PathVariable String cep) {
 
         try {
-            AddressDTO address = addressService.getAddressByCEP(cep);
+            AddressResponse address = addressService.getAddressByCEP(cep);
             return ResponseEntity.ok(address);
 
         } catch (AddressNotFoundException e) {
-            // tratar o caso em que o endereço não é encontrado
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Endereço não encontrado", e);
         } catch (Exception e) {
-            // tratar outros tipos de exceção
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno no servidor", e);
         }
     }
 
-    @PostMapping
-    public ResponseEntity<AddressResponse> createNewAddress(@RequestBody @Valid AddressRequest addressRequest) {
-        AddressResponse newAddress = addressService.createAddress(addressRequest);
+    @PostMapping()
+    public ResponseEntity<AddressResponse> createAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid AddressRequest address) throws UserNotFoundException {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        AddressResponse createdAddress = addressService.createAddress(userId, address);
 
-        return new ResponseEntity<>(newAddress, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
     }
 
 }
