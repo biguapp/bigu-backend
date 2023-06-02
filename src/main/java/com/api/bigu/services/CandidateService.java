@@ -26,6 +26,6 @@ public class CandidateService {
     }
 
     public void removeCandidate(Integer candidateId){
-        candidateRepository.delete(candidateId);
+        candidateRepository.delete(candidateRepository.findById(candidateId).get());
     }
 }

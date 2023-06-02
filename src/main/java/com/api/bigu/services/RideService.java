@@ -30,7 +30,7 @@ import static com.api.bigu.models.enums.UserType.DRIVER;
 public class RideService {
 
     @Autowired
-    CandidateService candidateService;
+    private CandidateService candidateService;
 
     @Autowired
     private CandidateMapper candidateMapper;
