@@ -1,6 +1,7 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.user.EditUserRequest;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
@@ -89,6 +90,23 @@ public class UserController {
                 user = userService.toResponse(userService.findUserById(userId));
             }
             return ResponseEntity.ok(user);
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<?> editProfile(@RequestHeader("Authorization") String authorizationHeader, @RequestBody EditUserRequest editUserRequest){
+        UserResponse userResponse = new UserResponse();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            User user = userService.findUserById(userId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), user)){
+                userResponse = userService.editProfile(userId, editUserRequest);
+            }
+            return ResponseEntity.ok(userResponse);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {

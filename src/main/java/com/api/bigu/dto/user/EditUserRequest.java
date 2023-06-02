@@ -9,19 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponse {
-
-    private Integer userId;
+public class EditUserRequest {
 
     private String fullName;
-
-    private String sex;
 
     private String email;
 
     private String phoneNumber;
 
     private String matricula;
-
 
 }

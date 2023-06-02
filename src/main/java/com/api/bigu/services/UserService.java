@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
+import com.api.bigu.dto.user.EditUserRequest;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
@@ -134,5 +135,14 @@ public class UserService {
         User user = userRepository.findById(userId).get();
         user.setPassword(encodedNewPassword);
         System.err.println(user.getPassword());
+    }
+
+    public UserResponse editProfile(Integer userId, EditUserRequest editUserRequest) {
+        User user = userRepository.findById(userId).get();
+        user.setFullName(editUserRequest.getFullName());
+        user.setEmail(editUserRequest.getEmail());
+        user.setPhoneNumber(editUserRequest.getPhoneNumber());
+        user.setMatricula(editUserRequest.getMatricula());
+        return toResponse(user);
     }
 }

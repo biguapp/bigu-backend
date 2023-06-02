@@ -13,6 +13,8 @@ public class UserMapper {
                 .fullName(userCreated.getFullName())
                 .sex(userCreated.getSex())
                 .email(userCreated.getEmail())
+                .phoneNumber(userCreated.getPhoneNumber())
+                .matricula(userCreated.getMatricula())
                 .build();
     }
 }

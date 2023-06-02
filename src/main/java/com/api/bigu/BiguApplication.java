@@ -60,7 +60,7 @@ public class BiguApplication {
 
             var rider = RegisterRequest.builder()
                     .fullName("Rider")
-                    .email("rider@mail.ufcg.edu.br")
+                    .email("matheus.rafael@ccc.ufcg.edu.br")
                     .sex("F")
                     .phoneNumber("333333333")
                     .password("1234")

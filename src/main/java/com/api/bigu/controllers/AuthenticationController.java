@@ -69,16 +69,34 @@ public class AuthenticationController {
             throw new MessagingException("Problemas ao enviar o email.");
         }
     }
-    
-    
+
     @PutMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String authorizationHeader, @RequestBody NewPasswordRequest newPasswordRequest) {
+    public ResponseEntity<?> resetPassword(@RequestHeader("Authorization") String resetToken, @RequestBody NewPasswordRequest newPasswordRequest) {
+        Integer userId = jwtService.extractUserId((jwtService.parse(resetToken)));
+        String body = "";
+        try {
+            User user = userService.findUserById(userId);
+            if (jwtService.isTokenValid(jwtService.parse(resetToken), user)) {
+                authenticationService.updatePassword(userId, newPasswordRequest);
+                body = "Senha alterada.";
+            }
+            return ResponseEntity.ok(body);
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        } catch (WrongPasswordException e) {
+            return AuthenticationError.wrongPassword();
+        }
+    }
+    
+    
+    @PutMapping("/edit-password")
+    public ResponseEntity<?> editPassword(@RequestHeader("Authorization") String authorizationHeader, @RequestParam String actualPassword, @RequestBody NewPasswordRequest newPasswordRequest) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
     	String body = "";
         try {
             User user = userService.findUserById(userId);
             if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), user)){
-                authenticationService.updatePassword(userId, newPasswordRequest);
+                authenticationService.updatePassword(userId, actualPassword, newPasswordRequest);
                 body = "Senha modificada com sucesso";
             }
 

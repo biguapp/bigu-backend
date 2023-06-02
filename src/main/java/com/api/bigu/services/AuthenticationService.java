@@ -94,7 +94,7 @@ public class AuthenticationService {
         
         userService.updateResetPasswordToken(jwtToken, userEmail);
         
-        String recoveryLink = "https://example.com/recover?token=" + jwtToken;
+        String recoveryLink = "https://bigu.herokuapp.com/recover?token=" + jwtToken;
 
         String subject = "BIGU - Recuperação de senha";
         String body = "Olá " + user.getFullName() + ",\n\n" +
@@ -112,11 +112,22 @@ public class AuthenticationService {
                 .build();
     }
 
+    public void updatePassword(Integer userId, String actualPassword, NewPasswordRequest newPasswordRequest) throws WrongPasswordException, UserNotFoundException {
+        User user = userService.findUserById(userId);
+        String encodedNewPassword = "";
+
+        if (passwordEncoder.matches(actualPassword, user.getPassword()) && newPasswordRequest.getNewPassword().equals(newPasswordRequest.getNewPasswordConfirmation())){
+            encodedNewPassword = passwordEncoder.encode(newPasswordRequest.getNewPassword());
+        } else throw new WrongPasswordException("Senha incorreta.");
+
+        userService.updatePassword(userId, encodedNewPassword);
+    }
+
     public void updatePassword(Integer userId, NewPasswordRequest newPasswordRequest) throws WrongPasswordException, UserNotFoundException {
         User user = userService.findUserById(userId);
         String encodedNewPassword = "";
 
-        if (passwordEncoder.matches(newPasswordRequest.getActualPassword(), user.getPassword()) && newPasswordRequest.getNewPassword().equals(newPasswordRequest.getNewPasswordConfirmation())){
+        if (newPasswordRequest.getNewPassword().equals(newPasswordRequest.getNewPasswordConfirmation())){
             encodedNewPassword = passwordEncoder.encode(newPasswordRequest.getNewPassword());
         } else throw new WrongPasswordException("Senha incorreta.");
 

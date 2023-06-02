@@ -11,9 +11,6 @@ import lombok.NonNull;
 public class NewPasswordRequest {
 
     @NonNull
-    private String actualPassword;
-
-    @NonNull
     private String newPassword;
 
     @NonNull
