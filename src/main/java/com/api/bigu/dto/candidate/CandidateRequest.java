@@ -8,9 +8,6 @@ import lombok.*;
 public class CandidateRequest {
 
     @NonNull
-    private String authorizationHeader;
-
-    @NonNull
     private Integer rideId;
 
     @NonNull

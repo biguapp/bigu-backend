@@ -111,12 +111,12 @@ public class RideController {
     }
 
     @PutMapping("/request-ride")
-    public ResponseEntity<?> requestRide(@RequestBody CandidateRequest candidateRequest) {
+    public ResponseEntity<?> requestRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateRequest candidateRequest) {
         CandidateResponse candidateResponse = new CandidateResponse();
         try {
-            Integer userId = jwtService.extractUserId(jwtService.parse(candidateRequest.getAuthorizationHeader()));
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User rider = rideService.getUser(userId);
-            if (jwtService.isTokenValid(jwtService.parse(candidateRequest.getAuthorizationHeader()), rider)) {
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rider)) {
                 candidateResponse = rideService.requestRide(userId, candidateRequest);
             }
 
