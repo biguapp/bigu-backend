@@ -9,6 +9,7 @@ import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AuthError;
 import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Pattern;
@@ -84,6 +85,8 @@ public class AuthenticationController {
             return UserError.userNotFoundError();
         } catch (WrongPasswordException e) {
             return AuthenticationError.wrongPassword();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
     
@@ -103,6 +106,8 @@ public class AuthenticationController {
             return UserError.userNotFoundError();
     	} catch (WrongPasswordException wPE) {
             return AuthenticationError.wrongPassword();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
         return ResponseEntity.ok(body);
     }

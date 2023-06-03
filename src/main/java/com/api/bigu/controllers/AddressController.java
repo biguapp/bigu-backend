@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -53,11 +54,14 @@ public class AddressController {
 
     @GetMapping("/get-ufcg")
     public ResponseEntity<?> getUfcgAddresses(@RequestHeader("Authorization") String authorizationHeader) {
+        List<AddressResponse> ufcgAddresses = new ArrayList<>();
         try {
             Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User admin = userService.findUserById(adminId);
-            jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin);
-            return ResponseEntity.ok(addressService.getAllCollegeAddresses());
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
+                ufcgAddresses = addressService.getAllCollegeAddresses();
+            }
+            return ResponseEntity.ok(ufcgAddresses);
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
         } catch (ExpiredJwtException eJE) {
@@ -88,15 +92,19 @@ public class AddressController {
 
     @GetMapping()
     public ResponseEntity<?> searchByUserId(@RequestHeader("Authorization") String authorizationHeader){
+        List<AddressResponse> addresses = new ArrayList<>();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            List<Address> addresses = addressService.getAddressesByUserId(userId);
-            System.out.println(addresses);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), userService.findUserById(userId))){
+                addresses = addressService.getAddressesByUserId(userId);
+            }
             return ResponseEntity.ok(addresses);
         } catch (AddressNotFoundException e){
             return AddressError.addressNotFoundError();
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
@@ -116,10 +124,16 @@ public class AddressController {
     }
 
     @PostMapping()
-    public ResponseEntity<AddressResponse> createAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid AddressRequest address) throws UserNotFoundException {
-        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        AddressResponse createdAddress = addressService.createAddress(userId, address);
-
+    public ResponseEntity<?> createAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid AddressRequest address) throws UserNotFoundException {
+        AddressResponse createdAddress = new AddressResponse();
+        try{
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            createdAddress = addressService.createAddress(userId, address);
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
         return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
     }
 

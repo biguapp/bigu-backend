@@ -53,13 +53,20 @@ public class UserController {
             return ResponseEntity.ok(userService.findUserById(userId));
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> deleteSelf(@RequestHeader("Authorization") String authorizationHeader) {
-        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-        userService.deleteById(userId);
+    public ResponseEntity<?> deleteSelf(@RequestHeader("Authorization") String authorizationHeader) {
+        try{
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            userService.deleteById(userId);
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+
         return ResponseEntity.noContent().build();
     }
 

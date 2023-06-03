@@ -32,11 +32,11 @@ public class AddressService {
     @Autowired
     AddressMapper addressMapper;
 
-    public List<Address> getAllCollegeAddresses() throws AddressNotFoundException {
-        List<Address> collegeAddresses = new ArrayList<>();
+    public List<AddressResponse> getAllCollegeAddresses() throws AddressNotFoundException {
+        List<AddressResponse> collegeAddresses = new ArrayList<>();
         for (Address address: getAllAddresses()) {
             if (address.getNickname().contains("UFCG")){
-                collegeAddresses.add(address);
+                collegeAddresses.add(addressMapper.toAddressResponse(address));
             }
         }
         return collegeAddresses;
@@ -62,16 +62,13 @@ public class AddressService {
         }
     }
 
-    public List<Address> getAddressesByUserId(Integer userId) throws UserNotFoundException, AddressNotFoundException {
-        User user = userService.findUserById(userId);
-        System.out.println("------ ENTROU ------");
-        System.out.println(user);
-        System.out.println(user.getAddresses());
-//        if (user.getAddresses().isEmpty()){
-//            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
-//        }
-        List<Address> addresses = user.getAddresses().values().stream().toList();
-        return addresses;
+    public List<AddressResponse> getAddressesByUserId(Integer userId) throws UserNotFoundException, AddressNotFoundException {
+        List<Address> addresses = userService.findUserById(userId).getAddresses().values().stream().toList();
+        List<AddressResponse> addressesResponse = new ArrayList<>();
+        for (Address address: addresses) {
+            addressesResponse.add(addressMapper.toAddressResponse(address));
+        }
+        return addressesResponse;
     }
 
     public AddressResponse getAddressByNickname(String nickname, Integer userId) throws AddressNotFoundException {
