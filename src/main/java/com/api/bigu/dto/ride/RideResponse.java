@@ -28,7 +28,7 @@ public class RideResponse {
 
     private int numSeats;
 
-    private float price;
+    private double price;
 
     private boolean toWomen;
 

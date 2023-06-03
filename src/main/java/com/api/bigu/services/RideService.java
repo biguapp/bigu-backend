@@ -1,5 +1,6 @@
 package com.api.bigu.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -73,8 +74,9 @@ public class RideService {
         ride.setCar(carService.findCarById(carId).get());
         members.add(driver);
         ride.setMembers(members);
-        driver.getRides().add(ride);
-        return rideMapper.toRideResponse(registerRide(ride));
+        rideRepository.save(ride);
+        userService.addRideToUser(driver.getUserId(), ride);
+        return rideMapper.toRideResponse(ride);
     }
 
     public Ride findRideById(Integer rideId) throws RideNotFoundException {
@@ -148,11 +150,6 @@ public class RideService {
             }
         } throw new UserNotFoundException("Usuário não está na carona.");
     }
-
-    private Ride registerRide(Ride ride) {
-        return rideRepository.save(ride);
-    }
-
     public CandidateResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException, AddressNotFoundException {
         Candidate candidate = candidateService.createCandidate(userId, candidateRequest);
         CandidateResponse candidateResponse = candidateMapper.toCandidateResponse(candidate);
@@ -191,5 +188,16 @@ public class RideService {
             }
         }
         return availableRides;
+    }
+
+    public List<RideResponse> getMemberHistory(Integer userId) throws UserNotFoundException {
+        List<RideResponse> userHistory = new ArrayList<>();
+        List<Ride> userRides = getUser(userId).getRides();
+        for (Ride ride: userRides) {
+            if (ride.getScheduledTime().isBefore(LocalDateTime.now())){
+                userHistory.add(rideMapper.toRideResponse(ride));
+            }
+        }
+        return userHistory;
     }
 }

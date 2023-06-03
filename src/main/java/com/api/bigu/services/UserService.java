@@ -9,6 +9,7 @@ import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
+import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.UserRepository;
@@ -144,5 +145,10 @@ public class UserService {
         user.setPhoneNumber(editUserRequest.getPhoneNumber());
         user.setMatricula(editUserRequest.getMatricula());
         return toResponse(user);
+    }
+
+    public void addRideToUser(Integer userId, Ride ride) {
+        User user = userRepository.findById(userId).get();
+        user.getRides().add(ride);
     }
 }

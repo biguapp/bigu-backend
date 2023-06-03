@@ -59,10 +59,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forgot-password")
-    public ResponseEntity<?> forgotPassword(@RequestParam @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$",
-                                            message = "email not valid") String userEmail) throws MessagingException {
+    public ResponseEntity<?> forgotPassword(@RequestBody @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$",
+                                            message = "email not valid") String email) throws MessagingException {
         try {
-            return ResponseEntity.ok(authenticationService.recover(userEmail));
+            return ResponseEntity.ok(authenticationService.recover(email));
         } catch (UserNotFoundException unfe) {
             return UserError.userNotFoundError();
         } catch (MessagingException e) {

@@ -46,7 +46,7 @@ public class Ride {
     private float distance;
 
     @Column(name = "price", nullable = false)
-    private float price;
+    private double price;
 
     @Column(name = "time", nullable = false)
     private LocalDateTime scheduledTime; // LocalDateTime dataHora =

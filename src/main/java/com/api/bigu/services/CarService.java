@@ -38,7 +38,7 @@ public class CarService {
             car = carRepository.findById(carId);
         }
         else {
-            throw new CarNotFoundException();
+            throw new CarNotFoundException("Carro não encontrado.");
         }
 
         return car;
@@ -46,7 +46,7 @@ public class CarService {
 
     public void deleteById(Integer carId) throws CarNotFoundException {
         if (!carRepository.existsById(carId)) {
-            throw new CarNotFoundException();
+            throw new CarNotFoundException("Carro não encontrado.");
         }
         carRepository.deleteById(carId);
     }
