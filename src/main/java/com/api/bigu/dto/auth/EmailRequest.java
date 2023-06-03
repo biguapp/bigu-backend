@@ -2,15 +2,13 @@ package com.api.bigu.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
 @Data
 @Builder
 @AllArgsConstructor
-@Schema(description = "Authentication Request")
+@NoArgsConstructor
+@Schema(description = "Email Request")
 public class EmailRequest {
 
     @NonNull
