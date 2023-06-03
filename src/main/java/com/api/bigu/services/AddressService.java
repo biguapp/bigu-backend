@@ -73,9 +73,8 @@ public class AddressService {
 
     public AddressResponse getAddressByNickname(String nickname, Integer userId) throws AddressNotFoundException {
         List<Address> addresses = addressRepository.findAll();
-        for (Address address: addresses
-             ) {
-            if ((address.getNickname() == nickname) && (address.getUserId() == userId)) return addressMapper.toAddressResponse(address);
+        for (Address address: addresses) {
+            if ((address.getNickname().equals(nickname)) && (address.getUserId().equals(userId))) return addressMapper.toAddressResponse(address);
         }
         throw new AddressNotFoundException("O usuário não tem um endereço '" + nickname + "' cadastrado.");
     }

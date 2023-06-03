@@ -38,10 +38,10 @@ public class CarController {
 
     @GetMapping
     public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) throws UserNotFoundException, NoCarsFoundException {
-        List<CarResponse> carList = new ArrayList<>();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            carList = carService.findCarsByUserId(userId);
+            List<CarResponse> carList = carService.findCarsByUserId(userId);
+            return ResponseEntity.ok(carList);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException e) {
@@ -49,8 +49,6 @@ public class CarController {
         } catch (ExpiredJwtException eJE) {
             return AuthError.tokenExpiredError();
         }
-
-        return ResponseEntity.ok(carList);
     }
 
     @PostMapping

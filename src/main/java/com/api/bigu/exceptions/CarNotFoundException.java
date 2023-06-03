@@ -2,7 +2,7 @@ package com.api.bigu.exceptions;
 
 public class CarNotFoundException extends Throwable{
     public CarNotFoundException(String message) {
-        super();
+        super(message);
     }
 
     public String getMessage() {

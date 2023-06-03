@@ -43,18 +43,17 @@ public class RideController {
 
     @GetMapping
     public ResponseEntity<?> getAllRides(@RequestHeader("Authorization") String authorizationHeader) {
-        List<RideResponse> allRides = new ArrayList<>();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
-            allRides = rideService.getAllRides();
-
+            List<RideResponse> allRides = rideService.getAllRides();
+            return ResponseEntity.ok(allRides);
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
             return AuthError.tokenExpiredError();
         }
-        return ResponseEntity.ok(allRides);
+
     }
 
     @GetMapping("/{rideId}")
@@ -92,12 +91,11 @@ public class RideController {
 
     @PostMapping()
     public ResponseEntity<?> createRide(@RequestHeader("Authorization") String authorizationHeader, @RequestBody RideRequest rideRequest) {
-        RideResponse rideResponse = new RideResponse();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(userId);
-            rideResponse = rideService.createRide(rideRequest, driver);
-
+            RideResponse rideResponse = rideService.createRide(rideRequest, driver);
+            return ResponseEntity.ok(rideResponse);
         } catch (CarNotFoundException cNFE) {
             return CarError.carNotFoundError();
         } catch (UserNotFoundException uNFE) {
@@ -109,7 +107,6 @@ public class RideController {
         } catch (InvalidTimeException e) {
             return RideError.invalidDateTimeError();
         }
-        return ResponseEntity.ok(rideResponse);
     }
 
     @PutMapping("/request-ride")
@@ -198,17 +195,17 @@ public class RideController {
 
     @GetMapping("/history")
     public ResponseEntity<?> getMemberHistory(@RequestHeader("Authorization") String authorizationHeader) {
-        List<RideResponse> memberRides = new ArrayList<>();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
-            memberRides = rideService.getMemberHistory(userId);
+            List<RideResponse> memberRides = rideService.getMemberHistory(userId);
+            return ResponseEntity.ok(memberRides);
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
         } catch (ExpiredJwtException eJE) {
             return AuthError.tokenExpiredError();
         }
-        return ResponseEntity.ok(memberRides);
+
     }
 }
 

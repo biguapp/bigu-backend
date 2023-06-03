@@ -2,7 +2,7 @@ package com.api.bigu.exceptions;
 
 public class RideIsFullException extends Throwable {
     public RideIsFullException(String message) {
-        super();
+        super(message);
     }
 
     public String getMessage() {

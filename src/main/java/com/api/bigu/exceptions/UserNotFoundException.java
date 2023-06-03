@@ -2,7 +2,7 @@ package com.api.bigu.exceptions;
 
 public class UserNotFoundException extends Throwable {
     public UserNotFoundException(String message) {
-        super();
+        super(message);
     }
 
     public String getMessage() {

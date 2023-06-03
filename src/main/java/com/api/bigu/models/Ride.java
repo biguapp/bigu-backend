@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -51,7 +52,6 @@ public class Ride {
     @Column(name = "time", nullable = false)
     private LocalDateTime scheduledTime; // LocalDateTime dataHora =
                                          // LocalDateTime.of(AAAA, MM, DD, HH, MM, SS);
-
     @ManyToOne
     private Car car;
 

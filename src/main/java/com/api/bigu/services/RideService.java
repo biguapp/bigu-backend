@@ -23,7 +23,6 @@ import com.api.bigu.repositories.RideRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
-import static com.api.bigu.models.enums.UserType.DRIVER;
 
 @Service
 @Transactional
@@ -35,9 +34,6 @@ public class RideService {
 
     @Autowired
     private CandidateMapper candidateMapper;
-
-    @Autowired
-    private AddressService addressService;
 
     @Autowired
     private RideRepository rideRepository;
@@ -86,12 +82,12 @@ public class RideService {
             return rideRepository.findById(rideId).get();
         }
         else {
-            throw new RideNotFoundException();
+            throw new RideNotFoundException("Corrida não encontrada.");
         }
     }
 
     public void deleteRideById(Integer rideId) throws RideNotFoundException {
-        rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
+        rideRepository.findById(rideId).orElseThrow();
         //if (rideRepository.findById(rideId).get().getMembers().contains(this.getDriver(driverId))){
         rideRepository.deleteById(rideId);
         //}
@@ -107,33 +103,9 @@ public class RideService {
         return availableRides;
     }
 
-    public void updateRide(Ride ride) {
-        if (rideRepository.findById(ride.getRideId()).isPresent()) {
-            rideRepository.save(ride);
-        }
-
-    }
-
-//	public List<Ride> getRideByUser(Integer userId) throws UserNotFoundException {
-//
-//	}
-
-    public void deleteByUserId(Integer userId) { //deleta as caronas em que o user foi motorista ou passageiro
-        //iduser -> caronas participadas -> para cada:
-        // idcarona -> deletar carona pelo idcarona
-
-    }
-// TODO CONSERTAR
-//	public Optional<Ride> findByMember(Integer memberId) throws UserNotFoundException {
-//		 List<User> membro = null;
-//		 membro.add(userService.findUserById(memberId).get());
-//		 return rideRepository.findByMembers(membro);
-//
-//	}
-
     public List<UserResponse> getRideMembers(Integer rideId) throws RideNotFoundException {
         Optional<Ride> ride = rideRepository.findById(rideId);
-        List<UserResponse> members = null;
+        List<UserResponse> members = new ArrayList<>();
         if (ride.isPresent()) {
             for (User member: ride.get().getMembers()
                  ) {
@@ -183,7 +155,7 @@ public class RideService {
         List<RideResponse> availableRides = new ArrayList<>();
         for (Ride ride: rides) {
             if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
-                if ((isWomen && ride.isToWomen()) | !ride.isToWomen()){
+                if ((isWomen && ride.isToWomen()) || !ride.isToWomen()){
                     availableRides.add(rideMapper.toRideResponse(ride));
                 }
             }

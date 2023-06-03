@@ -125,16 +125,15 @@ public class AddressController {
 
     @PostMapping()
     public ResponseEntity<?> createAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestBody @Valid AddressRequest address) throws UserNotFoundException {
-        AddressResponse createdAddress = new AddressResponse();
         try{
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            createdAddress = addressService.createAddress(userId, address);
+            AddressResponse createdAddress = addressService.createAddress(userId, address);
+            return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
             return AuthError.tokenExpiredError();
         }
-        return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
     }
 
 }

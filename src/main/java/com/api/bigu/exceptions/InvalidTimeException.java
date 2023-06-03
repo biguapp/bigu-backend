@@ -2,7 +2,7 @@ package com.api.bigu.exceptions;
 
 public class InvalidTimeException extends Throwable{
     public InvalidTimeException(String message) {
-        super();
+        super(message);
     }
 
     public String getMessage() {

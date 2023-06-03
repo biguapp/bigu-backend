@@ -124,7 +124,6 @@ public class AuthenticationService {
     }
 
     public void updatePassword(Integer userId, NewPasswordRequest newPasswordRequest) throws WrongPasswordException, UserNotFoundException {
-        User user = userService.findUserById(userId);
         String encodedNewPassword = "";
 
         if (newPasswordRequest.getNewPassword().equals(newPasswordRequest.getNewPasswordConfirmation())){
