@@ -64,7 +64,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException, WrongPasswordException {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(

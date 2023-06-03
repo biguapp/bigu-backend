@@ -52,9 +52,9 @@ public class AuthenticationController {
     ) {
         try {
             return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
-        } catch (Exception e) {
-            return AuthenticationError.userUnauthorized(e.getMessage());
-        } catch (UserNotFoundException e) {
+        } catch (WrongPasswordException e) {
+            return AuthenticationError.wrongPassword();
+        } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         }
     }

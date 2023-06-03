@@ -66,7 +66,8 @@ public class RideService {
     }
 
 
-    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException {
+    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException, InvalidTimeException {
+        if (rideRequest.getDateTime().isBefore(LocalDateTime.now())) throw new InvalidTimeException("Data ou hora inválida.");
         Ride ride = rideMapper.toRide(rideRequest);
         Integer carId = rideRequest.getCarId();
         List<User> members = new ArrayList<>();
@@ -181,7 +182,7 @@ public class RideService {
         boolean isWomen = getUser(userId).getSex().equals("F");
         List<RideResponse> availableRides = new ArrayList<>();
         for (Ride ride: rides) {
-            if (ride.getMembers().size() - 1 < ride.getNumSeats()){
+            if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
                 if ((isWomen && ride.isToWomen()) | !ride.isToWomen()){
                     availableRides.add(rideMapper.toRideResponse(ride));
                 }

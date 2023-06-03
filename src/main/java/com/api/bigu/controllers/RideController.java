@@ -106,6 +106,8 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (ExpiredJwtException eJE) {
             return AuthError.tokenExpiredError();
+        } catch (InvalidTimeException e) {
+            return RideError.invalidDateTimeError();
         }
         return ResponseEntity.ok(rideResponse);
     }
