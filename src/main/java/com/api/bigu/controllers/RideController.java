@@ -44,7 +44,7 @@ public class RideController {
     @GetMapping
     public ResponseEntity<?> getAllRides(@RequestHeader("Authorization") String authorizationHeader) {
         List<RideResponse> allRides = new ArrayList<>();
-        try{
+        try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
             allRides = rideService.getAllRides();
@@ -58,8 +58,8 @@ public class RideController {
     }
 
     @GetMapping("/{rideId}")
-    public ResponseEntity<?> searchById(@PathVariable Integer rideId){
-        try{
+    public ResponseEntity<?> searchById(@PathVariable Integer rideId) {
+        try {
             RideResponse ride = rideMapper.toRideResponse(rideService.findRideById(rideId));
             return ResponseEntity.ok(ride);
         } catch (RideNotFoundException rNFE) {
@@ -68,8 +68,8 @@ public class RideController {
     }
 
     @GetMapping("/{rideId}/members")
-    public ResponseEntity<?> getRideMembers(@PathVariable Integer rideId){
-        try{
+    public ResponseEntity<?> getRideMembers(@PathVariable Integer rideId) {
+        try {
             List<UserResponse> members = rideService.getRideMembers(rideId);
             return ResponseEntity.ok(members);
         } catch (RideNotFoundException rNFE) {
@@ -78,8 +78,8 @@ public class RideController {
     }
 
     @GetMapping("/{rideId}/{memberId}")
-    public ResponseEntity<?> getRideMember(@PathVariable Integer rideId, @PathVariable Integer memberId){
-        try{
+    public ResponseEntity<?> getRideMember(@PathVariable Integer rideId, @PathVariable Integer memberId) {
+        try {
             UserResponse member = rideService.getRideMember(rideId, memberId);
             return ResponseEntity.ok(member);
         } catch (UserNotFoundException uNFE) {
@@ -133,7 +133,7 @@ public class RideController {
     }
 
     @PutMapping("/answer-candidate")
-    public ResponseEntity<?> answerCandidate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateResponse candidateResponse){
+    public ResponseEntity<?> answerCandidate(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CandidateResponse candidateResponse) {
         try {
             Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(driverId);
@@ -148,6 +148,8 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
@@ -170,23 +172,41 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (RideNotFoundException e) {
             return RideError.rideNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
     }
 
     @GetMapping("/available")
-    public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader){
+    public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader) {
         List<RideResponse> availableRides = new ArrayList<>();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
-            availableRides = rideService.findAvailableRides(userId);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))) {
+                availableRides = rideService.findAvailableRides(userId);
+            }
 
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
         }
         return ResponseEntity.ok(availableRides);
     }
 
-
+    @GetMapping("/history")
+    public ResponseEntity<?> getMemberHistory(@RequestHeader("Authorization") String authorizationHeader) {
+        List<RideResponse> memberRides = new ArrayList<>();
+        try {
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+            memberRides = rideService.getMemberHistory(userId);
+        } catch (UserNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (ExpiredJwtException eJE) {
+            return AuthError.tokenExpiredError();
+        }
+        return ResponseEntity.ok(memberRides);
+    }
 }
 

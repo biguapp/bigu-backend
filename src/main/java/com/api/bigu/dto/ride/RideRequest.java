@@ -1,7 +1,5 @@
 package com.api.bigu.dto.ride;
 
-import com.api.bigu.dto.address.AddressRequest;
-import com.api.bigu.models.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,7 +31,7 @@ public class RideRequest {
 
     @NonNull
     @Schema(example = "8.90")
-    private float price;
+    private double price;
 
     @NonNull
     private boolean toWomen;
