@@ -7,7 +7,6 @@ import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.*;
-import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.services.*;
 import com.api.bigu.util.errors.*;
@@ -51,7 +50,7 @@ public class RideController {
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
 
     }
@@ -103,7 +102,7 @@ public class RideController {
         } catch (NoCarsFoundException nCFE) {
             return CarError.noCarsFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         } catch (InvalidTimeException e) {
             return RideError.invalidDateTimeError();
         }
@@ -124,7 +123,7 @@ public class RideController {
         } catch (RideIsFullException rIFE) {
             return RideError.rideIsFullError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
         }
@@ -148,7 +147,7 @@ public class RideController {
         } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
     }
 
@@ -172,7 +171,7 @@ public class RideController {
         } catch (RideNotFoundException e) {
             return RideError.rideNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
     }
 
@@ -188,7 +187,7 @@ public class RideController {
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
         return ResponseEntity.ok(availableRides);
     }
@@ -203,7 +202,7 @@ public class RideController {
         } catch (UserNotFoundException e) {
             throw new RuntimeException(e);
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
 
     }
