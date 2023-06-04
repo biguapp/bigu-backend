@@ -26,7 +26,7 @@ public class RegisterRequest {
     private String email;
 
     @NonNull
-    @Schema(example = "(DD)90000-0000")
+    @Schema(example = "(83)90000-0000")
     private String phoneNumber;
 
     @NonNull

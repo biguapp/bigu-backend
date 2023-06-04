@@ -1,6 +1,4 @@
 
-`
-0src/main/java/com/api/bigu/dto/user/UserDTO.java,d/9/d9c509cb3d61786d05c9e6f62604b7d2f3127110
 j
 :src/main/java/com/api/bigu/controllers/UserController.java,e/d/ed03ee1253f5bd14a449b8100849153853649031
 o
@@ -19,8 +17,6 @@ h
 8src/main/java/com/api/bigu/exceptions/StandardError.java,a/3/a3f4b58718f5f22813b941427e993fd352a92527
 u
 Esrc/main/java/com/api/bigu/exceptions/BadRequestExceptionHandler.java,c/f/cfa4a2e9f88c4c400207dee63556c2a2dbdfb92b
-n
->src/main/java/com/api/bigu/services/AuthenticationService.java,c/0/c002c10323075229c584d22f0e0b90b6822dcb87
 h
 8src/main/java/com/api/bigu/util/errors/AddressError.java,d/6/d6273e5a73a1f3d879a6a229aff0c89938339024
 m
@@ -31,5 +27,3 @@ a
 1src/main/java/com/api/bigu/models/enums/Role.java,1/1/11be919a385e0504a827cf4d80ae48b3f368038d
 e
 5src/main/java/com/api/bigu/models/enums/UserType.java,6/c/6c3fcbe80f3447cb10bc06931b33e7d471f592b1
-t
-Dsrc/main/java/com/api/bigu/controllers/AuthenticationController.java,f/2/f2d671ae5350441969b0a05e71583dfde2b639e6
