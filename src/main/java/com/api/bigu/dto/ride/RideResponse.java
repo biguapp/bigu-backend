@@ -1,25 +1,25 @@
 package com.api.bigu.dto.ride;
 
-import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
-import com.api.bigu.models.User;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import com.api.bigu.dto.car.CarResponse;
+import com.api.bigu.dto.user.UserResponse;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class RideResponse {
 
     private boolean goingToCollege;
 
-    private List<User> members;
+    private UserResponse driver;
+
+    private List<UserResponse> riders;
 
     private AddressResponse start;
 
@@ -29,11 +29,11 @@ public class RideResponse {
 
     private int numSeats;
 
-    private float price;
+    private double price;
 
     private boolean toWomen;
 
-    private Integer carId;
+    private CarResponse car;
 
     private String description;
 }

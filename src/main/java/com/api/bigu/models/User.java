@@ -3,6 +3,7 @@ package com.api.bigu.models;
 import com.api.bigu.models.enums.Addresses;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.models.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
@@ -49,6 +50,9 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "resetPasswordToken")
+    private String resetPasswordToken;
 
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -59,16 +63,16 @@ public class User implements UserDetails {
 //    private UserType userType;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "addresses")
     private Map<String, Address> addresses;
 
+    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @Column(name = "cars")
+    private Map<String, Car> cars;
+
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Ride> rides;
-
-    @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages;
-
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> receivedMessages;
 
     @Builder.Default
     private boolean accountNonLocked = true;
@@ -88,7 +92,11 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    @Override
+    public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
     public String getUsername() {
         return this.email;
     }
@@ -125,7 +133,15 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
+    public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;

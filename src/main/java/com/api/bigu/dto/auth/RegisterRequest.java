@@ -34,6 +34,5 @@ public class RegisterRequest {
 
     @Schema(example = "user")
     private String role;
-//    private String userType;
 
 }

@@ -1,7 +1,5 @@
 package com.api.bigu.dto.ride;
 
-import com.api.bigu.dto.address.AddressRequest;
-import com.api.bigu.models.Address;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,16 +14,13 @@ import java.time.LocalDateTime;
 public class RideRequest {
 
     @NonNull
-    private Integer driverId;
-
-    @NonNull
     private boolean goingToCollege;
 
     @NonNull
-    private AddressRequest start;
+    private Integer startAddressId;
 
     @NonNull
-    private AddressRequest destination;
+    private Integer destinationAddressId;
 
     @NonNull
     private LocalDateTime dateTime;
@@ -36,7 +31,7 @@ public class RideRequest {
 
     @NonNull
     @Schema(example = "8.90")
-    private float price;
+    private double price;
 
     @NonNull
     private boolean toWomen;
