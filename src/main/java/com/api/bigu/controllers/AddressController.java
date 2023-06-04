@@ -10,7 +10,7 @@ import com.api.bigu.models.User;
 import com.api.bigu.services.AddressService;
 import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AddressError;
-import com.api.bigu.util.errors.AuthError;
+import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
@@ -65,7 +65,7 @@ public class AddressController {
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         }
@@ -104,7 +104,7 @@ public class AddressController {
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
     }
 
@@ -132,7 +132,7 @@ public class AddressController {
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
     }
 

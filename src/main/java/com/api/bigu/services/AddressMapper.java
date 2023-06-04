@@ -23,6 +23,7 @@ public class AddressMapper {
 
     public AddressResponse toAddressResponse(Address addressCreated) {
         return AddressResponse.builder()
+                .id(addressCreated.getAddressId())
                 .nickname(addressCreated.getNickname())
                 .postalCode(addressCreated.getPostalCode())
                 .state(addressCreated.getState())

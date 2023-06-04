@@ -6,13 +6,10 @@ import com.api.bigu.exceptions.*;
 import com.api.bigu.models.User;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.services.UserService;
-import com.api.bigu.util.errors.AuthError;
 import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
 import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -86,7 +83,7 @@ public class AuthenticationController {
         } catch (WrongPasswordException e) {
             return AuthenticationError.wrongPassword();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
     }
     
@@ -107,7 +104,7 @@ public class AuthenticationController {
     	} catch (WrongPasswordException wPE) {
             return AuthenticationError.wrongPassword();
         } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+            return AuthenticationError.tokenExpiredError();
         }
         return ResponseEntity.ok(body);
     }
