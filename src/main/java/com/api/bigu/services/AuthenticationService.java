@@ -15,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -39,6 +41,13 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if(registerRequest.getRole() == null) {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
+        }
+        List<User> users = new ArrayList<>();
+        users = userService.getAllUsers();
+        for (User user: users) {
+            if(user.getEmail().equals(registerRequest.getEmail())){
+                throw new UserNotFoundException("User with email: " + user.getEmail() + " already exists.");
+            }
         }
 
         var user = userService.registerUser(User.builder()
