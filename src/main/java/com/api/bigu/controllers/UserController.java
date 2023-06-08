@@ -6,18 +6,10 @@ import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.User;
 import com.api.bigu.services.UserService;
-import com.api.bigu.util.errors.AuthError;
-import com.api.bigu.util.errors.CustomErrorType;
 import com.api.bigu.util.errors.UserError;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -41,31 +33,23 @@ public class UserController {
             }
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
-        @GetMapping("/self")
+    @GetMapping("/self")
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try {
             return ResponseEntity.ok(userService.findUserById(userId));
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
     @DeleteMapping()
     public ResponseEntity<?> deleteSelf(@RequestHeader("Authorization") String authorizationHeader) {
-        try{
-            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            userService.deleteById(userId);
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
-        }
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        userService.deleteById(userId);
 
         return ResponseEntity.noContent().build();
     }
@@ -82,26 +66,19 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e){
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<?> searchById(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer userId) {
         UserResponse user = new UserResponse();
-        try {
-            Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            User admin = userService.findUserById(adminId);
-            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)){
-                user = userService.toResponse(userService.findUserById(userId));
-            }
-            return ResponseEntity.ok(user);
-        } catch (UserNotFoundException e) {
-            return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+        Integer adminId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        User admin = userService.findUserById(adminId);
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), admin)) {
+            user = userService.toResponse(userService.findUserById(userId));
         }
+        return ResponseEntity.ok(user);
+
     }
 
     @PutMapping("/edit")
@@ -116,8 +93,6 @@ public class UserController {
             return ResponseEntity.ok(userResponse);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 }

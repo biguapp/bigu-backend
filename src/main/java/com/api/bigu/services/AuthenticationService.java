@@ -3,7 +3,6 @@ package com.api.bigu.services;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
 import com.api.bigu.dto.user.UserResponse;
-import com.api.bigu.exceptions.EmailException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.User;
@@ -11,7 +10,6 @@ import com.api.bigu.models.enums.Role;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -64,7 +62,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) throws UserNotFoundException, WrongPasswordException {
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
 
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(

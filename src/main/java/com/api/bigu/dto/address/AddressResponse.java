@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AddressResponse {
 
+    private Integer id;
+
     private String nickname;
 
     private String postalCode;

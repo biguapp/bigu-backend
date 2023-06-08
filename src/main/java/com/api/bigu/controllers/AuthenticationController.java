@@ -1,18 +1,18 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.auth.*;
-import com.api.bigu.exceptions.*;
+import com.api.bigu.dto.auth.AuthenticationRequest;
+import com.api.bigu.dto.auth.EmailRequest;
+import com.api.bigu.dto.auth.NewPasswordRequest;
+import com.api.bigu.dto.auth.RegisterRequest;
+import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.User;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.services.UserService;
-import com.api.bigu.util.errors.AuthError;
 import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.UserError;
-import io.jsonwebtoken.ExpiredJwtException;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -50,13 +50,7 @@ public class AuthenticationController {
     public ResponseEntity<?> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest
     ) {
-        try {
-            return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
-        } catch (WrongPasswordException e) {
-            return AuthenticationError.wrongPassword();
-        } catch (UserNotFoundException uNFE) {
-            return UserError.userNotFoundError();
-        }
+        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
     }
 
     @PostMapping("/forgot-password")
@@ -85,8 +79,6 @@ public class AuthenticationController {
             return UserError.userNotFoundError();
         } catch (WrongPasswordException e) {
             return AuthenticationError.wrongPassword();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
     
@@ -106,8 +98,6 @@ public class AuthenticationController {
             return UserError.userNotFoundError();
     	} catch (WrongPasswordException wPE) {
             return AuthenticationError.wrongPassword();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
         return ResponseEntity.ok(body);
     }

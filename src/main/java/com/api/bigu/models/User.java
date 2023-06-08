@@ -58,10 +58,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-//    @Column(name="user_type")
-//    @Enumerated(EnumType.STRING)
-//    private UserType userType;
-
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     @Column(name = "addresses")
     private Map<String, Address> addresses;

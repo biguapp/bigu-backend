@@ -7,11 +7,15 @@ import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.*;
-import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
-import com.api.bigu.services.*;
-import com.api.bigu.util.errors.*;
-import io.jsonwebtoken.ExpiredJwtException;
+import com.api.bigu.services.CandidateMapper;
+import com.api.bigu.services.CarService;
+import com.api.bigu.services.RideMapper;
+import com.api.bigu.services.RideService;
+import com.api.bigu.util.errors.AddressError;
+import com.api.bigu.util.errors.CarError;
+import com.api.bigu.util.errors.RideError;
+import com.api.bigu.util.errors.UserError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,8 +54,6 @@ public class RideController {
             return ResponseEntity.ok(allRides);
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
 
     }
@@ -102,8 +104,6 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException nCFE) {
             return CarError.noCarsFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         } catch (InvalidTimeException e) {
             return RideError.invalidDateTimeError();
         }
@@ -123,8 +123,6 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (RideIsFullException rIFE) {
             return RideError.rideIsFullError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
         }
@@ -147,8 +145,6 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
@@ -171,40 +167,26 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (RideNotFoundException e) {
             return RideError.rideNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
     @GetMapping("/available")
     public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader) {
         List<RideResponse> availableRides = new ArrayList<>();
-        try {
-            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))) {
-                availableRides = rideService.findAvailableRides(userId);
-            }
-
-        } catch (UserNotFoundException uNFE) {
-            return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))) {
+            availableRides = rideService.findAvailableRides(userId);
         }
+
         return ResponseEntity.ok(availableRides);
     }
 
     @GetMapping("/history")
     public ResponseEntity<?> getMemberHistory(@RequestHeader("Authorization") String authorizationHeader) {
-        try {
-            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-            jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
-            List<RideResponse> memberRides = rideService.getMemberHistory(userId);
-            return ResponseEntity.ok(memberRides);
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
-        }
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId));
+        List<RideResponse> memberRides = rideService.getMemberHistory(userId);
+        return ResponseEntity.ok(memberRides);
 
     }
 }

@@ -10,9 +10,7 @@ import com.api.bigu.models.User;
 import com.api.bigu.services.AddressService;
 import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AddressError;
-import com.api.bigu.util.errors.AuthError;
 import com.api.bigu.util.errors.UserError;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,17 +38,6 @@ public class AddressController {
         this.addressService = addressService;
     }
 
-//    @GetMapping("/")
-//    public ResponseEntity<?> getAllAddressesOfUser(@RequestHeader("Authorization") String authorizationHeader) {
-//        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
-//        try {
-//            return ResponseEntity.ok(addressService.getAddressesByUserId(userId));
-//        } catch (UserNotFoundException e) {
-//            return UserError.userNotFoundError();
-//        } catch (AddressNotFoundException e) {
-//            return AddressError.addressNotFoundError();
-//        }
-//    }
 
     @GetMapping("/get-ufcg")
     public ResponseEntity<?> getUfcgAddresses(@RequestHeader("Authorization") String authorizationHeader) {
@@ -64,8 +51,6 @@ public class AddressController {
             return ResponseEntity.ok(ufcgAddresses);
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         } catch (UserNotFoundException uNFE) {
             return UserError.userNotFoundError();
         }
@@ -103,8 +88,6 @@ public class AddressController {
             return AddressError.addressNotFoundError();
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 
@@ -131,8 +114,6 @@ public class AddressController {
             return new ResponseEntity<>(createdAddress, HttpStatus.CREATED);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthError.tokenExpiredError();
         }
     }
 

@@ -1,14 +1,10 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.address.AddressResponse;
-import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.user.EditUserRequest;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
-import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.Address;
-import com.api.bigu.models.Car;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
@@ -51,19 +47,6 @@ public class UserService {
         return user.getUserId();
     }
 
-//    public Integer authUser(AuthenticationRequest requestUser){
-//        User user = User.builder()
-//                .fullName(requestUser.getFullName())
-//                .email(requestUser.getEmail())
-//                .matricula(requestUser.getMatricula())
-//                .phoneNumber(requestUser.getPhoneNumber())
-//                .password(passwordEncoder.encode(requestUser.getPassword()))
-//                .role(Role.valueOf(requestUser.getRole().toUpperCase()))
-//                .build();
-//        this.registerUser(user);
-//        return user.getUserId();
-//    }
-
     public User registerUser(User user) {
         return userRepository.save(user);
     }
@@ -73,8 +56,8 @@ public class UserService {
     }
 
     public User findUserById(Integer userId) throws UserNotFoundException {
-        User user = userRepository.findById(userId).get();
-        return user;
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("No user by id: " + userId));
     }
 
     public UserResponse toResponse(User user) {
@@ -82,29 +65,18 @@ public class UserService {
     }
 
     public void deleteById(Integer userId) {
-
-    	//deletamos as caronas em que o user foi motorista ou passageiro
-    	//rideService.deleteByUserId(userId);
-
         userRepository.deleteById(userId);
     }
 
-    public User findUserByEmail(String userEmail) throws UserNotFoundException {
-        User user = userRepository.findByEmail(userEmail).get();
-        return user;
+    public User findUserByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("No user by email: " + userEmail));
     }
 
     public void addAddressToUser(Address address, Integer userId){
         User user = userRepository.findById(userId).get();
         user.getAddresses().put(address.getNickname(), address);
     }
-
-//    public void updateUser(User user) {
-//        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
-//            userRepository.save(user);
-//        }
-//
-//    }
 
     public boolean isBlocked(String email) {
         return userRepository.findByEmail(email).get().isAccountNonLocked();
@@ -135,7 +107,6 @@ public class UserService {
     public void updatePassword(Integer userId, String encodedNewPassword) {
         User user = userRepository.findById(userId).get();
         user.setPassword(encodedNewPassword);
-        System.err.println(user.getPassword());
     }
 
     public UserResponse editProfile(Integer userId, EditUserRequest editUserRequest) {

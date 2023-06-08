@@ -38,16 +38,16 @@ public class Ride {
     private Address destinationAddress;
     
     @Column(name = "num_seats", nullable = false)
-    private int numSeats;
+    private Integer numSeats;
 
     @Column(name = "to_college")
-    private boolean goingToCollege; // indo para uf (true) ou saindo dela (false)?
+    private Boolean goingToCollege; // indo para uf (true) ou saindo dela (false)?
 
     @Column(name = "distance", nullable = false)
-    private float distance;
+    private Float distance;
 
     @Column(name = "price", nullable = false)
-    private double price;
+    private Double price;
 
     @Column(name = "time", nullable = false)
     private LocalDateTime scheduledTime; // LocalDateTime dataHora =
@@ -59,5 +59,5 @@ public class Ride {
     private String description;
 
     @Column(name = "women_only")
-    private boolean toWomen;
+    private Boolean toWomen;
 }
