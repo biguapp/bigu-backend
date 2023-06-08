@@ -1,22 +1,12 @@
 
-j
-:src/main/java/com/api/bigu/controllers/UserController.java,e/d/ed03ee1253f5bd14a449b8100849153853649031
 o
 ?src/main/java/com/api/bigu/dto/auth/AuthenticationResponse.java,b/2/b2fd288b885d34c17e2bb2cf5b314f8ba5894d1f
 i
 9src/main/java/com/api/bigu/controllers/CarController.java,2/0/20f4d5b5a97ce1a6847ea03a06a261891852f0bf
-n
->src/main/java/com/api/bigu/config/JwtAuthenticationFilter.java,0/9/09ddb973620519c53f61965de85082bfd72d3236
 l
 <src/main/java/com/api/bigu/exceptions/RegisterException.java,f/4/f4913301f101db93f106aa034dc9a8c89d0d2804
-h
-8src/main/java/com/api/bigu/exceptions/StandardError.java,a/3/a3f4b58718f5f22813b941427e993fd352a92527
-u
-Esrc/main/java/com/api/bigu/exceptions/BadRequestExceptionHandler.java,c/f/cfa4a2e9f88c4c400207dee63556c2a2dbdfb92b
 j
 :src/main/java/com/api/bigu/controllers/RideController.java,d/3/d3808e3cb5d3b61b457d7293f54fd48aca74ffdc
-p
-@src/main/java/com/api/bigu/exceptions/UserNotFoundException.java,6/e/6ed231cbeb2d9b88d5e0a11d28c36c94523c226c
 h
 8src/main/java/com/api/bigu/util/errors/AddressError.java,d/6/d6273e5a73a1f3d879a6a229aff0c89938339024
 m

@@ -1,6 +1,7 @@
 package com.api.bigu.dto.auth;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,20 +17,20 @@ public class RegisterRequest {
     @Schema(example = "Ada Lovelace")
 	private String fullName;
 
-    @NonNull
+    @NotNull(message = "Sex field cannot be null")
     @Schema(example = "M")
     private String sex;
 
-    @NonNull
-    @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$", message = "email not valid")
+    @NotNull(message = "Email field cannot be null")
+    @Pattern(regexp = "^[a-z0-9._]+@([a-z0-9])+\\.ufcg.edu.br$", message = "Email is not valid")
     @Schema(example = "aluno@ccc.ufcg.edu.br")
     private String email;
 
-    @NonNull
+    @NotNull(message = "Phone Number field cannot be null")
     @Schema(example = "(83)90000-0000")
     private String phoneNumber;
 
-    @NonNull
+    @NotNull(message = "Password field cannot be null")
     private String password;
 
     @Schema(example = "user")
