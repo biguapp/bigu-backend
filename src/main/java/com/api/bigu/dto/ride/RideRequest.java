@@ -1,10 +1,10 @@
 package com.api.bigu.dto.ride;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 import java.time.LocalDateTime;
 
@@ -13,30 +13,30 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RideRequest {
 
-    @NonNull
-    private boolean goingToCollege;
+    @NotNull(message =" Going to College field cannot be null")
+    private Boolean goingToCollege;
 
-    @NonNull
+    @NotNull(message = "Start Address Id field cannot be null")
     private Integer startAddressId;
 
-    @NonNull
+    @NotNull(message = "Destination Address Id field cannot be null")
     private Integer destinationAddressId;
 
-    @NonNull
+    @NotNull(message = "Date time field cannot be null")
     private LocalDateTime dateTime;
 
-    @NonNull
+    @NotNull(message = "Num Seats field cannot be null")
     @Schema(example = "3")
-    private int numSeats;
+    private Integer numSeats;
 
-    @NonNull
+    @NotNull(message = "Price field cannot be null")
     @Schema(example = "8.90")
-    private double price;
+    private Double price;
 
-    @NonNull
-    private boolean toWomen;
+    @NotNull(message = "To Women field cannot be null")
+    private Boolean toWomen;
 
-    @NonNull
+    @NotNull(message = "Card Id field cannot be null")
     private Integer carId;
 
     private String description;

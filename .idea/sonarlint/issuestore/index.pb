@@ -1,10 +1,4 @@
 
-o
-?src/main/java/com/api/bigu/dto/auth/AuthenticationResponse.java,b/2/b2fd288b885d34c17e2bb2cf5b314f8ba5894d1f
-i
-9src/main/java/com/api/bigu/controllers/CarController.java,2/0/20f4d5b5a97ce1a6847ea03a06a261891852f0bf
-j
-:src/main/java/com/api/bigu/controllers/RideController.java,d/3/d3808e3cb5d3b61b457d7293f54fd48aca74ffdc
 l
 <src/main/java/com/api/bigu/exceptions/RegisterException.java,f/4/f4913301f101db93f106aa034dc9a8c89d0d2804
 h

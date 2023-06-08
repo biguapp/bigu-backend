@@ -1,11 +1,5 @@
 package com.api.bigu.services;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.api.bigu.dto.candidate.CandidateRequest;
 import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.dto.ride.RideRequest;
@@ -13,15 +7,19 @@ import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.*;
 import com.api.bigu.models.Candidate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.RideRepository;
-
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 
 @Service
@@ -88,9 +86,9 @@ public class RideService {
 
     public void deleteRideById(Integer rideId) throws RideNotFoundException {
         rideRepository.findById(rideId).orElseThrow();
-        //if (rideRepository.findById(rideId).get().getMembers().contains(this.getDriver(driverId))){
+
         rideRepository.deleteById(rideId);
-        //}
+
     }
 
     public List<RideResponse> getAllRides() {
@@ -136,8 +134,7 @@ public class RideService {
     public RideResponse acceptCandidate(CandidateResponse candidateResponse) throws RideNotFoundException, UserNotFoundException {
         Ride ride = rideRepository.findById(candidateResponse.getRideId()).get();
         List<Candidate> candidates = ride.getCandidates().stream().toList();
-        System.err.println(candidates);
-        System.err.println(ride.getCandidates());
+
         for (Candidate candidate: candidates) {
             if (candidate.getUserId().equals(candidateResponse.getUserId())){
                 if (candidateResponse.isAccepted()){
@@ -155,7 +152,7 @@ public class RideService {
         List<RideResponse> availableRides = new ArrayList<>();
         for (Ride ride: rides) {
             if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
-                if ((isWomen && ride.isToWomen()) || !ride.isToWomen()){
+                if(isWomen || !ride.getToWomen()){
                     availableRides.add(rideMapper.toRideResponse(ride));
                 }
             }

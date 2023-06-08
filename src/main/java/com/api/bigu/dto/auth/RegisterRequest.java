@@ -13,7 +13,7 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class RegisterRequest {
 
-    @NonNull
+    @NotNull(message = "Full Name field cannot be null")
     @Schema(example = "Ada Lovelace")
 	private String fullName;
 

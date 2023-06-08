@@ -27,24 +27,24 @@ public class RideMapper {
                 .startAddress(addressRepository.findById(rideRequest.getStartAddressId()).get())
                 .destinationAddress(addressRepository.findById(rideRequest.getDestinationAddressId()).get())
                 .numSeats(rideRequest.getNumSeats())
-                .goingToCollege(rideRequest.isGoingToCollege())
+                .goingToCollege(rideRequest.getGoingToCollege())
                 .price(rideRequest.getPrice())
                 .scheduledTime(rideRequest.getDateTime())
                 .description(rideRequest.getDescription())
-                .toWomen(rideRequest.isToWomen())
+                .toWomen(rideRequest.getToWomen())
                 .build();
     }
 
     public RideResponse toRideResponse(Ride rideCreated) {
         return RideResponse.builder()
-                .goingToCollege(rideCreated.isGoingToCollege())
+                .goingToCollege(rideCreated.getGoingToCollege())
                 .driver(userMapper.toUserResponse(rideCreated.getMembers().get(0)))
                 .start(addressMapper.toAddressResponse(rideCreated.getStartAddress()))
                 .destination(addressMapper.toAddressResponse(rideCreated.getDestinationAddress()))
                 .dateTime(rideCreated.getScheduledTime())
                 .numSeats(rideCreated.getNumSeats())
                 .price(rideCreated.getPrice())
-                .toWomen(rideCreated.isToWomen())
+                .toWomen(rideCreated.getToWomen())
                 .car(carMapper.toCarResponse(rideCreated.getCar()))
                 .description(rideCreated.getDescription())
                 .build();

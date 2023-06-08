@@ -1,7 +1,5 @@
 package com.api.bigu.config;
 
-import com.api.bigu.exceptions.JwtException;
-import com.api.bigu.util.errors.AuthenticationError;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -8,13 +8,12 @@ import com.api.bigu.exceptions.NoCarsFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.CarService;
-import com.api.bigu.util.errors.AuthenticationError;
 import com.api.bigu.util.errors.CarError;
 import com.api.bigu.util.errors.UserError;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
@@ -43,8 +42,6 @@ public class CarController {
             return UserError.userNotFoundError();
         } catch (NoCarsFoundException e) {
             return CarError.noCarsFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthenticationError.tokenExpiredError();
         }
     }
 
@@ -55,8 +52,6 @@ public class CarController {
             return ResponseEntity.ok(carService.addCarToUser(userId, carRequest));
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthenticationError.tokenExpiredError();
         }
     }
 
@@ -68,8 +63,6 @@ public class CarController {
             return UserError.userNotFoundError();
         } catch (CarNotFoundException e) {
             return CarError.carNotFoundError();
-        } catch (ExpiredJwtException eJE) {
-            return AuthenticationError.tokenExpiredError();
         }
 
         return ResponseEntity.ok("Carro removido.");
