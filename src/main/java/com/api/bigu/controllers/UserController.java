@@ -38,9 +38,18 @@ public class UserController {
 
     @GetMapping("/self")
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
-        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        System.err.println("ENTROU AQUI.");
+        UserResponse userResp = new UserResponse();
         try {
-            return ResponseEntity.ok(userService.findUserById(userId));
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            System.err.println(userId);
+            User user = userService.findUserById(userId);
+            System.err.println(user);
+            if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), user)) {
+                userResp = userService.toResponse(user);
+            }
+            System.err.println(userResp);
+            return ResponseEntity.ok(userResp);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
         }
