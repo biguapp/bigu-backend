@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
 import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.UserAlreadyExistsException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.User;
@@ -46,7 +47,7 @@ public class AuthenticationService {
         users = userService.getAllUsers();
         for (User user: users) {
             if(user.getEmail().equals(registerRequest.getEmail())){
-                throw new UserNotFoundException("User with email: " + user.getEmail() + " already exists.");
+                throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " already exists.");
             }
         }
 
@@ -79,10 +80,8 @@ public class AuthenticationService {
                     authenticationRequest.getPassword()
             )
         );
+
         var user = userService.findUserByEmail(authenticationRequest.getEmail());
-        if (!user.getPassword().equals(passwordEncoder.encode(authenticationRequest.getPassword()))) {
-            incrementLoginAttempts(authenticationRequest.getEmail());
-        } else { resetLoginAttempts(authenticationRequest.getEmail()); }
 
         var claims = new HashMap<String, Integer>();
         claims.put("uid", user.getUserId());
@@ -138,24 +137,6 @@ public class AuthenticationService {
         } else throw new WrongPasswordException("Senha incorreta.");
 
         userService.updatePassword(userId, encodedNewPassword);
-    }
-
-    public void incrementLoginAttempts(String email) throws UserNotFoundException {
-        userService.findUserByEmail(email).loginFailed();
-    }
-
-    public void resetLoginAttempts(String email) throws UserNotFoundException {
-        userService.findUserByEmail(email).loginSucceeded();
-    }
-
-    public void blockAuthenticate(String email) throws UserNotFoundException {
-        User user;
-        try {
-            user = userService.findUserByEmail(email);
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        user.loginFailed();
     }
 
     public void sendConfirmationEmail(String to, String code) throws MessagingException {

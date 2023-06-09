@@ -73,8 +73,6 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean accountNonLocked = true;
 
-    @Builder.Default
-    private int failedLoginAttempts = 0;
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
 
@@ -105,18 +103,6 @@ public class User implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
         return accountNonLocked;
-    }
-
-    public void loginFailed() {
-        failedLoginAttempts++;
-        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            accountNonLocked = false;
-        }
-    }
-
-    public void loginSucceeded() {
-        failedLoginAttempts = 0;
-        accountNonLocked = true;
     }
 
     @Override
