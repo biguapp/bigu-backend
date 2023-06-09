@@ -33,7 +33,7 @@ public class CarController {
     public ResponseEntity<?> getAll(){ return ResponseEntity.ok(carRepository.findAll());}
 
     @GetMapping
-    public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) throws UserNotFoundException, NoCarsFoundException {
+    public ResponseEntity<?> getUserCars(@RequestHeader("Authorization") String authorizationHeader) throws UserNotFoundException {
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             List<CarResponse> carList = carService.findCarsByUserId(userId);
