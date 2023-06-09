@@ -80,7 +80,7 @@ public class AuthenticationService {
             )
         );
         var user = userService.findUserByEmail(authenticationRequest.getEmail());
-        if (!user.getPassword().equals(authenticationRequest.getPassword())) {
+        if (!user.getPassword().equals(passwordEncoder.encode(authenticationRequest.getPassword()))) {
             incrementLoginAttempts(authenticationRequest.getEmail());
         } else { resetLoginAttempts(authenticationRequest.getEmail()); }
 
