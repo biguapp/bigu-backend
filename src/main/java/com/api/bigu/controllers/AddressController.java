@@ -118,9 +118,10 @@ public class AddressController {
     }
 
     @DeleteMapping
-    public ResponseEntity<?> deleteAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestBody Integer addressId ) throws UserNotFoundException {
+    public ResponseEntity<?> deleteAddress(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Integer addressId) throws UserNotFoundException {
         try{
-            addressService.removeAddressFromUser(jwtService.extractUserId(jwtService.parse(authorizationHeader)), addressId);
+            Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+            addressService.removeAddressFromUser(userId, addressId);
         } catch (AddressNotFoundException e) {
             return AddressError.addressNotFoundError();
         }
