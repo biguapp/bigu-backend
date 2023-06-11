@@ -43,7 +43,7 @@ public class Ride {
     @Column(name = "to_college")
     private Boolean goingToCollege; // indo para uf (true) ou saindo dela (false)?
 
-    @Column(name = "distance", nullable = false)
+    @Column(name = "distance")
     private Float distance;
 
     @Column(name = "price", nullable = false)

@@ -5,6 +5,7 @@ import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.UserRepository;
@@ -94,4 +95,14 @@ public class AddressService {
         System.out.println(userRepository.findAll());
         return addressMapper.toAddressResponse(addressCreated);
     }
+
+    public void removeAddressFromUser(Integer extractUserId, Integer addressId) throws AddressNotFoundException {
+        User user = userService.findUserById(extractUserId);
+        Address address = addressRepository.findById(addressId).get();
+        if (user.getAddresses().containsValue(address)) {
+            user.getAddresses().remove(address.getNickname());
+            addressRepository.delete(address);
+        }
+    }
+
 }
