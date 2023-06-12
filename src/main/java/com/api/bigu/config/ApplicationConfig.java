@@ -24,7 +24,7 @@ public class ApplicationConfig {
 
     @Bean
     public EmailService emailService() {
-        return new JavaMailEmailService("your_email@gmail.com", "your_password", "smtp.gmail.com", 587);
+        return new JavaMailEmailService("biguapp@hotmail.com", "bigu151902", "smtp-mail.outlook.com", 587);
     }
 
     @Bean

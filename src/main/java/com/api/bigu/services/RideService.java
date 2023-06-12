@@ -1,27 +1,26 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.candidate.CandidateRequest;
+import com.api.bigu.dto.candidate.CandidateResponse;
+import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.dto.ride.RideResponse;
+import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.*;
+import com.api.bigu.models.Candidate;
+import com.api.bigu.models.Ride;
+import com.api.bigu.models.User;
+import com.api.bigu.repositories.RideRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.api.bigu.dto.candidate.CandidateRequest;
-import com.api.bigu.dto.candidate.CandidateResponse;
-import com.api.bigu.dto.ride.RideRequest;
-import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.exceptions.*;
-import com.api.bigu.models.Candidate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.api.bigu.models.Ride;
-import com.api.bigu.models.User;
-import com.api.bigu.repositories.RideRepository;
-
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
-
-import static com.api.bigu.models.enums.UserType.DRIVER;
 
 @Service
 @Transactional
@@ -29,10 +28,10 @@ import static com.api.bigu.models.enums.UserType.DRIVER;
 public class RideService {
 
     @Autowired
-    private CandidateMapper candidateMapper;
+    private CandidateService candidateService;
 
     @Autowired
-    private AddressService addressService;
+    private CandidateMapper candidateMapper;
 
     @Autowired
     private RideRepository rideRepository;
@@ -50,30 +49,29 @@ public class RideService {
         User user;
         user = userService.findUserById(userId);
         if (carService.findCarsByUserId(userId).isEmpty()) {
-            throw new NoCarsFoundException();
+            throw new NoCarsFoundException("teste.");
         } else return user;
     }
 
-    public User getRider(Integer userId, Integer addressId) throws UserNotFoundException, AddressNotFoundException {
+    public User getUser(Integer userId) throws UserNotFoundException {
         User user;
         user = userService.findUserById(userId);
-        if (user.getAddresses().containsKey(addressService.getAddressById(addressId).getNickname())){
-            return user;
-        } else throw new AddressNotFoundException("Endereço não encontrado.");
+        return user;
     }
 
-    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException {
+
+    public RideResponse createRide(RideRequest rideRequest, User driver) throws CarNotFoundException, InvalidTimeException {
+        if (rideRequest.getDateTime().isBefore(LocalDateTime.now())) throw new InvalidTimeException("Data ou hora inválida.");
         Ride ride = rideMapper.toRide(rideRequest);
         Integer carId = rideRequest.getCarId();
         List<User> members = new ArrayList<>();
-
         if (Objects.equals(driver.getSex(), "M")) ride.setToWomen(false);
-
         ride.setCar(carService.findCarById(carId).get());
         members.add(driver);
         ride.setMembers(members);
-
-        return rideMapper.toRideResponse(registerRide(ride));
+        rideRepository.save(ride);
+        userService.addRideToUser(driver.getUserId(), ride);
+        return rideMapper.toRideResponse(ride);
     }
 
     public Ride findRideById(Integer rideId) throws RideNotFoundException {
@@ -82,84 +80,94 @@ public class RideService {
             return rideRepository.findById(rideId).get();
         }
         else {
-            throw new RideNotFoundException();
+            throw new RideNotFoundException("Corrida não encontrada.");
         }
     }
 
     public void deleteRideById(Integer rideId) throws RideNotFoundException {
-        rideRepository.findById(rideId).orElseThrow(RideNotFoundException::new);
+        rideRepository.findById(rideId).orElseThrow();
+
         rideRepository.deleteById(rideId);
+
     }
 
-    public List<Ride> getAllRides() {
-        return rideRepository.findAll();
-    }
+    public List<RideResponse> getAllRides() {
+        List<Ride> rides = rideRepository.findAll();
+        List<RideResponse> availableRides = new ArrayList<>();
+        for (Ride ride: rides) {
+                    availableRides.add(rideMapper.toRideResponse(ride));
 
-    public void updateRide(Ride ride) {
-        if (rideRepository.findById(ride.getRideId()).isPresent()) {
-            rideRepository.save(ride);
         }
-
+        return availableRides;
     }
 
-//	public List<Ride> getRideByUser(Integer userId) throws UserNotFoundException {
-//
-//	}
-
-    public void deleteByUserId(Integer userId) { //deleta as caronas em que o user foi motorista ou passageiro
-        //iduser -> caronas participadas -> para cada:
-        // idcarona -> deletar carona pelo idcarona
-
-    }
-// TODO CONSERTAR
-//	public Optional<Ride> findByMember(Integer memberId) throws UserNotFoundException {
-//		 List<User> membro = null;
-//		 membro.add(userService.findUserById(memberId).get());
-//		 return rideRepository.findByMembers(membro);
-//
-//	}
-
-    public List<User> getRideMembers(Integer rideId) throws RideNotFoundException {
+    public List<UserResponse> getRideMembers(Integer rideId) throws RideNotFoundException {
         Optional<Ride> ride = rideRepository.findById(rideId);
-        List<User> members = null;
+        List<UserResponse> members = new ArrayList<>();
         if (ride.isPresent()) {
-            members = ride.get().getMembers();
+            for (User member: ride.get().getMembers()
+                 ) {
+                members.add(userService.toResponse(member));
+            }
         }
         return members;
     }
 
-    public User getRideMember(Integer rideId, Integer userId) throws UserNotFoundException, RideNotFoundException {
-        List<User> members = this.getRideMembers(rideId);
-        for (User user : members) {
-            if (Objects.equals(user.getUserId(), userId)) {
+    public UserResponse getRideMember(Integer rideId, Integer userId) throws UserNotFoundException, RideNotFoundException {
+        List<UserResponse> members = this.getRideMembers(rideId);
+        for (UserResponse user : members) {
+            if (user.getUserId().equals(userId)) {
                 return user;
             }
         } throw new UserNotFoundException("Usuário não está na carona.");
     }
-
-    private Ride registerRide(Ride ride) {
-        return rideRepository.save(ride);
-    }
-
-    public RideResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException {
-        Candidate candidate = candidateMapper.toCandidate(userId, candidateRequest);
+    public CandidateResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException, AddressNotFoundException {
+        Candidate candidate = candidateService.createCandidate(userId, candidateRequest);
+        CandidateResponse candidateResponse = candidateMapper.toCandidateResponse(candidate);
         Ride ride = rideRepository.findById(candidateRequest.getRideId()).get();
         if (ride.getNumSeats() > ride.getMembers().size() - 1) {
             ride.getCandidates().add(candidate);
         } else throw new RideIsFullException("A carona está cheia.");
-        return rideMapper.toRideResponse(ride);
+        return candidateResponse;
     }
 
     public RideResponse acceptCandidate(CandidateResponse candidateResponse) throws RideNotFoundException, UserNotFoundException {
         Ride ride = rideRepository.findById(candidateResponse.getRideId()).get();
-        for (Candidate candidate: ride.getCandidates()) {
+        List<Candidate> candidates = ride.getCandidates().stream().toList();
+
+        for (Candidate candidate: candidates) {
             if (candidate.getUserId().equals(candidateResponse.getUserId())){
                 if (candidateResponse.isAccepted()){
                     ride.getMembers().add(userService.findUserById(candidate.getUserId()));
                 }
-                ride.getCandidates().remove(candidate);
+                candidateService.removeCandidate(candidate.getCandidateId());
             }
         }
         return rideMapper.toRideResponse(ride);
+    }
+
+    public List<RideResponse> findAvailableRides(Integer userId) throws UserNotFoundException {
+        List<Ride> rides = rideRepository.findAll();
+        boolean isWomen = getUser(userId).getSex().equals("F");
+        List<RideResponse> availableRides = new ArrayList<>();
+        for (Ride ride: rides) {
+            if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
+                if(isWomen || !ride.getToWomen()){
+                    availableRides.add(rideMapper.toRideResponse(ride));
+                }
+            }
+        }
+        return availableRides;
+    }
+
+    public List<RideResponse> getMemberHistory(Integer userId) throws UserNotFoundException {
+        List<RideResponse> userHistory = new ArrayList<>();
+        List<Ride> userRides = getUser(userId).getRides();
+        for (Ride ride: userRides) {
+            if (ride.getScheduledTime().isBefore(LocalDateTime.now())){
+                userHistory.add(rideMapper.toRideResponse(ride));
+            }
+        }
+        return userHistory;
     }
 }

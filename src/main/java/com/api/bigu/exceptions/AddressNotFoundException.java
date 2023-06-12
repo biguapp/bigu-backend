@@ -2,7 +2,7 @@ package com.api.bigu.exceptions;
 
 public class AddressNotFoundException extends Throwable {
     public AddressNotFoundException(String message) {
-        super();
+        super(message);
     }
 
     public String getMessage() {

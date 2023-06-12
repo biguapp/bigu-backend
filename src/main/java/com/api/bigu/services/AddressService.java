@@ -1,11 +1,11 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.address.AddressDTO;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.UserRepository;
@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,9 +33,19 @@ public class AddressService {
     @Autowired
     AddressMapper addressMapper;
 
+    public List<AddressResponse> getAllCollegeAddresses() throws AddressNotFoundException {
+        List<AddressResponse> collegeAddresses = new ArrayList<>();
+        for (Address address: getAllAddresses()) {
+            if (address.getNickname().contains("UFCG")){
+                collegeAddresses.add(addressMapper.toAddressResponse(address));
+            }
+        }
+        return collegeAddresses;
+    }
+
     public List<Address> getAllAddresses(){ return addressRepository.findAll(); }
 
-    public AddressResponse getAddressByCEP(Long cep) throws AddressNotFoundException {
+    public AddressResponse getAddressByCEP(String cep) throws AddressNotFoundException {
         Address address = addressRepository.findByPostalCode(cep).get();
         if (addressRepository.findByPostalCode(cep).isPresent()){
             return addressMapper.toAddressResponse(address);
@@ -52,23 +63,19 @@ public class AddressService {
         }
     }
 
-    public List<Address> getAddressesByUserId(Integer userId) throws UserNotFoundException, AddressNotFoundException {
-        User user = userService.findUserById(userId);
-        System.out.println("------ ENTROU ------");
-        System.out.println(user);
-        System.out.println(user.getAddresses());
-        if (user.getAddresses().isEmpty()){
-            throw new AddressNotFoundException("O usuário não possui endereços cadastrados.");
+    public List<AddressResponse> getAddressesByUserId(Integer userId) throws UserNotFoundException, AddressNotFoundException {
+        List<Address> addresses = userService.findUserById(userId).getAddresses().values().stream().toList();
+        List<AddressResponse> addressesResponse = new ArrayList<>();
+        for (Address address: addresses) {
+            addressesResponse.add(addressMapper.toAddressResponse(address));
         }
-        List<Address> addresses = user.getAddresses().values().stream().toList();
-        return addresses;
+        return addressesResponse;
     }
 
     public AddressResponse getAddressByNickname(String nickname, Integer userId) throws AddressNotFoundException {
         List<Address> addresses = addressRepository.findAll();
-        for (Address address: addresses
-             ) {
-            if ((address.getNickname() == nickname) && (address.getUserId() == userId)) return addressMapper.toAddressResponse(address);
+        for (Address address: addresses) {
+            if ((address.getNickname().equals(nickname)) && (address.getUserId().equals(userId))) return addressMapper.toAddressResponse(address);
         }
         throw new AddressNotFoundException("O usuário não tem um endereço '" + nickname + "' cadastrado.");
     }
@@ -88,4 +95,14 @@ public class AddressService {
         System.out.println(userRepository.findAll());
         return addressMapper.toAddressResponse(addressCreated);
     }
+
+    public void removeAddressFromUser(Integer extractUserId, Integer addressId) throws AddressNotFoundException {
+        User user = userService.findUserById(extractUserId);
+        Address address = addressRepository.findById(addressId).get();
+        if (user.getAddresses().containsValue(address)) {
+            user.getAddresses().remove(address.getNickname());
+            addressRepository.delete(address);
+        }
+    }
+
 }

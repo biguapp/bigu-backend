@@ -50,14 +50,13 @@ public class User implements UserDetails {
 
     @Column(name = "password", nullable = false)
     private String password;
+    
+    @Column(name = "resetPasswordToken")
+    private String resetPasswordToken;
 
     @Column(name="role", nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-
-//    @Column(name="user_type")
-//    @Enumerated(EnumType.STRING)
-//    private UserType userType;
 
     @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
     @Column(name = "addresses")
@@ -68,19 +67,12 @@ public class User implements UserDetails {
     private Map<String, Car> cars;
 
     @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Ride> rides;
-
-    @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages;
-
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> receivedMessages;
 
     @Builder.Default
     private boolean accountNonLocked = true;
 
-    @Builder.Default
-    private int failedLoginAttempts = 0;
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
 
@@ -94,7 +86,11 @@ public class User implements UserDetails {
         return this.password;
     }
 
-    @Override
+    public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@Override
     public String getUsername() {
         return this.email;
     }
@@ -109,18 +105,6 @@ public class User implements UserDetails {
         return accountNonLocked;
     }
 
-    public void loginFailed() {
-        failedLoginAttempts++;
-        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            accountNonLocked = false;
-        }
-    }
-
-    public void loginSucceeded() {
-        failedLoginAttempts = 0;
-        accountNonLocked = true;
-    }
-
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
@@ -131,7 +115,15 @@ public class User implements UserDetails {
         return true;
     }
 
-    @Override
+    public String getResetPasswordToken() {
+		return resetPasswordToken;
+	}
+
+	public void setResetPasswordToken(String resetPasswordToken) {
+		this.resetPasswordToken = resetPasswordToken;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof User user)) return false;

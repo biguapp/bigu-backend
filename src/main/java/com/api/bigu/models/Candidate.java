@@ -15,10 +15,13 @@ public class Candidate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private Integer candidateId;
 
     @Column(name= "user_id")
     private Integer userId;
+
+    @Column(name = "ride_id")
+    private Integer rideId;
 
     @Column(name= "address_id")
     private Integer addressId;

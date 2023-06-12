@@ -1,6 +1,7 @@
 package com.api.bigu.dto.car;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,20 +12,20 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class CarRequest {
 
-    @NonNull
+    @NotNull(message = "Brand field cannot be null")
     private String brand;
 
-    @NonNull
+    @NotNull(message = "Model field cannot be null")
     private String model;
 
-    @NonNull
+    @NotNull(message = "Model Year field cannot be null")
     @Schema(example = "2023")
-    private Integer modelYear;
+    private String modelYear;
 
-    @NonNull
+    @NotNull(message = "Color field cannot be null")
     private String color;
 
-    @NonNull
+    @NotNull(message = "Plate field cannot be null")
     @Schema(example = "KGU7E07")
     private String plate;
 

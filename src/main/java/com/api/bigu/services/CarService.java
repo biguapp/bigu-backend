@@ -1,6 +1,5 @@
 package com.api.bigu.services;
 
-import com.api.bigu.dto.car.CarDTO;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.car.CarResponse;
 import com.api.bigu.exceptions.CarNotFoundException;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,7 +38,7 @@ public class CarService {
             car = carRepository.findById(carId);
         }
         else {
-            throw new CarNotFoundException();
+            throw new CarNotFoundException("Carro não encontrado.");
         }
 
         return car;
@@ -46,7 +46,7 @@ public class CarService {
 
     public void deleteById(Integer carId) throws CarNotFoundException {
         if (!carRepository.existsById(carId)) {
-            throw new CarNotFoundException();
+            throw new CarNotFoundException("Carro não encontrado.");
         }
         carRepository.deleteById(carId);
     }
@@ -58,16 +58,19 @@ public class CarService {
         return carMapper.toCarResponse(car);
     }
 
-    //@SneakyThrows
-    public List<Car> findCarsByUserId(Integer userId) throws UserNotFoundException, NoCarsFoundException {
-        List<Car> cars = userService.findUserById(userId).getCars().values().stream().toList();
-        if (cars.isEmpty()) throw new NoCarsFoundException();
-        return cars;
+    public List<CarResponse> findCarsByUserId(Integer userId) throws UserNotFoundException, NoCarsFoundException {
+        List<Car> userCars = userService.findUserById(userId).getCars().values().stream().toList();
+        List<CarResponse> carsResponse = new ArrayList<>();
+        for (Car car: userCars
+             ) {
+            carsResponse.add(carMapper.toCarResponse(car));
+        }
+        return carsResponse;
     }
 
     public void removeCarFromUser(Integer userId, Integer carId) throws UserNotFoundException, CarNotFoundException {
         User user = userService.findUserById(userId);
-        Car car = findCarById(carId).orElseThrow(CarNotFoundException::new);
+        Car car = findCarById(carId).get();
         if (user.getCars().containsKey(car.getPlate())) {
             user.getCars().remove(car.getPlate());
             carRepository.delete(car);

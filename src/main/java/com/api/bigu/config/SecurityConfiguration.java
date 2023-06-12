@@ -41,15 +41,18 @@ public class SecurityConfiguration {
                     .permitAll())
 
             .authorizeHttpRequests()
+                .requestMatchers("/api/v1/users/self").permitAll()
+                .and()
+
+
+            .authorizeHttpRequests()
                 .requestMatchers(
                         "/api/v1/auth/**")
                 .permitAll()
-
-                .requestMatchers(HttpMethod.GET, "/api/v1/hello/user").hasAuthority(Role.USER.name())
-                .requestMatchers(HttpMethod.GET, "/api/v1/hello/admin").hasAuthority(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, "/api/v1/users/get-all").hasAuthority(Role.ADMIN.name())
-                .anyRequest().permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/users/{userId}").hasAuthority(Role.ADMIN.name())
 
+                .anyRequest().permitAll()
             .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

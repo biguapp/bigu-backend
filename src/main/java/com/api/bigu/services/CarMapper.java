@@ -24,6 +24,7 @@ public class CarMapper {
 
     public CarResponse toCarResponse(Car carCreated) {
         return CarResponse.builder()
+                .carId(carCreated.getCarId())
                 .brand(carCreated.getBrand())
                 .model(carCreated.getModel())
                 .modelYear(carCreated.getModelYear())

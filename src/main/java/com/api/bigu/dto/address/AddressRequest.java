@@ -1,41 +1,41 @@
 package com.api.bigu.dto.address;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NonNull;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class AddressRequest {
 
-    @NonNull
+    @NotNull(message = "Nickname field cannot be null")
     @Schema(example = "Casa")
     private String nickname;
 
-    @NonNull
+    @NotNull(message = "Postal Code field cannot be null")
     private String postalCode;
 
-    @NonNull
+    @NotNull(message = "State field cannot be null")
     @Schema(example = "PB")
     private String state;
 
-    @NonNull
+    @NotNull(message = "City field cannot be null")
     @Schema(example = "Campina Grande")
     private String city;
 
-    @NonNull
+    @NotNull(message = "District field cannot be null")
     @Schema(example = "Centro")
     private String district;
 
-    @NonNull
+    @NotNull(message = "Street field cannot be null")
     @Schema(example = "Rua Exemplo")
     private String street;
 
     @Schema(example = "123")
-    @NonNull
+    @NotNull(message = "Number field cannot be null")
     private String number;
 
     @Schema(example = "Complemento")

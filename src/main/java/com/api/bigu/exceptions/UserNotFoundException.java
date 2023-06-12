@@ -1,11 +1,14 @@
 package com.api.bigu.exceptions;
 
-public class UserNotFoundException extends Throwable {
-    public UserNotFoundException(String message) {
-        super();
-    }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-    public String getMessage() {
-        return "Usuário não encontrado.";
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+    public UserNotFoundException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

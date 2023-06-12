@@ -16,31 +16,36 @@ public class RideMapper {
     @Autowired
     AddressMapper addressMapper;
 
+    @Autowired
+    UserMapper userMapper;
+
+    @Autowired
+    CarMapper carMapper;
+
     public Ride toRide(RideRequest rideRequest) {
         return Ride.builder()
                 .startAddress(addressRepository.findById(rideRequest.getStartAddressId()).get())
                 .destinationAddress(addressRepository.findById(rideRequest.getDestinationAddressId()).get())
                 .numSeats(rideRequest.getNumSeats())
-                .goingToCollege(rideRequest.isGoingToCollege())
+                .goingToCollege(rideRequest.getGoingToCollege())
                 .price(rideRequest.getPrice())
                 .scheduledTime(rideRequest.getDateTime())
                 .description(rideRequest.getDescription())
-                .toWomen(rideRequest.isToWomen())
+                .toWomen(rideRequest.getToWomen())
                 .build();
     }
 
     public RideResponse toRideResponse(Ride rideCreated) {
         return RideResponse.builder()
-                .goingToCollege(rideCreated.isGoingToCollege())
-                .members(rideCreated.getMembers())
-                .candidates(rideCreated.getCandidates())
+                .goingToCollege(rideCreated.getGoingToCollege())
+                .driver(userMapper.toUserResponse(rideCreated.getMembers().get(0)))
                 .start(addressMapper.toAddressResponse(rideCreated.getStartAddress()))
                 .destination(addressMapper.toAddressResponse(rideCreated.getDestinationAddress()))
                 .dateTime(rideCreated.getScheduledTime())
                 .numSeats(rideCreated.getNumSeats())
                 .price(rideCreated.getPrice())
-                .toWomen(rideCreated.isToWomen())
-                .carId(rideCreated.getCar().getId())
+                .toWomen(rideCreated.getToWomen())
+                .car(carMapper.toCarResponse(rideCreated.getCar()))
                 .description(rideCreated.getDescription())
                 .build();
     }
