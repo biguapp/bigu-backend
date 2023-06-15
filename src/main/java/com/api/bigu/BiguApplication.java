@@ -38,7 +38,7 @@ public class BiguApplication {
             AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService
     ) {
         return args -> {
-            var admin = RegisterRequest.builder()
+            /*var admin = RegisterRequest.builder()
                     .fullName("Admin")
                     .email("admin@mail.ufcg.edu.br")
                     .sex("M")
@@ -209,7 +209,7 @@ public class BiguApplication {
                     .userId(userRepository.findByEmail(rider2.getEmail()).get().getUserId())
                     .build();
             userService.addAddressToUser(addressRider2, userRepository.findByEmail(rider2.getEmail()).get().getUserId());
-            addressRepository.save(addressRider2);
+            addressRepository.save(addressRider2);*/
 
         };
     }
