@@ -15,6 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class RideResponse {
 
+    private Integer id;
+
     private boolean goingToCollege;
 
     private UserResponse driver;

@@ -37,6 +37,7 @@ public class RideMapper {
 
     public RideResponse toRideResponse(Ride rideCreated) {
         return RideResponse.builder()
+                .id(rideCreated.getRideId())
                 .goingToCollege(rideCreated.getGoingToCollege())
                 .driver(userMapper.toUserResponse(rideCreated.getMembers().get(0)))
                 .start(addressMapper.toAddressResponse(rideCreated.getStartAddress()))
