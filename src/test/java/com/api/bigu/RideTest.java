@@ -12,7 +12,7 @@ import com.api.bigu.exceptions.NoCarsFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
-import com.api.bigu.models.Ride;
+
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.CarRepository;
@@ -21,16 +21,30 @@ import com.api.bigu.services.*;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.ResponseEntity;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.*;
 
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
-@SpringBootTest
+
+@SpringBootTest(classes = BiguApplication.class, webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RideTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private TestRestTemplate restTemplate;
 
     @Autowired
     AuthenticationService authenticationService;
@@ -65,7 +79,8 @@ public class RideTest {
     @Autowired
     UserMapper userMapper;
 
-    Ride ride;
+    final String baseUrl = "http://localhost:" + port + "/api/v1/rides";
+
     RegisterRequest adminRequest, driverRequest, rider1Request, rider2Request, rider3Request, rider4Request, rider5Request;
 
     CarRequest carRequest;
@@ -158,17 +173,14 @@ public class RideTest {
     }
 
     @Test
-    public void testCreateRideSuccess() {
-        if (car.getCarId() == null)
-            throw new RuntimeException();
-        else
-            System.out.println(car.getCarId());
+    public void testCreateRideSuccess() throws Exception {
+        URI uri = new URI(baseUrl);
 
         RideRequest validRideRequest = RideRequest.builder()
                 .carId(car.getCarId())
                 .price(1.7)
                 .description("Indo para a UFCG amanhã às 7:30. Atrasados serão deixados")
-                .dateTime(LocalDateTime.parse("2023-06-16T07:30:00"))
+                .dateTime(LocalDateTime.parse("2024-06-16T07:30:00"))
                 .startAddressId(addressDriver.getAddressId())
                 .goingToCollege(Boolean.TRUE)
                 .destinationAddressId(addressUFCG1.getAddressId())
@@ -178,7 +190,7 @@ public class RideTest {
 
         RideResponse expectedResponse = RideResponse.builder()
                 .start(addressMapper.toAddressResponse(addressDriver))
-                .dateTime(LocalDateTime.parse("2023-06-16T07:30:00"))
+                .dateTime(LocalDateTime.parse("2024-06-16T07:30:00"))
                 .description("Indo para a UFCG amanhã às 7:30. Atrasados serão deixados")
                 .numSeats(4)
                 .price(1.7)
@@ -189,10 +201,17 @@ public class RideTest {
                 .toWomen(Boolean.FALSE)
                 .build();
 
-        ResponseEntity<?> actualResponse = rideController.createRide(driverToken, validRideRequest);
+        String authorizationHeader = driverToken;
 
-        // Verify the results
-        Assert.assertEquals(ResponseEntity.ok(expectedResponse), actualResponse);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        requestHeaders.add("Authorization", authorizationHeader);
+
+        HttpEntity<RideRequest> httpEntity = new HttpEntity<>(validRideRequest, requestHeaders);
+        ResponseEntity<RideResponse> actualResponse = this.restTemplate.exchange(uri, HttpMethod.POST, httpEntity, RideResponse.class);
+
+        Assert.assertEquals(ResponseEntity.ok(expectedResponse).getBody(), actualResponse.getBody());
     }
 
 }
