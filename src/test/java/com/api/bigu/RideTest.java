@@ -1,18 +1,13 @@
 package com.api.bigu;
 
-import com.api.bigu.controllers.RideController;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.car.CarResponse;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.exceptions.CarNotFoundException;
-import com.api.bigu.exceptions.InvalidTimeException;
-import com.api.bigu.exceptions.NoCarsFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
+
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
-
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.CarRepository;
@@ -23,23 +18,24 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
-import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = BiguApplication.class, webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RideTest {
-
     @LocalServerPort
     private int port;
 
@@ -47,10 +43,10 @@ public class RideTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    AuthenticationService authenticationService;
+    private EntityBuilder entityBuilder;
 
     @Autowired
-    RideService rideService;
+    AuthenticationService authenticationService;
 
     @Autowired
     CarService carService;
@@ -68,9 +64,6 @@ public class RideTest {
     CarRepository carRepository;
 
     @Autowired
-    RideController rideController;
-
-    @Autowired
     CarMapper carMapper;
 
     @Autowired
@@ -81,95 +74,15 @@ public class RideTest {
 
     final String baseUrl = "http://localhost:" + port + "/api/v1/rides";
 
-    RegisterRequest adminRequest, driverRequest, rider1Request, rider2Request, rider3Request, rider4Request, rider5Request;
-
-    CarRequest carRequest;
-    String adminToken, driverToken, rider1Token, rider2Token, rider3Token, rider4Token, rider5Token;
-    User admin, driver, rider1, rider2, rider3, rider4, rider5;
-    Car car;
-    Address addressUFCG1, addressUFCG2, addressUFCG3, addressDriver, addressR1, addressR2, addressR3, addressR4;
+    private String adminToken, driverToken, rider1Token, rider2Token, rider3Token, rider4Token, rider5Token;
+    private Map<String, User> registeredUsers = new HashMap<>();
+    private User admin, driver, rider1, rider2, rider3, rider4, rider5;
+    private Car car;
+    private Address addressUFCG1, addressUFCG2, addressUFCG3, addressDriver, addressR1, addressR2, addressR3, addressR4;
 
     @BeforeEach
     void setUp(){
-        adminRequest = RegisterRequest.builder()
-                .fullName("Admin")
-                .email("admin@mail.ufcg.edu.br")
-                .sex("M")
-                .phoneNumber("111111111")
-                .password("1234")
-                .role("ADMIN")
-                .build();
-       adminToken = authenticationService.register(adminRequest).getToken();
-
-       driverRequest = RegisterRequest.builder()
-                .fullName("Driver de Araujo")
-                .email("driver@mail.ufcg.edu.br")
-                .sex("F")
-                .phoneNumber("222222222")
-                .password("1234")
-                .role("USER")
-                .build();
-        driverToken = authenticationService.register(driverRequest).getToken();
-        driver = userRepository.findByEmail(driverRequest.getEmail()).get();
-
-        rider1Request = RegisterRequest.builder()
-                .fullName("Rider1 Silva")
-                .email("matheus.rafael@ccc.ufcg.edu.br")
-                .sex("F")
-                .phoneNumber("333333333")
-                .password("1234")
-                .role("USER")
-                .build();
-        rider1Token = authenticationService.register(rider1Request).getToken();
-        rider1 = userRepository.findByEmail(rider1Request.getEmail()).get();
-
-        carRequest = CarRequest.builder()
-                .brand("Chevrolet")
-                .plate("KGU7E07")
-                .color("Prata")
-                .model("Onix")
-                .modelYear("2019")
-                .build();
-        CarResponse carResponse = carService.addCarToUser(driver.getUserId(), carRequest);
-        car = carRepository.findById(carResponse.getCarId()).get();
-
-        addressUFCG1 = Address.builder()
-                .nickname("UFCG - Frente")
-                .postalCode("58429900")
-                .state("PB")
-                .city("Campina Grande")
-                .district("Universitário")
-                .street("Rua Aprígio Veloso")
-                .number("882")
-                .complement("Entrada principal da UFCG")
-                .build();
-        addressRepository.save(addressUFCG1);
-
-        addressDriver = Address.builder()
-                .nickname("Casa")
-                .postalCode("58433264")
-                .state("PB")
-                .city("Campina Grande")
-                .district("Malvinas")
-                .street("Rua Exemplo")
-                .number("284")
-                .userId(driver.getUserId())
-                .build();
-        userService.addAddressToUser(addressDriver, driver.getUserId());
-        addressRepository.save(addressDriver);
-
-        addressR1 = Address.builder()
-                .nickname("Trabalho")
-                .postalCode("58400165")
-                .state("PB")
-                .city("Campina Grande")
-                .district("Centro")
-                .street("Rua Teste")
-                .number("123")
-                .userId(rider1.getUserId())
-                .build();
-        userService.addAddressToUser(addressR1, rider1.getUserId());
-        addressRepository.save(addressR1);
+        buildEntities();
     }
 
     @Test
@@ -202,6 +115,7 @@ public class RideTest {
                 .build();
 
         String authorizationHeader = driverToken;
+        System.out.println(authorizationHeader);
 
         HttpHeaders requestHeaders = new HttpHeaders();
         requestHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -214,4 +128,46 @@ public class RideTest {
         Assert.assertEquals(ResponseEntity.ok(expectedResponse).getBody(), actualResponse.getBody());
     }
 
+    private void buildEntities() {
+        RegisterRequest adminRequest = entityBuilder.buildUser("Admin","admin@mail.ufcg.edu.br", "M", "111111111", "1234", "ADMIN");
+        adminToken = authenticationService.register(adminRequest).getToken();
+        admin = userRepository.findByEmail(adminRequest.getEmail()).get();
+
+        RegisterRequest driverRequest = entityBuilder.buildUser("Driver de Araujo", "driver@mail.ufcg.edu.br", "M", "222222222", "1234", "USER");
+        driverToken = authenticationService.register(driverRequest).getToken();
+        driver = userRepository.findByEmail(driverRequest.getEmail()).get();
+
+        RegisterRequest rider1Request = entityBuilder.buildUser("Rider1 Silva", "rider1.silva@ccc.ufcg.edu.br", "F", "333333333", "1234", "USER");
+        rider1Token = authenticationService.register(rider1Request).getToken();
+        rider1 = userRepository.findByEmail(rider1Request.getEmail()).get();
+
+        RegisterRequest rider2Request = entityBuilder.buildUser("Rider2 Silva", "rider2.silva@ccc.ufcg.edu.br", "F", "444444444", "1234", "USER");
+        rider2Token = authenticationService.register(rider2Request).getToken();
+        rider2 = userRepository.findByEmail(rider2Request.getEmail()).get();
+
+        RegisterRequest rider3Request = entityBuilder.buildUser("Rider3 Silva", "rider3.rafaela@ccc.ufcg.edu.br", "F", "555555555", "1234", "USER");
+        rider3Token = authenticationService.register(rider3Request).getToken();
+        rider3 = userRepository.findByEmail(rider3Request.getEmail()).get();
+
+        RegisterRequest rider4Request = entityBuilder.buildUser("Rider4 Silva", "rider4.rafaela@ccc.ufcg.edu.br", "F", "666666666", "1234", "USER");
+        rider4Token = authenticationService.register(rider4Request).getToken();
+        rider4 = userRepository.findByEmail(rider4Request.getEmail()).get();
+
+        RegisterRequest rider5Request = entityBuilder.buildUser("Rider5 Silva", "rider5.rafaela@ccc.ufcg.edu.br", "F", "77777777", "1234", "USER");
+        rider5Token = authenticationService.register(rider5Request).getToken();
+        rider5 = userRepository.findByEmail(rider5Request.getEmail()).get();
+
+        CarRequest carRequest = entityBuilder.buildCar("Chevrolet", "KGU7E07", "Prata", "Onix", "2019");
+        CarResponse carResponse = carService.addCarToUser(driver.getUserId(), carRequest);
+        car = carRepository.findById(carResponse.getCarId()).get();
+
+        addressUFCG1 = entityBuilder.buildAddress("UFCG - Frente", "58429900", "PB", "Campina Grande", "Universitário", "Rua Aprígio Veloso", "882", "Entrada principal da UFCG",null);
+        addressRepository.save(addressUFCG1);
+
+        addressDriver = entityBuilder.buildAddress("Casa", "58433264", "PB", "Campina Grande", "Malvinas", "Rua Exemplo", "222", "Portão à esquerda", driver.getUserId());
+        userService.addAddressToUser(addressDriver, driver.getUserId());
+
+        addressR1 = entityBuilder.buildAddress("Trabalho", "58400165", "PB", "Campina Grande", "Centro", "Rua Teste", "123", "Primeiro andar", rider1.getUserId());
+        userService.addAddressToUser(addressR1, rider1.getUserId());
+    }
 }
