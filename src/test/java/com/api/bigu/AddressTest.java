@@ -1,6 +1,7 @@
 package com.api.bigu;
 
 import com.api.bigu.dto.address.AddressRequest;
+import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.dto.auth.AuthenticationResponse;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.car.CarRequest;
@@ -25,13 +26,10 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 
-
-import java.time.LocalDateTime;
 import java.util.Arrays;
 
-
 @SpringBootTest(classes = BiguApplication.class, webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserTest {
+public class AddressTest {
     @LocalServerPort
     private int port;
 
@@ -79,22 +77,25 @@ public class UserTest {
     }
 
     @Test
-    public void testCreateUserSuccess() {
-        RegisterRequest validRegisterRequest = entityBuilder.buildUser("Usu de Teste",
-                "usu.teste@ccc.ufcg.edu.br", "M", "999999999", "123", "USER");
-        UserResponse userResponse = UserResponse.builder()
-                .userId(8)
-                .fullName("Usu de Teste")
-                .email("usu.teste@ccc.ufcg.edu.br")
-                .sex("M")
-                .phoneNumber("999999999")
-                .build();
+    public void testCreateAddressSuccess() {
+        AddressRequest validAddressRequest = entityBuilder.buildAddress("Teste", "55555555", "PB",
+                "Campina Grande", "Portal Sudoeste", "Rua dos Limoeiros", "120", "A única casa sem Limoeiro");
+        Address validAddress = addressMapper.toAddress(validAddressRequest);
+        validAddress.setUserId(3);
+        validAddress.setAddressId(4);
+        AddressResponse expectedResponse = addressMapper.toAddressResponse(validAddress);
 
+        String authorizationHeader = rider1Token;
 
-        HttpEntity<RegisterRequest> httpEntity = new HttpEntity<>(validRegisterRequest);
-        ResponseEntity<AuthenticationResponse> actualResponse = this.restTemplate.exchange("http://localhost:" + port + "/api/v1/auth/register", HttpMethod.POST, httpEntity, AuthenticationResponse.class);
+        HttpHeaders requestHeaders = new HttpHeaders();
+        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
+        requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        requestHeaders.add("Authorization", authorizationHeader);
 
-        Assert.assertEquals(userResponse, actualResponse.getBody().getUserResponse());
+        HttpEntity<AddressRequest> httpEntity = new HttpEntity<>(validAddressRequest, requestHeaders);
+        ResponseEntity<AddressResponse> actualResponse = this.restTemplate.exchange("http://localhost:" + port + "/api/v1/addresses", HttpMethod.POST, httpEntity, AddressResponse.class);
+
+        Assert.assertEquals(ResponseEntity.ok(expectedResponse).getBody(), actualResponse.getBody());
     }
 
     private void buildEntities() {

@@ -1,4 +1,5 @@
 package com.api.bigu;
+import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.models.Address;
@@ -32,8 +33,8 @@ public class EntityBuilder {
 
     }
 
-    public Address buildAddress(String nickname, String postalCode, String state, String city, String district, String street, String number, String complement, Integer userId) {
-        Address address = Address.builder()
+    public AddressRequest buildAddress(String nickname, String postalCode, String state, String city, String district, String street, String number, String complement) {
+        AddressRequest address = AddressRequest.builder()
                 .nickname(nickname)
                 .postalCode(postalCode)
                 .state(state)
@@ -41,7 +42,7 @@ public class EntityBuilder {
                 .district(district)
                 .street(street)
                 .number(number)
-                .userId(userId)
+                .complement(complement)
                 .build();
 
         return address;

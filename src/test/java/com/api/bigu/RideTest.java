@@ -1,5 +1,6 @@
 package com.api.bigu;
 
+import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.car.CarResponse;
@@ -148,13 +149,18 @@ public class RideTest {
         CarResponse carResponse = carService.addCarToUser(driver.getUserId(), carRequest);
         car = carRepository.findById(carResponse.getCarId()).get();
 
-        addressUFCG1 = entityBuilder.buildAddress("UFCG - Frente", "58429900", "PB", "Campina Grande", "Universitário", "Rua Aprígio Veloso", "882", "Entrada principal da UFCG",null);
+        AddressRequest addressUFCGRequest = entityBuilder.buildAddress("UFCG - Frente", "58429900", "PB", "Campina Grande", "Universitário", "Rua Aprígio Veloso", "882", "Entrada principal da UFCG");
+        addressUFCG1 = addressMapper.toAddress(addressUFCGRequest);
         addressRepository.save(addressUFCG1);
 
-        addressDriver = entityBuilder.buildAddress("Casa", "58433264", "PB", "Campina Grande", "Malvinas", "Rua Exemplo", "222", "Portão à esquerda", driver.getUserId());
+        AddressRequest addressDriverRequest = entityBuilder.buildAddress("Casa", "58433264", "PB", "Campina Grande", "Malvinas", "Rua Exemplo", "222", "Portão à esquerda");
+        addressDriver = addressMapper.toAddress(addressDriverRequest);
+        addressDriver.setUserId(driver.getUserId());
         userService.addAddressToUser(addressDriver, driver.getUserId());
 
-        addressR1 = entityBuilder.buildAddress("Trabalho", "58400165", "PB", "Campina Grande", "Centro", "Rua Teste", "123", "Primeiro andar", rider1.getUserId());
+        AddressRequest addressRider1Request = entityBuilder.buildAddress("Trabalho", "58400165", "PB", "Campina Grande", "Centro", "Rua Teste", "123", "Primeiro andar");
+        addressR1 = addressMapper.toAddress(addressRider1Request);
+        addressR1.setUserId(rider1.getUserId());
         userService.addAddressToUser(addressR1, rider1.getUserId());
     }
 }
