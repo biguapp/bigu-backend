@@ -1,11 +1,13 @@
 package com.api.bigu;
 
+import com.api.bigu.dto.auth.AuthenticationResponse;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.car.CarResponse;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 
+import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
@@ -28,7 +30,7 @@ import java.util.Arrays;
 
 
 @SpringBootTest(classes = BiguApplication.class, webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class RideTest {
+public class UserTest {
     @LocalServerPort
     private int port;
 
@@ -76,43 +78,22 @@ public class RideTest {
     }
 
     @Test
-    public void testCreateRideSuccess() {
-        RideRequest validRideRequest = RideRequest.builder()
-                .carId(car.getCarId())
-                .price(1.7)
-                .description("Indo para a UFCG amanhã às 7:30. Atrasados serão deixados")
-                .dateTime(LocalDateTime.parse("2024-06-16T07:30:00"))
-                .startAddressId(addressDriver.getAddressId())
-                .goingToCollege(Boolean.TRUE)
-                .destinationAddressId(addressUFCG1.getAddressId())
-                .numSeats(4)
-                .toWomen(Boolean.FALSE)
+    public void testCreateUserSuccess() {
+        RegisterRequest validRegisterRequest = entityBuilder.buildUser("Usu de Teste",
+                "usu.teste@ccc.ufcg.edu.br", "M", "999999999", "123", "USER");
+        UserResponse userResponse = UserResponse.builder()
+                .userId(8)
+                .fullName("Usu de Teste")
+                .email("usu.teste@ccc.ufcg.edu.br")
+                .sex("M")
+                .phoneNumber("999999999")
                 .build();
 
-        RideResponse expectedResponse = RideResponse.builder()
-                .start(addressMapper.toAddressResponse(addressDriver))
-                .dateTime(LocalDateTime.parse("2024-06-16T07:30:00"))
-                .description("Indo para a UFCG amanhã às 7:30. Atrasados serão deixados")
-                .numSeats(4)
-                .price(1.7)
-                .car(carMapper.toCarResponse(car))
-                .destination(addressMapper.toAddressResponse(addressUFCG1))
-                .driver(userMapper.toUserResponse(driver))
-                .goingToCollege(Boolean.TRUE)
-                .toWomen(Boolean.FALSE)
-                .build();
 
-        String authorizationHeader = driverToken;
+        HttpEntity<RegisterRequest> httpEntity = new HttpEntity<>(validRegisterRequest);
+        ResponseEntity<AuthenticationResponse> actualResponse = this.restTemplate.exchange("http://localhost:" + port + "/api/v1/auth/register", HttpMethod.POST, httpEntity, AuthenticationResponse.class);
 
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.setContentType(MediaType.APPLICATION_JSON);
-        requestHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        requestHeaders.add("Authorization", authorizationHeader);
-
-        HttpEntity<RideRequest> httpEntity = new HttpEntity<>(validRideRequest, requestHeaders);
-        ResponseEntity<RideResponse> actualResponse = this.restTemplate.exchange("http://localhost:" + port + "/api/v1/rides", HttpMethod.POST, httpEntity, RideResponse.class);
-
-        Assert.assertEquals(ResponseEntity.ok(expectedResponse).getBody(), actualResponse.getBody());
+        Assert.assertEquals(userResponse, actualResponse.getBody().getUserResponse());
     }
 
     private void buildEntities() {

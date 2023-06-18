@@ -209,7 +209,7 @@ public class RideTest2 {
         requestHeaders.add("Authorization", authorizationHeader);
 
         HttpEntity<RideRequest> httpEntity = new HttpEntity<>(validRideRequest, requestHeaders);
-        ResponseEntity<RideResponse> actualResponse = this.restTemplate.exchange(uri, HttpMethod.POST, httpEntity, RideResponse.class);
+        ResponseEntity<RideResponse> actualResponse = this.restTemplate.exchange("http://localhost:" + port + "/api/v1/rides", HttpMethod.POST, httpEntity, RideResponse.class);
 
         Assert.assertEquals(ResponseEntity.ok(expectedResponse).getBody(), actualResponse.getBody());
     }
