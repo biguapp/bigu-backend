@@ -36,7 +36,7 @@ public class BiguApplication {
 
     @Bean
     public CommandLineRunner commandLineRunner(
-            AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService
+            AuthenticationService authService
     ) {
         return args -> {
             System.err.println("Admin token: " + authService.authenticate(new AuthenticationRequest("admin@mail.ufcg.edu.br", "1234")));
