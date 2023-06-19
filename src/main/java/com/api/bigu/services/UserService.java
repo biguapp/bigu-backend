@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.user.EditUserRequest;
 import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Ride;
@@ -121,5 +122,9 @@ public class UserService {
     public void addRideToUser(Integer userId, Ride ride) {
         User user = userRepository.findById(userId).get();
         user.getRides().add(ride);
+    }
+
+    public List<Ride> getRidesFromUser(Integer userId) throws UserNotFoundException, RideNotFoundException {
+        return userRepository.findById(userId).get().getRides();
     }
 }

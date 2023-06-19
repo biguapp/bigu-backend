@@ -10,6 +10,7 @@ import com.api.bigu.models.Candidate;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.RideRepository;
+import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class RideService {
 
     @Autowired
     private RideMapper rideMapper;
+    private final UserRepository userRepository;
 
     public User getDriver(Integer userId) throws UserNotFoundException, NoCarsFoundException, CarNotFoundException {
         User user;
@@ -169,5 +171,19 @@ public class RideService {
             }
         }
         return userHistory;
+    }
+
+    public List<CandidateResponse> getCandidates(Integer userId) throws UserNotFoundException, RideNotFoundException {
+        List<Ride> rides = userService.getRidesFromUser(userId);
+        List<Candidate> candidates = candidateService.getAllCandidates();
+        List<CandidateResponse> candidateResponses = new ArrayList<>();
+        for (Ride ride: rides) {
+            candidates.addAll(candidateService.getCandidatesFromRide(ride.getRideId()));
+        }
+
+        for (Candidate candidate : candidates) {
+            candidateResponses.add(candidateMapper.toCandidateResponse(candidate));
+        }
+        return candidateResponses;
     }
 }
