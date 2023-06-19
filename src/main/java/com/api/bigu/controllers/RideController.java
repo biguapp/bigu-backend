@@ -148,7 +148,7 @@ public class RideController {
         }
     }
 
-    @GetMapping("/candidates")
+    @GetMapping("/candidates/{rideId}")
     public ResponseEntity<?> getCandidates(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId){
         try {
             Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
