@@ -136,7 +136,7 @@ public class RideService {
         List<Candidate> candidates = ride.getCandidates().stream().toList();
 
         for (Candidate candidate: candidates) {
-            if (candidate.getUserId().equals(candidateResponse.getUserId())){
+            if (candidate.getUserId().equals(candidateResponse.getUserResponse().getUserId())){
                 if (candidateResponse.isAccepted()){
                     ride.getMembers().add(userService.findUserById(candidate.getUserId()));
                 }
