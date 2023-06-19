@@ -15,6 +15,8 @@ public class CandidateResponse {
 
     private boolean accepted;
 
+    private String phoneNumber;
+
     private Integer rideId;
 
     private Integer userId;

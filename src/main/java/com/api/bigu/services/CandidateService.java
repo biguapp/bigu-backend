@@ -9,6 +9,9 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 public class CandidateService {
@@ -19,6 +22,10 @@ public class CandidateService {
     @Autowired
     CandidateMapper candidateMapper;
 
+    public List<Candidate> getAllCandidates(){
+        return candidateRepository.findAll();
+    }
+
     public Candidate createCandidate(Integer userId, CandidateRequest candidateRequest) throws AddressNotFoundException {
         Candidate candidate = candidateMapper.toCandidate(userId, candidateRequest);
         candidateRepository.save(candidate);
@@ -28,4 +35,17 @@ public class CandidateService {
     public void removeCandidate(Integer candidateId){
         candidateRepository.delete(candidateRepository.findById(candidateId).get());
     }
+
+    public List<Candidate> getCandidatesFromRide(Integer rideId){
+        List<Candidate> response = new ArrayList<>();
+        for (Candidate candidate: getAllCandidates()) {
+            if(candidate.getRideId().equals(rideId)){
+                response.add(candidate);
+            }
+        }
+        return response;
+    }
+
+
+
 }

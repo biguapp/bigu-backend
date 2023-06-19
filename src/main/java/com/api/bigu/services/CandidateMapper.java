@@ -23,6 +23,7 @@ public class CandidateMapper {
         return CandidateResponse.builder()
                 .candidateId(candidateCreated.getCandidateId())
                 .userId(candidateCreated.getUserId())
+                .phoneNumber(candidateCreated.getPhoneNumber())
                 .rideId(candidateCreated.getRideId())
                 .addressId(candidateCreated.getAddressId())
                 .build();
