@@ -148,15 +148,13 @@ public class RideController {
         }
     }
 
-    @GetMapping("/candidates/{rideId}")
-    public ResponseEntity<?> getCandidates(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId){
+    @GetMapping("/candidates")
+    public ResponseEntity<?> getCandidates(@RequestHeader("Authorization") String authorizationHeader) {
         try {
             Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
             User driver = rideService.getDriver(driverId);
             if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
-                if (rideService.findRideById(rideId).getDriverId().equals(driverId)){
-                    return ResponseEntity.ok(rideService.getCandidates(rideId));
-                } else return RideError.rideNotFoundError();
+                return ResponseEntity.ok(rideService.getCandidates(driverId));
             } else return UserError.userBlockedError();
         } catch (CarNotFoundException cNFE) {
             return CarError.carNotFoundError();

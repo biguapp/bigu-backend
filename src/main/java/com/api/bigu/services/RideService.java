@@ -171,10 +171,15 @@ public class RideService {
         return userHistory;
     }
 
-    public List<CandidateResponse> getCandidates(Integer rideId) {
+    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException {
         List<CandidateResponse> candidatesResponse = new ArrayList<>();
-        List<Candidate> candidates = rideRepository.findById(rideId).get().getCandidates();
-        for (Candidate candidate : candidates) {
+        List<Candidate> candidates = new ArrayList<>();
+        List<Ride> userRides = userService.getRidesFromUser(driverId);
+        for (Ride ride : userRides) {
+            candidates.addAll(candidateService.getCandidatesFromRide(ride.getRideId()));
+        }
+
+        for(Candidate candidate: candidates) {
             candidatesResponse.add(candidateMapper.toCandidateResponse(candidate));
         }
         return candidatesResponse;
