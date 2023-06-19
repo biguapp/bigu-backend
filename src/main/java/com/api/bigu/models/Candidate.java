@@ -17,7 +17,7 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer candidateId;
 
-    @Column(name ="phone_number")
+    @Column(name= "phone_number")
     private String phoneNumber;
 
     @Column(name= "user_id")
