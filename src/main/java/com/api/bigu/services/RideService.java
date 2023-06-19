@@ -170,4 +170,13 @@ public class RideService {
         }
         return userHistory;
     }
+
+    public List<CandidateResponse> getCandidates(Integer rideId) {
+        List<CandidateResponse> candidatesResponse = new ArrayList<>();
+        List<Candidate> candidates = rideRepository.findById(rideId).get().getCandidates();
+        for (Candidate candidate : candidates) {
+            candidatesResponse.add(candidateMapper.toCandidateResponse(candidate));
+        }
+        return candidatesResponse;
+    }
 }

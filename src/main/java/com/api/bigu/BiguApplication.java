@@ -36,7 +36,7 @@ public class BiguApplication {
 
     @Bean
     public CommandLineRunner commandLineRunner(
-            AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService
+            AuthenticationService authService
     ) {
         return args -> {
             /*
