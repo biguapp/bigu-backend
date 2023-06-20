@@ -14,6 +14,12 @@ import org.springframework.stereotype.Component;
 public class CandidateMapper {
 
     @Autowired
+    private AddressService addressService;
+
+    @Autowired
+    private AddressMapper addressMapper;
+
+    @Autowired
     private UserMapper userMapper;
 
     @Autowired
@@ -28,13 +34,12 @@ public class CandidateMapper {
                 .build();
     }
 
-    public CandidateResponse toCandidateResponse(Candidate candidateCreated){
+    public CandidateResponse toCandidateResponse(Candidate candidateCreated) throws AddressNotFoundException {
         return CandidateResponse.builder()
                 .candidateId(candidateCreated.getCandidateId())
                 .userResponse(userMapper.toUserResponse(userService.findUserById(candidateCreated.getUserId())))
-                .phoneNumber(candidateCreated.getPhoneNumber())
                 .rideId(candidateCreated.getRideId())
-                .addressId(candidateCreated.getAddressId())
+                .addressResponse(addressService.getAddressById(candidateCreated.getAddressId()))
                 .build();
     }
 }

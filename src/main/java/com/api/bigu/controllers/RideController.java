@@ -164,6 +164,8 @@ public class RideController {
             return CarError.noCarsFoundError();
         } catch (RideNotFoundException rNFE) {
             return RideError.rideNotFoundError();
+        } catch (AddressNotFoundException e) {
+            return AddressError.addressNotFoundError();
         }
     }
 

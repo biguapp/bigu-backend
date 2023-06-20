@@ -171,7 +171,7 @@ public class RideService {
         return userHistory;
     }
 
-    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException {
+    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException, AddressNotFoundException {
         List<CandidateResponse> candidatesResponse = new ArrayList<>();
         List<Candidate> candidates = new ArrayList<>();
         List<Ride> userRides = userService.getRidesFromUser(driverId);
