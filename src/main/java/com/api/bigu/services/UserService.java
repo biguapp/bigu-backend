@@ -25,7 +25,7 @@ import java.util.Optional;
 public class UserService {
 
     @Autowired
-    UserMapper userMapper;
+    private UserMapper userMapper;
 
     @Autowired
     private UserRepository userRepository;
