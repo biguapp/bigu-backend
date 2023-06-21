@@ -121,7 +121,7 @@ public class RideService {
             }
         } throw new UserNotFoundException("Usuário não está na carona.");
     }
-    public CandidateResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException, AddressNotFoundException {
+    public CandidateResponse requestRide(Integer userId, CandidateRequest candidateRequest) throws UserNotFoundException, RideIsFullException, AddressNotFoundException, RideNotFoundException {
         Candidate candidate = candidateService.createCandidate(userId, candidateRequest);
         CandidateResponse candidateResponse = candidateMapper.toCandidateResponse(candidate);
         Ride ride = rideRepository.findById(candidateRequest.getRideId()).get();
@@ -132,7 +132,7 @@ public class RideService {
     }
 
     public RideResponse acceptCandidate(CandidateResponse candidateResponse) throws RideNotFoundException, UserNotFoundException {
-        Ride ride = rideRepository.findById(candidateResponse.getRideId()).get();
+        Ride ride = rideRepository.findById(candidateResponse.getRideResponse().getId()).get();
         List<Candidate> candidates = ride.getCandidates().stream().toList();
 
         for (Candidate candidate: candidates) {

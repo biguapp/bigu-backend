@@ -5,6 +5,7 @@ import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.dto.candidate.CandidateRequest;
 import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
+import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Candidate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +18,16 @@ public class CandidateMapper {
     private AddressService addressService;
 
     @Autowired
-    private AddressMapper addressMapper;
-
-    @Autowired
     private UserMapper userMapper;
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RideService rideService;
+
+    @Autowired
+    private RideMapper rideMapper;
 
     public Candidate toCandidate(Integer userId, CandidateRequest candidateRequest) {
         return Candidate.builder()
@@ -34,11 +38,11 @@ public class CandidateMapper {
                 .build();
     }
 
-    public CandidateResponse toCandidateResponse(Candidate candidateCreated) throws AddressNotFoundException {
+    public CandidateResponse toCandidateResponse(Candidate candidateCreated) throws AddressNotFoundException, RideNotFoundException {
         return CandidateResponse.builder()
                 .candidateId(candidateCreated.getCandidateId())
                 .userResponse(userMapper.toUserResponse(userService.findUserById(candidateCreated.getUserId())))
-                .rideId(candidateCreated.getRideId())
+                .rideResponse(rideMapper.toRideResponse(rideService.findRideById(candidateCreated.getRideId())))
                 .addressResponse(addressService.getAddressById(candidateCreated.getAddressId()))
                 .build();
     }
