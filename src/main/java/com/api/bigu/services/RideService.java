@@ -136,7 +136,7 @@ public class RideService {
         List<Candidate> candidates = ride.getCandidates().stream().toList();
 
         for (Candidate candidate: candidates) {
-            if (candidate.getUserId().equals(candidateResponse.getUserId())){
+            if (candidate.getUserId().equals(candidateResponse.getUserResponse().getUserId())){
                 if (candidateResponse.isAccepted()){
                     ride.getMembers().add(userService.findUserById(candidate.getUserId()));
                 }
@@ -171,7 +171,7 @@ public class RideService {
         return userHistory;
     }
 
-    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException {
+    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException, AddressNotFoundException {
         List<CandidateResponse> candidatesResponse = new ArrayList<>();
         List<Candidate> candidates = new ArrayList<>();
         List<Ride> userRides = userService.getRidesFromUser(driverId);
