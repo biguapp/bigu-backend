@@ -8,6 +8,7 @@ import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Candidate;
+import com.api.bigu.repositories.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +25,7 @@ public class CandidateMapper {
     private UserService userService;
 
     @Autowired
-    private RideService rideService;
+    private RideRepository rideRepository;
 
     @Autowired
     private RideMapper rideMapper;
@@ -42,7 +43,7 @@ public class CandidateMapper {
         return CandidateResponse.builder()
                 .candidateId(candidateCreated.getCandidateId())
                 .userResponse(userMapper.toUserResponse(userService.findUserById(candidateCreated.getUserId())))
-                .rideResponse(rideMapper.toRideResponse(rideService.findRideById(candidateCreated.getRideId())))
+                .rideResponse(rideMapper.toRideResponse(rideRepository.findById(candidateCreated.getRideId()).orElseThrow(() -> new RideNotFoundException("Ride not found."))))
                 .addressResponse(addressService.getAddressById(candidateCreated.getAddressId()))
                 .build();
     }
