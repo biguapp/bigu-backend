@@ -1,6 +1,7 @@
 package com.api.bigu.dto.candidate;
 
 import com.api.bigu.dto.address.AddressResponse;
+import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +18,7 @@ public class CandidateResponse {
 
     private boolean accepted;
 
-    private Integer rideId;
+    private RideResponse rideResponse;
 
     private UserResponse userResponse;
 

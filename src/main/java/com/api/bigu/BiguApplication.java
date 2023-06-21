@@ -1,29 +1,14 @@
 package com.api.bigu;
 
-import com.api.bigu.dto.auth.AuthenticationRequest;
-import com.api.bigu.dto.car.CarRequest;
-import com.api.bigu.dto.ride.RideRequest;
-import com.api.bigu.exceptions.CarNotFoundException;
-import com.api.bigu.exceptions.UserNotFoundException;
-import com.api.bigu.models.Address;
-import com.api.bigu.models.Car;
-import com.api.bigu.repositories.AddressRepository;
-import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.repositories.UserRepository;
-import com.api.bigu.services.*;
-import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.util.errors.CarError;
-import com.api.bigu.util.errors.UserError;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.time.LocalDateTime;
-
-
 @SpringBootApplication
 public class BiguApplication {
+
     private final UserRepository userRepository;
 
     public BiguApplication(UserRepository userRepository) {
@@ -35,9 +20,7 @@ public class BiguApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(
-            AuthenticationService authService
-    ) {
+    public CommandLineRunner commandLineRunner() {
         return args -> {
             /*
             System.err.println("Admin token: " + authService.authenticate(new AuthenticationRequest("admin@mail.ufcg.edu.br", "1234")));

@@ -123,8 +123,10 @@ public class RideController {
             return UserError.userNotFoundError();
         } catch (RideIsFullException rIFE) {
             return RideError.rideIsFullError();
-        } catch (AddressNotFoundException e) {
+        } catch (AddressNotFoundException aNFE) {
             return AddressError.addressNotFoundError();
+        } catch (RideNotFoundException rNFE) {
+            return RideError.rideNotFoundError();
         }
         return ResponseEntity.ok(candidateResponse);
     }
