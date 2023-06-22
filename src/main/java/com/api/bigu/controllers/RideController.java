@@ -179,7 +179,7 @@ public class RideController {
 
             if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), driver)) {
                 rideService.deleteRideById(rideId);
-                return new ResponseEntity<>(HttpStatus.OK);
+                return ResponseEntity.ok("A carona foi removida com sucesso");
             } else return UserError.userBlockedError();
 
         } catch (CarNotFoundException cNFE) {
