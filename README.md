@@ -48,9 +48,9 @@ You can deploy the bigu-backend application on any cloud platform that supports 
    ```
    
 ### Accessing the application
-Once the application is deployed, you can access it by sending requests to the following URL:
+Once the application is deployed, you can see the available endpoints by accessing Swagger at:
 ```
-http://localhost:8080
+http://localhost:8080/swagger-ui/index.html
 ```
 
 ### Stopping the application
@@ -72,9 +72,3 @@ If you would like to contribute to the development of bigu-backend, please follo
 
 ## License
 TODO: Add license information.
-
-## Troubleshooting
-If you're running macOS, you might need to install the `gettext` package to use `envsubst`. You can install it using Homebrew:
-```bash
-brew install gettext
-```
