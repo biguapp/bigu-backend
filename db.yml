@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER=bigu
+      - POSTGRES_PASSWORD=bigu
