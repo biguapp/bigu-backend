@@ -46,6 +46,20 @@ You can deploy the bigu-backend application on any cloud platform that supports 
    ```
    docker-compose -f bigu-backend.yml up
    ```
+   
+### Accessing the application
+Once the application is deployed, you can access it by sending requests to the following URL:
+```
+http://localhost:8080
+```
+
+### Stopping the application
+To stop the application, run the following command:
+```
+docker-compose -f bigu-backend.yml down
+```
+
+If you're running the application locally, you can also stop it by pressing `Ctrl+C` in the terminal window where you ran the `docker-compose` command.
 
 ## Contributing
 If you would like to contribute to the development of bigu-backend, please follow these steps:

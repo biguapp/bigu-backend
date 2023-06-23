@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  app:
+    image: 'bigu-backend:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    env_file:
+      - database.env
+      - mail.env
+    ports:
+      - '8080:8080'
+
+  db:
+    image: 'postgres:latest'
+    container_name: db
+    environment:
+      - POSTGRES_USER=bigu
+      - POSTGRES_PASSWORD=bigu
