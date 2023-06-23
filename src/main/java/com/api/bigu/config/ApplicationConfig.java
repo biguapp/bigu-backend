@@ -4,6 +4,7 @@ import com.api.bigu.repositories.UserRepository;
 import com.api.bigu.services.EmailService;
 import com.api.bigu.services.JavaMailEmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,10 +23,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @Configuration
-@RequiredArgsConstructor
 public class ApplicationConfig {
 
-    private final UserRepository userRepository;
+    private UserRepository userRepository;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Bean
     public DataSource getDataSource() throws URISyntaxException {
@@ -44,7 +49,7 @@ public class ApplicationConfig {
 
     @Bean
     public EmailService emailService() {
-        return new JavaMailEmailService("biguapp@hotmail.com", "bigu151902", "smtp-mail.outlook.com", 587);
+        return new JavaMailEmailService(System.getenv("SPRING_MAIL_USERNAME"), System.getenv("SPRING_MAIL_PASSWORD"),System.getenv("SPRING_MAIL_HOST"), Integer.parseInt(System.getenv("SPRING_MAIL_PORT")));
     }
 
     @Bean
