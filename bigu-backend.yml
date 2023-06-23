@@ -5,6 +5,7 @@ services:
     image: 'bigu-backend:latest'
     build:
       context: .
+      dockerfile: Dockerfile
     container_name: app
     depends_on:
       - db
