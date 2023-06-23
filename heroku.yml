@@ -2,6 +2,6 @@ build:
   docker:
     web: Dockerfile
 
-  addons:
-    - plan: heroku-postgresql
-      as: DATABASE
+addons:
+  - plan: heroku-postgresql
+    as: DATABASE
