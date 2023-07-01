@@ -1,8 +1,9 @@
-package com.api.bigu.models;
+package com.api.bigu.user;
 
-import com.api.bigu.models.enums.Addresses;
+import com.api.bigu.models.Address;
+import com.api.bigu.models.Car;
+import com.api.bigu.models.Ride;
 import com.api.bigu.models.enums.Role;
-import com.api.bigu.models.enums.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;

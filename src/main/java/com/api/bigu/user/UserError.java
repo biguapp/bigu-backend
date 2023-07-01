@@ -1,6 +1,6 @@
-package com.api.bigu.util.errors;
+package com.api.bigu.user;
 
-import com.api.bigu.models.User;
+import com.api.bigu.util.errors.CustomErrorType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

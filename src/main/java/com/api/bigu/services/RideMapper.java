@@ -2,10 +2,11 @@ package com.api.bigu.services;
 
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.user.UserResponse;
 import com.api.bigu.models.Ride;
-import com.api.bigu.models.User;
+import com.api.bigu.user.User;
 import com.api.bigu.repositories.AddressRepository;
+import com.api.bigu.user.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

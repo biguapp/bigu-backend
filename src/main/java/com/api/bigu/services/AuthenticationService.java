@@ -2,12 +2,13 @@ package com.api.bigu.services;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
-import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.user.UserResponse;
 import com.api.bigu.exceptions.UserAlreadyExistsException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
-import com.api.bigu.models.User;
+import com.api.bigu.user.User;
 import com.api.bigu.models.enums.Role;
+import com.api.bigu.user.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;

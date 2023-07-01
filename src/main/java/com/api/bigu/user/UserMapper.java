@@ -1,7 +1,5 @@
-package com.api.bigu.services;
+package com.api.bigu.user;
 
-import com.api.bigu.dto.user.UserResponse;
-import com.api.bigu.models.User;
 import org.springframework.stereotype.Component;
 
 @Component

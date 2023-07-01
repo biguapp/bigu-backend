@@ -2,7 +2,7 @@ package com.api.bigu.dto.candidate;
 
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.dto.ride.RideResponse;
-import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
