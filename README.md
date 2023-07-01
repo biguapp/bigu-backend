@@ -7,11 +7,10 @@ Bigu is a ride-sharing application that allows users to share rides with other u
 ## Prerequisites
 Before you can run the Bigu backend application, please ensure that you have the following prerequisites satisfied:
 
-- **Docker**. You can download Docker [here](https://www.docker.com/get-started).
+- **Podman**. You can download Podman [here](https://podman-desktop.io). 
 - **An e-mail account**. The Bigu backend application uses e-mail to send notifications to users. You can use any e-mail service you like, as long as it supports SMTP.
-- **A PostgreSQL database**. If you're deploying Bigu on the cloud, you'll need to set up a PostgreSQL database. You can download it [here](https://www.postgresql.org/download/).
 
-## Installation
+## Deploying the application
 To install and run the Bigu backend application, please follow these steps:
 
 1. Clone the repository to your local machine:
@@ -22,29 +21,13 @@ To install and run the Bigu backend application, please follow these steps:
    ```
    cd bigu-backend
    ```
-3. Build the Docker image:
+3. Build the container image:
    ```
-   docker build -t bigu-backend:latest .
+   podman build -t bigu-backend:latest .
    ```
-   
-### Deploying bigu-backend locally
-To simplify local deployments, we have provided a `docker-compose.yml` file that will deploy the bigu-backend application along with a PostgreSQL database. To deploy the application locally, follow the steps below:
-
-1. Edit the email server environment variables in the `mail.env` file. You can use any e-mail service you like, as long as it supports SMTP.
-   
-2. Run the following command to deploy the application:
+4. Deploy the Kubernetes cluster:
    ```
-    docker-compose -f bigu-backend.yml -f db.yml up
-    ```
-   
-### Deploying bigu-backend on the cloud
-You can deploy the bigu-backend application on any cloud platform that supports Docker containers. To deploy the application on the cloud using Docker Compose, follow the steps below:
-
-1. Edit the email server environment variables in the `mail.env` file. You can use any e-mail service you like, as long as it supports SMTP.
-2. Edit the database environment variables in the `database.env` file. You can use any PostgreSQL database you like, as long as it is accessible from the cloud.
-3. Run the following command to deploy the application:
-   ```
-   docker-compose -f bigu-backend.yml up
+   podman play kube bigu-backend.yml
    ```
    
 ### Accessing the application
@@ -56,10 +39,8 @@ http://localhost:8080/swagger-ui/index.html
 ### Stopping the application
 To stop the application, run the following command:
 ```
-docker-compose -f bigu-backend.yml down
+podman kube play bigu-backend.yaml --down
 ```
-
-If you're running the application locally, you can also stop it by pressing `Ctrl+C` in the terminal window where you ran the `docker-compose` command.
 
 ## Contributing
 If you would like to contribute to the development of bigu-backend, please follow these steps:
