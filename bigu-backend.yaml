@@ -6,7 +6,7 @@ metadata:
   name: bigu-backend-pod
 spec:
   containers:
-    - image: localhost/bigu:latest
+    - image: localhost/bigu-backend:latest
       name: bigu-backend
       ports:
         - containerPort: 8080
