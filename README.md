@@ -25,7 +25,7 @@ To install and run the Bigu backend application, please follow these steps:
    ```
    podman build -t bigu-backend:latest .
    ```
-4. Deploy the Kubernetes cluster:
+4. Deploy the Kubernetes pod:
    ```
    podman play kube bigu-backend.yml
    ```
