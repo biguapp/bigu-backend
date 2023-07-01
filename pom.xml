@@ -146,7 +146,10 @@
 			<artifactId>jquery</artifactId>
 			<version>3.6.2</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency>
     </dependencies>
 
 	<build>

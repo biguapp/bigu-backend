@@ -9,7 +9,7 @@ import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.CarService;
 import com.api.bigu.util.errors.CarError;
-import com.api.bigu.util.errors.UserError;
+import com.api.bigu.user.UserError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

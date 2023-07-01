@@ -1,12 +1,7 @@
-package com.api.bigu.controllers;
+package com.api.bigu.user;
 
 import com.api.bigu.config.JwtService;
-import com.api.bigu.dto.user.EditUserRequest;
-import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.UserNotFoundException;
-import com.api.bigu.models.User;
-import com.api.bigu.services.UserService;
-import com.api.bigu.util.errors.UserError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

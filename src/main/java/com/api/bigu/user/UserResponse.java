@@ -1,4 +1,4 @@
-package com.api.bigu.dto.user;
+package com.api.bigu.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,14 +9,19 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EditUserRequest {
+public class UserResponse {
+
+    private Integer userId;
 
     private String fullName;
+
+    private String sex;
 
     private String email;
 
     private String phoneNumber;
 
     private String matricula;
+
 
 }

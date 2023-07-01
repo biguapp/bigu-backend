@@ -6,14 +6,13 @@ import com.api.bigu.exceptions.CarNotFoundException;
 import com.api.bigu.exceptions.NoCarsFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Car;
-import com.api.bigu.models.User;
+import com.api.bigu.user.User;
 import com.api.bigu.repositories.CarRepository;
+import com.api.bigu.user.UserService;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

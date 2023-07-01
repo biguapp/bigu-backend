@@ -1,4 +1,4 @@
-package com.api.bigu.controllers;
+package com.api.bigu.user;
 
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.AuthenticationRequest;
@@ -7,11 +7,8 @@ import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
-import com.api.bigu.models.User;
 import com.api.bigu.services.AuthenticationService;
-import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.AuthenticationError;
-import com.api.bigu.util.errors.UserError;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

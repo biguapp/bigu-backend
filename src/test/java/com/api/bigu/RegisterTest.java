@@ -1,17 +1,12 @@
 package com.api.bigu;
 
 import com.api.bigu.dto.auth.*;
-import com.api.bigu.models.User;
-import com.api.bigu.models.enums.UserType;
-import com.api.bigu.repositories.UserRepository;
+import com.api.bigu.user.UserRepository;
 import com.api.bigu.services.AuthenticationService;
-import com.api.bigu.services.UserService;
+import com.api.bigu.user.UserService;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 
-import static com.api.bigu.models.enums.Role.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class RegisterTest {

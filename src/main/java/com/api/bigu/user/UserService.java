@@ -1,15 +1,12 @@
-package com.api.bigu.services;
+package com.api.bigu.user;
 
 import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.dto.user.EditUserRequest;
-import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
 import com.api.bigu.models.Ride;
-import com.api.bigu.models.User;
+import com.api.bigu.services.AddressMapper;
 import com.api.bigu.models.enums.Role;
-import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

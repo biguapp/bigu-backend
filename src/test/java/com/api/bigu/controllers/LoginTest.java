@@ -5,8 +5,8 @@
 //import com.api.bigu.exceptions.UserNotFoundException;
 //import com.api.bigu.exceptions.WrongPasswordException;
 //import com.api.bigu.services.AuthenticationService;
-//import com.api.bigu.services.UserService;
-//import com.api.bigu.util.errors.UserError;
+//import com.api.bigu.user.UserService;
+//import com.api.bigu.user.UserError;
 //import jakarta.transaction.Transactional;
 //import lombok.NoArgsConstructor;
 //import lombok.SneakyThrows;

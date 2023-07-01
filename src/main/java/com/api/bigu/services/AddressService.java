@@ -5,17 +5,16 @@ import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
-import com.api.bigu.models.Car;
-import com.api.bigu.models.User;
+import com.api.bigu.user.User;
 import com.api.bigu.repositories.AddressRepository;
-import com.api.bigu.repositories.UserRepository;
+import com.api.bigu.user.UserRepository;
+import com.api.bigu.user.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional

@@ -1,8 +1,7 @@
-package com.api.bigu.repositories;
+package com.api.bigu.user;
 
-import com.api.bigu.models.User;
+import com.api.bigu.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
