@@ -33,26 +33,6 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public DataSource getDataSource() throws URISyntaxException {
-        URI dbUri = new URI(System.getenv("DATABASE_URL"));
-        String username = dbUri.getUserInfo().split(":")[0];
-        String password = dbUri.getUserInfo().split(":")[1];
-        String dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath() + "?sslmode=prefer";
-
-        DataSourceBuilder<?> dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url(dbUrl);
-        dataSourceBuilder.username(username);
-        dataSourceBuilder.password(password);
-        return dataSourceBuilder.build();
-    }
-
-    @Bean
-    public EmailService emailService() {
-        return new JavaMailEmailService(System.getenv("SPRING_MAIL_USERNAME"), System.getenv("SPRING_MAIL_PASSWORD"),System.getenv("SPRING_MAIL_HOST"), Integer.parseInt(System.getenv("SPRING_MAIL_PORT")));
-    }
-
-    @Bean
     public UserDetailsService userDetailsService() {
         return username -> userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
