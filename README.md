@@ -15,7 +15,7 @@ To install and run the Bigu backend application, please follow these steps:
 
 1. Clone the repository to your local machine:
    ```
-   git clone https://github.com/engsoft-ufcg-22-2/bigu-backend.git
+   git clone https://github.com/biguapp/bigu-backend.git
    ```
 2. Navigate to the project directory:
    ```
