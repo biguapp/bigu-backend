@@ -7,7 +7,7 @@ Bigu is a ride-sharing application that allows users to share rides with other u
 ## Prerequisites
 Before you can run the Bigu backend application, please ensure that you have the following prerequisites satisfied:
 
-- **Podman**. You can download Podman [here](https://podman-desktop.io). 
+- **Podman**. You can download Podman [here](https://podman.io). 
 - **An e-mail account**. The Bigu backend application uses e-mail to send notifications to users. You can use any e-mail service you like, as long as it supports SMTP.
 
 ## Deploying the application
