@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models.enums;
 
 public enum UserType {
@@ -6,3 +7,4 @@ public enum UserType {
     RIDER
 
 }
+*/

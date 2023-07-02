@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 import org.springframework.http.HttpHeaders;
@@ -41,3 +42,4 @@ public class GlobalExceptionHandler {
     }
 
 }
+*/

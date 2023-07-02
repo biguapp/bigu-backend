@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.messagingstompwebsocket;
 
 import lombok.AllArgsConstructor;
@@ -13,3 +14,4 @@ public class OutputMessage {
     private String text;
     private String time;
 }
+*/

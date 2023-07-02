@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class RideIsFullException extends Throwable {
@@ -9,3 +10,4 @@ public class RideIsFullException extends Throwable {
         return "A carona está cheia.";
     }
 }
+*/

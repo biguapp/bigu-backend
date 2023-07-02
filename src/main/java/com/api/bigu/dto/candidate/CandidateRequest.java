@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.candidate;
 
 import jakarta.validation.constraints.NotNull;
@@ -16,3 +17,4 @@ public class CandidateRequest {
     @NotNull(message = "Address id field cannot be null")
     private Integer addressId;
 }
+*/

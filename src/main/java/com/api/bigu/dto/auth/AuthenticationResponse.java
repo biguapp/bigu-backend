@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.auth;
 
 import com.api.bigu.user.UserResponse;
@@ -17,3 +18,4 @@ public class AuthenticationResponse {
     private UserResponse userResponse;
 
 }
+*/

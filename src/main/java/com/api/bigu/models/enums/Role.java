@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models.enums;
 
 public enum Role {
@@ -6,3 +7,4 @@ public enum Role {
     USER
 
 }
+*/

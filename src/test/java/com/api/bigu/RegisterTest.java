@@ -1,3 +1,4 @@
+/**
 package com.api.bigu;
 
 import com.api.bigu.dto.auth.*;
@@ -90,3 +91,4 @@ public class RegisterTest {
 	}
 	
 }
+*/

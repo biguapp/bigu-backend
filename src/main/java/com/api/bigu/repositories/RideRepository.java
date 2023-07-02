@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.repositories;
 
 import com.api.bigu.models.Ride;
@@ -9,3 +10,4 @@ public interface RideRepository extends JpaRepository<Ride, Integer> {
     void deleteByRideId(Integer rideId);
 
 }
+*/

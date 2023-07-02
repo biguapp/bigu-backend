@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.auth;
 
 import jakarta.validation.constraints.NotNull;
@@ -18,3 +19,4 @@ public class NewPasswordRequest {
     private String newPasswordConfirmation;
 
 }
+*/

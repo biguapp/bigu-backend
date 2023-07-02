@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class RideNotFoundException extends Throwable {
@@ -9,3 +10,4 @@ public class RideNotFoundException extends Throwable {
         return "Corrida não encontrada.";
     }
 }
+*/

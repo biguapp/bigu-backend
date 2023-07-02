@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.ride;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,3 +42,4 @@ public class RideRequest {
 
     private String description;
 }
+*/

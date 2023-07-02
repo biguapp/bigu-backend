@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.services;
 
 import com.api.bigu.dto.candidate.CandidateRequest;
@@ -186,3 +187,4 @@ public class RideService {
         return candidatesResponse;
     }
 }
+*/

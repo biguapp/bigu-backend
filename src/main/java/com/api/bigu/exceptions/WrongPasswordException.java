@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class WrongPasswordException extends Throwable{
@@ -9,3 +10,4 @@ public class WrongPasswordException extends Throwable{
         return "Senha errada.";
     }
 }
+*/

@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.messagingstompwebsocket;
 
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -18,3 +19,4 @@ public class ChatController {
         return new OutputMessage(message.getFrom(), message.getText(), time);
     }
 }
+*/

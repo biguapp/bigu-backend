@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.messagingstompwebsocket;
 
 import org.springframework.context.annotation.Configuration;
@@ -20,3 +21,4 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/chat").withSockJS();
     }
 }
+*/

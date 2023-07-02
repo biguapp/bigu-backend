@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 import org.springframework.http.HttpStatus;
@@ -11,4 +12,4 @@ public class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
-}
+}*/

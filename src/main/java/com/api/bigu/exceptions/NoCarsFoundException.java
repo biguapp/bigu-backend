@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class NoCarsFoundException extends Throwable{
@@ -9,3 +10,4 @@ public class NoCarsFoundException extends Throwable{
         return "Nenhum carro encontrado.";
     }
 }
+*/

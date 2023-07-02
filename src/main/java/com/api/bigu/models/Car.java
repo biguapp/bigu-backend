@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models;
 
 import jakarta.persistence.*;
@@ -34,3 +35,4 @@ public class Car {
     @Column(name = "plate", nullable = false)
     private String plate;
 }
+*/

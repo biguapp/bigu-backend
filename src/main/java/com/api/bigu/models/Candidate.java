@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models;
 
 
@@ -29,3 +30,4 @@ public class Candidate {
     @Column(name= "address_id")
     private Integer addressId;
 }
+*/

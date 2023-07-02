@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -46,3 +47,4 @@ public class Address {
     private Integer userId;
 
 }
+*/

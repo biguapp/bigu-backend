@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.candidate;
 
 import com.api.bigu.dto.address.AddressResponse;
@@ -24,3 +25,4 @@ public class CandidateResponse {
 
     private AddressResponse addressResponse;
 }
+*/

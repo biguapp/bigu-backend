@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class AddressNotFoundException extends Throwable {
@@ -9,3 +10,4 @@ public class AddressNotFoundException extends Throwable {
         return "Endereço não encontrado.";
     }
 }
+*/

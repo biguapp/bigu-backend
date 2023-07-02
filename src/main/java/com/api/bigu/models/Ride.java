@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.models;
 
 import com.api.bigu.user.User;
@@ -61,3 +62,4 @@ public class Ride {
     @Column(name = "women_only")
     private Boolean toWomen;
 }
+*/

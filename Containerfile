@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17
+FROM eclipse-temurin:17-ubi9-minimal
 
 COPY . ./app
 WORKDIR ./app

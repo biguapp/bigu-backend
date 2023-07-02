@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.auth;
 
 import lombok.AllArgsConstructor;
@@ -15,4 +16,4 @@ public class RecoveryResponse {
 
     private String message;
 
-}
+}*/

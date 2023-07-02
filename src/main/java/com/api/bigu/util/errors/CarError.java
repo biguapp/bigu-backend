@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.util.errors;
 
 import org.springframework.http.HttpStatus;
@@ -18,3 +19,4 @@ public class CarError {
                 HttpStatus.BAD_REQUEST);
     }
 }
+*/

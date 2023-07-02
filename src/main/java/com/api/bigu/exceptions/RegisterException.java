@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 import java.io.Serial;
@@ -11,3 +12,4 @@ public class RegisterException extends RuntimeException {
         super(message);
     }
 }
+*/

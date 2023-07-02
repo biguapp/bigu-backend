@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.util.errors;
 
 public class CustomErrorType {
@@ -12,4 +13,4 @@ public class CustomErrorType {
         return errorMessage;
     }
 
-}
+}*/

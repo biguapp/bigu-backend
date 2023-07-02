@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class InvalidTimeException extends Throwable{
@@ -9,3 +10,4 @@ public class InvalidTimeException extends Throwable{
         return "Data ou hora inválida.";
     }
 }
+*/

@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 public class UserBlockedException extends Throwable {
@@ -9,3 +10,4 @@ public class UserBlockedException extends Throwable {
         return "Usuário bloqueado.";
     }
 }
+*/

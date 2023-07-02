@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.exceptions;
 
 import lombok.AllArgsConstructor;
@@ -23,3 +24,4 @@ public class StandardError implements Serializable {
     private Integer status;
     private List<String> errors;
 }
+*/

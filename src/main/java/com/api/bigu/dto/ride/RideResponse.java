@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.ride;
 
 import com.api.bigu.dto.address.AddressResponse;
@@ -38,3 +39,4 @@ public class RideResponse {
 
     private String description;
 }
+*/

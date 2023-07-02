@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.dto.car;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -21,3 +22,4 @@ public class CarResponse {
 
     private String plate;
 }
+*/

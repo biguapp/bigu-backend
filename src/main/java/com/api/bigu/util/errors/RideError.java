@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.util.errors;
 
 import com.api.bigu.dto.ride.RideResponse;
@@ -24,3 +25,4 @@ public class RideError {
                 HttpStatus.INSUFFICIENT_STORAGE);
     }
 }
+*/

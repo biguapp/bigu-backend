@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.util.errors;
 
 import org.springframework.http.HttpStatus;
@@ -12,3 +13,4 @@ public class AddressError {
                 HttpStatus.NOT_FOUND);
     }
 }
+*/

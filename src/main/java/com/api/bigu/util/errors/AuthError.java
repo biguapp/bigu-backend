@@ -1,3 +1,4 @@
+/**
 package com.api.bigu.util.errors;
 
 import org.springframework.http.HttpStatus;
@@ -14,3 +15,4 @@ public class AuthError {
 
 
 }
+*/
