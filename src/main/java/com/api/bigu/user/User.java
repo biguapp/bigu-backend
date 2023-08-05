@@ -1,4 +1,3 @@
-/**
 package com.api.bigu.user;
 
 import java.util.UUID;
@@ -14,4 +13,3 @@ public class User {
         this.userId = userId;
     }
 }
-*/

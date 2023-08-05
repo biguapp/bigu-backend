@@ -15,19 +15,20 @@ To install and run the Bigu backend application, please follow these steps:
 
 1. Clone the repository to your local machine:
    ```
-   git clone https://github.com/engsoft-ufcg-22-2/bigu-backend.git
+   git clone https://github.com/biguapp/bigu-backend.git
    ```
 2. Navigate to the project directory:
    ```
    cd bigu-backend
    ```
-3. Build the container image:
+3. Build the container images for the application and for Keycloak:
    ```
    podman build -t bigu-backend:latest .
+   podman build -t bigu-keycloak:latest ./keycloak
    ```
 4. Deploy the Kubernetes cluster:
    ```
-   podman play kube bigu-backend.yml
+   podman play kube bigu-backend.yaml
    ```
    
 ### Accessing the application

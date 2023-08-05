@@ -6,7 +6,7 @@ metadata:
   name: bigu-backend-pod
 spec:
   containers:
-    - image: localhost/bigu:latest
+    - image: localhost/bigu-backend:latest
       name: bigu-backend
       ports:
         - containerPort: 8080
@@ -19,8 +19,48 @@ spec:
       tty: true
       volumeMounts:
           - mountPath: /var/lib/postgresql/data
-            name: 7c18ed6b14b730c8c4241548985ee386a3a7a10738ceac2d44c2da30a835d5b8-pvc
+            name: bigu-db-pvc
+      env:
+        - name: POSTGRES_DB
+          value: bigu
+        - name: POSTGRES_USER
+          value: bigu
+        - name: POSTGRES_PASSWORD
+          value: bigu
+    - image: localhost/bigu-keycloak:latest
+      name: bigu-keycloak
+      ports:
+        - containerPort: 8080
+          hostPort: 8081
+      tty: true
+      volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: bigu-db-pvc
+    - image: docker.io/library/postgres:14
+      name: bigu-keycloak-db
+      ports:
+        - containerPort: 5433
+          hostPort: 5433
+      tty: true
+      volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: bigu-keycloak-db-pvc
+      env:
+        - name: PGPORT
+          value: 5433
+        - name: POSTGRES_DB
+          value: keycloak
+        - name: POSTGRES_USER
+          value: bigu
+        - name: POSTGRES_PASSWORD
+          value: bigu
+
+
   volumes:
-      - name: 7c18ed6b14b730c8c4241548985ee386a3a7a10738ceac2d44c2da30a835d5b8-pvc
+      - name: bigu-db-pvc
         persistentVolumeClaim:
-          claimName: 7c18ed6b14b730c8c4241548985ee386a3a7a10738ceac2d44c2da30a835d5b8
+          claimName: bigu-db
+
+      - name: bigu-keycloak-db-pvc
+        persistentVolumeClaim:
+          claimName: bigu-keycloak-db

@@ -1,4 +1,3 @@
-/**
 package com.api.bigu.user;
 
 public interface UserService {
@@ -7,4 +6,3 @@ public interface UserService {
     boolean isDriverOrRider();
     boolean isAdmin();
 }
-*/
