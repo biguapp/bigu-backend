@@ -39,7 +39,7 @@ public class AuthenticationService {
 	@Autowired
     private AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public AuthenticationResponse register(RegisterRequest registerRequest) throws MessagingException {
         if(registerRequest.getRole() == null) {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
         }
@@ -61,7 +61,7 @@ public class AuthenticationService {
                 .build());
 
         UserResponse userResp = userService.toResponse(user);
-
+        validateAccount(user.getEmail());
         var claims = new HashMap<String, Integer>();
         claims.put("uid", user.getUserId());
 
@@ -147,5 +147,30 @@ public class AuthenticationService {
 
     public void addToBlackList(String token) {
         jwtService.addToBlacklist(token);
+    }
+
+    public ValidateResponse validateAccount(String userEmail) throws UserNotFoundException, MessagingException{
+        User user = userService.findUserByEmail(userEmail);
+
+        String jwtToken = jwtService.generateToken(user);
+
+        userService.updateResetPasswordToken(jwtToken, userEmail);
+
+        String validationLink = "https://bigu.herokuapp.com/validate?token=" + jwtToken;
+
+        String subject = "BIGU - Confirmação de conta";
+        String body = "Olá " + user.getFullName() + ",\n\n" +
+                "Seja bem-vindo ao Bigu. " +
+                "Clique no link abaixo para confirmar seu cadastro:\n\n" +
+                validationLink + "\n\n" +
+                "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
+                "Atenciosamente,\n" +
+                "Equipe do Sistema";
+
+        emailService.sendEmail(user.getEmail(), subject, body);
+
+        return new ValidateResponse().builder()
+                .message("Email de validação enviado.")
+                .build();
     }
 }
