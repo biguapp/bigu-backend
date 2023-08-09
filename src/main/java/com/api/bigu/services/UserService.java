@@ -31,9 +31,6 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private AddressMapper addressMapper;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public Integer buildUser(RegisterRequest requestUser) {
@@ -74,6 +71,15 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("No user by email: " + userEmail));
     }
 
+    public boolean validateUser(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).get();
+        if (userRepository.findByEmail(userEmail).isPresent()){
+            user.setValidated(true);
+            return true;
+        }
+        return false;
+    }
+
     public void addAddressToUser(Address address, Integer userId){
         User user = userRepository.findById(userId).get();
         user.getAddresses().put(address.getNickname(), address);
@@ -89,6 +95,18 @@ public class UserService {
     	
     	if (user.isPresent()) {
             user.get().setResetPasswordToken(token);
+            userRepository.save(user.get());
+        } else {
+            throw new UserNotFoundException("O usuário com email " + email + " não foi encontrado.");
+        }
+    }
+
+    public void updateUserValidateToken(String token, String email) throws UserNotFoundException {
+
+        Optional<User> user = userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            user.get().setUserValidateToken(token);
             userRepository.save(user.get());
         } else {
             throw new UserNotFoundException("O usuário com email " + email + " não foi encontrado.");

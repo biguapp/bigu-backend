@@ -73,6 +73,12 @@ public class User implements UserDetails {
     @Builder.Default
     private boolean accountNonLocked = true;
 
+    @Column(name = "validated")
+    private boolean isValidated;
+
+    @Column(name = "userValidateToken")
+    private String userValidateToken;
+
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
 

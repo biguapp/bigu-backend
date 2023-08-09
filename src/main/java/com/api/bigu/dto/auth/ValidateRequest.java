@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ValidateResponse {
+public class ValidateRequest {
 
-    private String userEmail;
+    private String token;
 
-    private boolean isValidated;
+    private String message;
+
 }

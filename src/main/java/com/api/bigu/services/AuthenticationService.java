@@ -3,6 +3,7 @@ package com.api.bigu.services;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
 import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.NotValidatedException;
 import com.api.bigu.exceptions.UserAlreadyExistsException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
@@ -61,10 +62,9 @@ public class AuthenticationService {
                 .build());
 
         UserResponse userResp = userService.toResponse(user);
-        validateAccount(user.getEmail());
         var claims = new HashMap<String, Integer>();
         claims.put("uid", user.getUserId());
-
+        validateEmail(user.getEmail());
         var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -73,7 +73,9 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-
+        if (!userService.findUserByEmail(authenticationRequest.getEmail()).isValidated()){
+            throw new NotValidatedException("Usuário inválido.");
+        }
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(),
@@ -93,7 +95,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public RecoveryResponse recover(String userEmail) throws UserNotFoundException, MessagingException {
+    public RecoveryResponse recoverEmail(String userEmail) throws UserNotFoundException, MessagingException {
         User user = userService.findUserByEmail(userEmail);
 
         String jwtToken = jwtService.generateToken(user);
@@ -109,7 +111,7 @@ public class AuthenticationService {
                 recoveryLink + "\n\n" +
                 "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
                 "Atenciosamente,\n" +
-                "Equipe do Sistema";
+                "Equipe do Bigu!";
 
         emailService.sendEmail(user.getEmail(), subject, body);
 
@@ -149,28 +151,35 @@ public class AuthenticationService {
         jwtService.addToBlacklist(token);
     }
 
-    public ValidateResponse validateAccount(String userEmail) throws UserNotFoundException, MessagingException{
+    public ValidateRequest validateEmail(String userEmail) throws UserNotFoundException, MessagingException{
         User user = userService.findUserByEmail(userEmail);
 
         String jwtToken = jwtService.generateToken(user);
 
-        userService.updateResetPasswordToken(jwtToken, userEmail);
+        userService.updateUserValidateToken(jwtToken, userEmail);
 
         String validationLink = "https://bigu.herokuapp.com/validate?token=" + jwtToken;
 
         String subject = "BIGU - Confirmação de conta";
         String body = "Olá " + user.getFullName() + ",\n\n" +
-                "Seja bem-vindo ao Bigu. " +
+                "Seja bem-vindo(a) ao Bigu. \n" +
                 "Clique no link abaixo para confirmar seu cadastro:\n\n" +
                 validationLink + "\n\n" +
                 "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
                 "Atenciosamente,\n" +
-                "Equipe do Sistema";
+                "Equipe do Bigu!";
 
         emailService.sendEmail(user.getEmail(), subject, body);
 
-        return new ValidateResponse().builder()
+        return new ValidateRequest().builder()
                 .message("Email de validação enviado.")
+                .build();
+    }
+
+    public ValidateResponse validateAccount(String userEmail){
+        return ValidateResponse.builder()
+                .isValidated(userService.validateUser(userEmail))
+                .userEmail(userEmail)
                 .build();
     }
 }

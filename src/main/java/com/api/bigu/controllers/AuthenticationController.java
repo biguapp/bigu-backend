@@ -5,6 +5,7 @@ import com.api.bigu.dto.auth.AuthenticationRequest;
 import com.api.bigu.dto.auth.EmailRequest;
 import com.api.bigu.dto.auth.NewPasswordRequest;
 import com.api.bigu.dto.auth.RegisterRequest;
+import com.api.bigu.exceptions.NotValidatedException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.User;
@@ -38,25 +39,46 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<?> register(
             @RequestBody @Valid RegisterRequest registerRequest
-    ) {
+    ) throws MessagingException{
         try {
             return ResponseEntity.ok(authenticationService.register(registerRequest));
         } catch (IllegalArgumentException | TransactionSystemException e) {
             return AuthenticationError.userUnauthorized(e.getMessage());
+        } catch (MessagingException e) {
+            throw new MessagingException("Problemas ao enviar o email.");
         }
+    }
+
+    @PutMapping("/validate")
+    public ResponseEntity<?> validate(@RequestHeader("Authorization") String validateToken) {
+        String userEmail = jwtService.extractUsername((jwtService.parse(validateToken)));
+        try {
+            User user = userService.findUserByEmail(userEmail);
+            if (jwtService.isTokenValid(jwtService.parse(validateToken), user)) {
+                return ResponseEntity.ok(authenticationService.validateAccount(user.getEmail()));
+            }
+        } catch (UserNotFoundException e) {
+            return UserError.userNotFoundError();
+        }
+        return (ResponseEntity<?>) ResponseEntity.noContent();
     }
 
     @PostMapping("/authenticate")
     public ResponseEntity<?> authenticate(
             @RequestBody AuthenticationRequest authenticationRequest
     ) {
-        return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+        User user = userService.findUserByEmail(authenticationRequest.getEmail());
+        if (user.isValidated()) {
+            return ResponseEntity.ok(authenticationService.authenticate(authenticationRequest));
+        } else {
+            return (ResponseEntity<?>) ResponseEntity.badRequest();
+        }
     }
 
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody EmailRequest emailRequest) throws MessagingException {
         try {
-            return ResponseEntity.ok(authenticationService.recover(emailRequest.getEmail()));
+            return ResponseEntity.ok(authenticationService.recoverEmail(emailRequest.getEmail()));
         } catch (UserNotFoundException unfe) {
             return UserError.userNotFoundError();
         } catch (MessagingException e) {
