@@ -8,8 +8,12 @@ import com.api.bigu.models.User;
 import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.UserError;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/api/v1/users")
@@ -102,6 +106,21 @@ public class UserController {
             return ResponseEntity.ok(userResponse);
         } catch (UserNotFoundException e) {
             return UserError.userNotFoundError();
+        }
+    }
+
+    @PostMapping("/{userId}/profile-image")
+    public ResponseEntity<String> uploadProfileImage(
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestParam("profileImage") MultipartFile profileImage) {
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try {
+            User user = userService.findUserById(userId);
+            userService.saveUserProfileImage(user, profileImage);
+            return ResponseEntity.ok("Profile image uploaded successfully.");
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error uploading profile image.");
         }
     }
 }

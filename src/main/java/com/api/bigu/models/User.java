@@ -28,6 +28,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
+    private String profileImageName;
+
+    private String profileImageType;
+
+    @Lob
+    private byte[] profileImage;
+
     @CPF
     @Column(name = "cpf_user")
     private String cpfUser;

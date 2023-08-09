@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -144,5 +146,14 @@ public class UserService {
 
     public List<Ride> getRidesFromUser(Integer userId) throws UserNotFoundException, RideNotFoundException {
         return userRepository.findById(userId).get().getRides();
+    }
+
+    public void saveUserProfileImage(User user, MultipartFile profileImage) throws IOException {
+        if (profileImage != null && !profileImage.isEmpty()) {
+            user.setProfileImageName(profileImage.getOriginalFilename());
+            user.setProfileImageType(profileImage.getContentType());
+            user.setProfileImage(profileImage.getBytes());
+            userRepository.save(user);
+        }
     }
 }
