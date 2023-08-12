@@ -23,10 +23,10 @@ public class Ride {
     @Column(name = "driver_id")
     private Integer driverId;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<User> members;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<Candidate> candidates;
 
     @ManyToOne
