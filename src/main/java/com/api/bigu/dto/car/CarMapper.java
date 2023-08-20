@@ -1,4 +1,4 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.car;
 
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;

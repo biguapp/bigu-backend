@@ -1,4 +1,4 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.user;
 
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.models.User;

@@ -1,12 +1,11 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.candidate;
 
-import com.api.bigu.dto.address.AddressRequest;
-import com.api.bigu.dto.address.AddressResponse;
-import com.api.bigu.dto.candidate.CandidateRequest;
-import com.api.bigu.dto.candidate.CandidateResponse;
+import com.api.bigu.dto.user.UserMapper;
 import com.api.bigu.exceptions.AddressNotFoundException;
-import com.api.bigu.models.Address;
 import com.api.bigu.models.Candidate;
+import com.api.bigu.dto.address.AddressMapper;
+import com.api.bigu.services.AddressService;
+import com.api.bigu.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
