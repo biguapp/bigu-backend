@@ -65,15 +65,15 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId")
     @Column(name = "addresses")
     private Map<String, Address> addresses;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId")
     @Column(name = "cars")
     private Map<String, Car> cars;
 
-    @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private List<Ride> rides;
 
@@ -85,6 +85,9 @@ public class User implements UserDetails {
 
     @Column(name = "userValidateToken")
     private String userValidateToken;
+
+    @OneToMany
+    private List<Feedback> feedbacks;
 
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;

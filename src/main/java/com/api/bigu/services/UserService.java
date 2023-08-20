@@ -150,10 +150,18 @@ public class UserService {
 
     public void saveUserProfileImage(User user, MultipartFile profileImage) throws IOException {
         if (profileImage != null && !profileImage.isEmpty()) {
+            deleteUserProfileImage(user);
             user.setProfileImageName(profileImage.getOriginalFilename());
             user.setProfileImageType(profileImage.getContentType());
             user.setProfileImage(profileImage.getBytes());
             userRepository.save(user);
         }
+    }
+
+    public void deleteUserProfileImage(User user){
+        user.setProfileImage(null);
+        user.setProfileImageName(null);
+        user.setProfileImageType(null);
+        userRepository.save(user);
     }
 }

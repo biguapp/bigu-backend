@@ -9,6 +9,7 @@ import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.UserError;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -109,7 +110,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/{userId}/profile-image")
+    @PutMapping("/{userId}/profile-image")
     public ResponseEntity<String> uploadProfileImage(
             @RequestHeader("Authorization") String authorizationHeader,
             @RequestParam("profileImage") MultipartFile profileImage) {
@@ -121,6 +122,32 @@ public class UserController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error uploading profile image.");
+        }
+    }
+
+    @GetMapping("/{userId}/profile-image")
+    public ResponseEntity<?> getProfileImage(
+            @RequestHeader("Authorization") String authorizationHeader){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try{
+            User user = userService.findUserById(userId);
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType(user.getProfileImageType()))
+                    .body(user.getProfileImage());
+        } catch (UserNotFoundException e){
+            return UserError.userNotFoundError();
+        }
+    }
+
+    @DeleteMapping("/{userId}/profile-image")
+    public ResponseEntity<?> deleteProfileImage(
+            @RequestHeader("Authorization") String authorizationHeader){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try {
+            User user = userService.findUserById(userId);
+            userService.deleteUserProfileImage(user);
+            return ResponseEntity.ok("Imagem removida com sucesso.");
+        } catch (UserNotFoundException e){
+            return UserError.userNotFoundError();
         }
     }
 }
