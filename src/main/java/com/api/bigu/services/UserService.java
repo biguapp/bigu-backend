@@ -2,6 +2,7 @@ package com.api.bigu.services;
 
 import com.api.bigu.dto.auth.RegisterRequest;
 import com.api.bigu.dto.user.EditUserRequest;
+import com.api.bigu.dto.user.UserMapper;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;

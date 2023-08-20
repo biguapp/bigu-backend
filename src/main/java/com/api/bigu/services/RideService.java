@@ -1,7 +1,9 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.candidate.CandidateMapper;
 import com.api.bigu.dto.candidate.CandidateRequest;
 import com.api.bigu.dto.candidate.CandidateResponse;
+import com.api.bigu.dto.ride.RideMapper;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
@@ -69,6 +71,7 @@ public class RideService {
         ride.setCar(carService.findCarById(carId).get());
         members.add(driver);
         ride.setMembers(members);
+        ride.setIsOver(false);
         rideRepository.save(ride);
         userService.addRideToUser(driver.getUserId(), ride);
         return rideMapper.toRideResponse(ride);
@@ -183,5 +186,12 @@ public class RideService {
             candidatesResponse.add(candidateMapper.toCandidateResponse(candidate));
         }
         return candidatesResponse;
+    }
+
+    public RideResponse setRideOver(Integer rideId) throws RideNotFoundException{
+        Ride ride = rideRepository.findById(rideId).get();
+        ride.setIsOver(true);
+        rideRepository.save(ride);
+        return rideMapper.toRideResponse(ride);
     }
 }

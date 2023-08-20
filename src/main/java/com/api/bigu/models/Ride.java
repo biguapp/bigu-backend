@@ -23,10 +23,10 @@ public class Ride {
     @Column(name = "driver_id")
     private Integer driverId;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<User> members;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     private List<Candidate> candidates;
 
     @ManyToOne
@@ -60,4 +60,7 @@ public class Ride {
 
     @Column(name = "women_only")
     private Boolean toWomen;
+
+    @Column(name = "is_over")
+    private Boolean isOver;
 }

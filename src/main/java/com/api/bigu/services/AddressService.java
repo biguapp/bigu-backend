@@ -1,11 +1,11 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.address.AddressMapper;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
-import com.api.bigu.models.Car;
 import com.api.bigu.models.User;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.UserRepository;
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional

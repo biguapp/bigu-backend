@@ -1,7 +1,7 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.candidate.CandidateMapper;
 import com.api.bigu.dto.candidate.CandidateRequest;
-import com.api.bigu.dto.candidate.CandidateResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
 import com.api.bigu.models.Candidate;
 import com.api.bigu.repositories.CandidateRepository;

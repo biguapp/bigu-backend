@@ -38,4 +38,6 @@ public class RideResponse {
     private CarResponse car;
 
     private String description;
+
+    private Boolean isOver;
 }

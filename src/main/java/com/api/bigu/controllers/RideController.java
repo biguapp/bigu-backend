@@ -8,9 +8,9 @@ import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.*;
 import com.api.bigu.models.User;
-import com.api.bigu.services.CandidateMapper;
+import com.api.bigu.dto.candidate.CandidateMapper;
 import com.api.bigu.services.CarService;
-import com.api.bigu.services.RideMapper;
+import com.api.bigu.dto.ride.RideMapper;
 import com.api.bigu.services.RideService;
 import com.api.bigu.util.errors.AddressError;
 import com.api.bigu.util.errors.CarError;
@@ -169,7 +169,7 @@ public class RideController {
         }
     }
 
-    @DeleteMapping("delete-ride/{rideId}")
+    @DeleteMapping("/delete-ride/{rideId}")
     public ResponseEntity<?> cancelRide(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId) {
         try {
             Integer driverId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
@@ -209,6 +209,19 @@ public class RideController {
         List<RideResponse> memberRides = rideService.getMemberHistory(userId);
         return ResponseEntity.ok(memberRides);
 
+    }
+
+    @PutMapping("/over/{rideId}")
+    public ResponseEntity<?> setRideOver(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer rideId){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))){
+            try {
+                rideService.setRideOver(rideId);
+            } catch (RideNotFoundException e) {
+                return RideError.rideNotFoundError();
+            }
+        }
+        return ResponseEntity.ok("Ride " + rideId + " is over.");
     }
 }
 
