@@ -89,6 +89,8 @@ public class User implements UserDetails {
     @OneToMany
     private List<Feedback> feedbacks;
 
+    @Column(name = "avgScore")
+    private float avgScore;
 
     private static final int MAX_LOGIN_ATTEMPTS = 3;
 

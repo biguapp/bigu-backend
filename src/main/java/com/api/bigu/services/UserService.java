@@ -7,6 +7,7 @@ import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.Feedback;
 import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -164,5 +166,56 @@ public class UserService {
         user.setProfileImageName(null);
         user.setProfileImageType(null);
         userRepository.save(user);
+    }
+
+    public void addFeedbackToUser(Integer userId, Feedback feedback){
+        User user = userRepository.findById(userId).get();
+        user.getFeedbacks().add(feedback);
+        userRepository.save(user);
+        if (feedback.getReceiverId().equals(userId)){
+            user.setAvgScore(avgFeedbacksReceived(userId));
+        }
+    }
+
+    public void deleteFeedbackFromUser(Integer userId, Feedback feedback){
+        User user = userRepository.findById(userId).get();
+        user.getFeedbacks().remove(feedback);
+        userRepository.save(user);
+        if (feedback.getReceiverId().equals(userId)){
+            user.setAvgScore(avgFeedbacksReceived(userId));
+        }
+    }
+
+    public float avgFeedbacksReceived(Integer userId) throws UserNotFoundException{
+        int count = 0;
+        float sumScore = 0;
+        for (Feedback feedback: userRepository.findById(userId).get().getFeedbacks()) {
+            if (userId.equals(feedback.getReceiverId())){
+                sumScore += feedback.getScore();
+                count++;
+            }
+        }
+        float avg = sumScore/count;
+        return avg;
+    }
+
+    public List<Feedback> getFeedbacksSent(Integer userId){
+        List<Feedback> feedbacks = new ArrayList<>();
+        for(Feedback feedback : userRepository.findById(userId).get().getFeedbacks()){
+            if (userId.equals(feedback.getSenderId())){
+                feedbacks.add(feedback);
+            }
+        }
+        return feedbacks;
+    }
+
+    public List<Feedback> getFeedbacksReceived(Integer userId){
+        List<Feedback> feedbacks = new ArrayList<>();
+        for(Feedback feedback : userRepository.findById(userId).get().getFeedbacks()){
+            if (userId.equals(feedback.getReceiverId())){
+                feedbacks.add(feedback);
+            }
+        }
+        return feedbacks;
     }
 }

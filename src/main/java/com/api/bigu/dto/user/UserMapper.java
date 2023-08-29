@@ -15,6 +15,7 @@ public class UserMapper {
                 .email(userCreated.getEmail())
                 .phoneNumber(userCreated.getPhoneNumber())
                 .matricula(userCreated.getMatricula())
+                .avgScore(userCreated.getAvgScore())
                 .build();
     }
 }

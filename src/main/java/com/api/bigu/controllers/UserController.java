@@ -1,10 +1,14 @@
 package com.api.bigu.controllers;
 
 import com.api.bigu.config.JwtService;
+import com.api.bigu.dto.feedback.FeedbackRequest;
 import com.api.bigu.dto.user.EditUserRequest;
 import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.FeedbackNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
+import com.api.bigu.models.Feedback;
 import com.api.bigu.models.User;
+import com.api.bigu.services.FeedbackService;
 import com.api.bigu.services.UserService;
 import com.api.bigu.util.errors.UserError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +26,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FeedbackService feedbackService;
 
     @Autowired
     private JwtService jwtService;
@@ -150,4 +157,43 @@ public class UserController {
             return UserError.userNotFoundError();
         }
     }
+
+    @GetMapping("/{userId}/avg-score")
+    public ResponseEntity<?> getAvgScore(@RequestHeader("Authorization") String authorizationHeader){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try {
+            return ResponseEntity.ok(userService.avgFeedbacksReceived(userId));
+        } catch (UserNotFoundException e){
+            return UserError.userNotFoundError();
+        }
+    }
+
+    @PostMapping("/{userId}/create-feedback")
+    public ResponseEntity<?> createFeedback(@RequestHeader("Authorization") String authorizationHeader, FeedbackRequest feedbackRequest){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try{
+            return ResponseEntity.ok(feedbackService.createFeedback(feedbackRequest));
+        } catch (UserNotFoundException e){
+            return UserError.userNotFoundError();
+        }
+    }
+
+    @DeleteMapping("{userId}/delete-feedback")
+    public ResponseEntity<?> deleteFeedback(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Integer feedbackId){
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        try{
+            feedbackService.deleteFeedback(feedbackId, userId);
+            return ResponseEntity.ok("Feedback removido.");
+        }
+        catch (UserNotFoundException uNFE){
+            return UserError.userNotFoundError();
+        }
+        catch (FeedbackNotFoundException fNFE){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    //TODO implementar endpoints de getFeedbacksReceived e getFeedbacksDone
+
+
 }

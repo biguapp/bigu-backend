@@ -59,6 +59,7 @@ public class AuthenticationService {
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
+                .avgScore(0)
                 .build());
 
         UserResponse userResp = userService.toResponse(user);
