@@ -40,6 +40,28 @@ public class AuthenticationService {
 	@Autowired
     private AuthenticationManager authenticationManager;
 
+    public AuthenticationResponse registerMock(User newUser) {
+        if(newUser.getRole() == null) {
+            newUser.setRole(Role.USER);
+        }
+        List<User> users = userService.getAllUsers();
+        for (User user: users) {
+            if(user.getEmail().equals(newUser.getEmail())){
+                throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " already exists.");
+            }
+        }
+
+        User user = userService.registerUser(newUser);
+        UserResponse userResp = userService.toResponse(user);
+        var claims = new HashMap<String, Integer>();
+        claims.put("uid", user.getUserId());
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .userResponse(userResp)
+                .build();
+    }
+
     public AuthenticationResponse register(RegisterRequest registerRequest) throws MessagingException {
         if(registerRequest.getRole() == null) {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
@@ -169,6 +191,10 @@ public class AuthenticationService {
                 "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
                 "Atenciosamente,\n" +
                 "Equipe do Bigu!";
+
+        System.err.println("Sending validation email to: " +  userEmail);
+        System.err.println("Subject: " +  subject);
+        System.err.println("Body: " + body);
 
         emailService.sendEmail(user.getEmail(), subject, body);
 

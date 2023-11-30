@@ -92,7 +92,7 @@ public class User implements UserDetails {
     @Column(name = "avgScore")
     private float avgScore;
 
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    private static final int MAX_LOGIN_ATTEMPTS = 5;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

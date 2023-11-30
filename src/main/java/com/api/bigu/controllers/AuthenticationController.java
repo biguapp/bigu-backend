@@ -45,6 +45,7 @@ public class AuthenticationController {
         } catch (IllegalArgumentException | TransactionSystemException e) {
             return AuthenticationError.userUnauthorized(e.getMessage());
         } catch (MessagingException e) {
+            System.err.println(e.getMessage());
             throw new MessagingException("Problemas ao enviar o email.");
         }
     }
