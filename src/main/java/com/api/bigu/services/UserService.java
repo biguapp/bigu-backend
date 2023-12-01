@@ -6,10 +6,7 @@ import com.api.bigu.dto.user.UserMapper;
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.exceptions.RideNotFoundException;
 import com.api.bigu.exceptions.UserNotFoundException;
-import com.api.bigu.models.Address;
-import com.api.bigu.models.Feedback;
-import com.api.bigu.models.Ride;
-import com.api.bigu.models.User;
+import com.api.bigu.models.*;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -217,5 +214,11 @@ public class UserService {
             }
         }
         return feedbacks;
+    }
+
+    public void addCarToUser(Integer userId, Car car) {
+        User user = userRepository.findById(userId).get();
+        user.getCars().put(car.getCarId(), car);
+        userRepository.save(user);
     }
 }

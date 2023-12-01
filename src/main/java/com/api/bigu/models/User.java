@@ -71,7 +71,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "userId")
     @Column(name = "cars")
-    private Map<String, Car> cars;
+    private Map<Integer, Car> cars;
 
     @ManyToMany(mappedBy = "members")
     @JsonIgnore

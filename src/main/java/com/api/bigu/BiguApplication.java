@@ -1,11 +1,16 @@
 package com.api.bigu;
-import com.api.bigu.dto.auth.RegisterRequest;
+import com.api.bigu.dto.car.CarMapper;
 import com.api.bigu.dto.car.CarRequest;
+import com.api.bigu.dto.ride.RideRequest;
+import com.api.bigu.exceptions.CarNotFoundException;
+import com.api.bigu.exceptions.InvalidTimeException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
+import com.api.bigu.models.Ride;
 import com.api.bigu.models.User;
 import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.AddressRepository;
+import com.api.bigu.repositories.CarRepository;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.repositories.UserRepository;
 import com.api.bigu.services.*;
@@ -13,6 +18,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class BiguApplication {
@@ -28,7 +35,7 @@ public class BiguApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService) {
+    public CommandLineRunner commandLineRunner(AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService, CarMapper carMapper, CarRepository carRepository) {
         return args -> {
             var driver = User.builder()
                     .fullName("Driver Fuch")
@@ -102,7 +109,7 @@ public class BiguApplication {
             System.err.println("User 4 token: " + authService.register(rider2).getToken());*/
 
 
-            CarRequest car = CarRequest.builder()
+            CarRequest carDriver = CarRequest.builder()
                     .brand("Chevrolet")
                     .plate("KGU7E07")
                     .color("Prata")
@@ -110,13 +117,13 @@ public class BiguApplication {
                     .modelYear("2019")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail(driver.getEmail()).get().getUserId(), car);
+                carService.addCarToUser(driver.getUserId(), carDriver);
             } catch (UserNotFoundException e) {
                 throw new NullPointerException("Usuário não encontrado.");
             }
             System.err.println("Car registered");
 
-            CarRequest car2 = CarRequest.builder()
+            CarRequest carDriverF = CarRequest.builder()
                     .brand("Hyundai")
                     .plate("MNH9728")
                     .color("Branco")
@@ -124,7 +131,7 @@ public class BiguApplication {
                     .modelYear("2021")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail(driverF.getEmail()).get().getUserId(), car);
+                carService.addCarToUser(driverF.getUserId(), carDriverF);
             } catch (UserNotFoundException e) {
                 throw new NullPointerException("Usuário não encontrado.");
             }
@@ -220,6 +227,24 @@ public class BiguApplication {
                     .build();
             addressRepository.save(addressRider2);
             userService.addAddressToUser(addressRider2, userRepository.findByEmail(riderF.getEmail()).get().getUserId());
+
+            RideRequest ride1 = RideRequest.builder()
+                            .carId(carRepository.findByUserId(driver.getUserId()).get().get(0).getCarId())
+                            .price(2.5)
+                            .dateTime(LocalDateTime.of(2024, 6, 2, 8, 0))
+                            .numSeats(3)
+                            .toWomen(false)
+                            .goingToCollege(true)
+                            .destinationAddressId(addressUFCG1.getAddressId())
+                            .startAddressId(addressDriver.getAddressId())
+                            .build();
+            try {
+                rideService.createRide(ride1, driver);
+            } catch (CarNotFoundException e) {
+                throw new NullPointerException("Carro não encontrado.");
+            } catch (InvalidTimeException e) {
+                throw new NullPointerException("Hora inválida.");
+            }
 
         };
     }

@@ -50,7 +50,7 @@ public class AuthenticationService {
                 throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " already exists.");
             }
         }
-
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         User user = userService.registerUser(newUser);
         UserResponse userResp = userService.toResponse(user);
         var claims = new HashMap<String, Integer>();

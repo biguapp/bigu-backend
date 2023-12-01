@@ -52,13 +52,13 @@ public class CarService {
 
     public CarResponse addCarToUser(Integer userId, CarRequest carRequest) throws UserNotFoundException {
         Car car = carMapper.toCar(userId, carRequest);
-        userService.findUserById(userId).getCars().put(car.getPlate(), car);
         carRepository.save(car);
+        userService.addCarToUser(userId, car);
         return carMapper.toCarResponse(car);
     }
 
     public List<CarResponse> findCarsByUserId(Integer userId) throws UserNotFoundException, NoCarsFoundException {
-        List<Car> userCars = userService.findUserById(userId).getCars().values().stream().toList();
+        List<Car> userCars = carRepository.findByUserId(userId).get();
         List<CarResponse> carsResponse = new ArrayList<>();
         for (Car car: userCars
              ) {
@@ -70,8 +70,8 @@ public class CarService {
     public void removeCarFromUser(Integer userId, Integer carId) throws UserNotFoundException, CarNotFoundException {
         User user = userService.findUserById(userId);
         Car car = findCarById(carId).get();
-        if (user.getCars().containsKey(car.getPlate())) {
-            user.getCars().remove(car.getPlate());
+        if (user.getCars().containsKey(car.getCarId())) {
+            user.getCars().remove(car.getCarId());
             carRepository.delete(car);
         }
     }
