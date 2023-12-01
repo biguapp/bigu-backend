@@ -192,11 +192,22 @@ public class RideController {
     }
 
     @GetMapping("/available")
-    public ResponseEntity<?> getAvailableRides(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> getAvailableRidesToUser(@RequestHeader("Authorization") String authorizationHeader) {
         List<RideResponse> availableRides = new ArrayList<>();
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))) {
-            availableRides = rideService.findAvailableRides(userId);
+            availableRides = rideService.findAvailableRidesToUser(userId);
+        }
+
+        return ResponseEntity.ok(availableRides);
+    }
+
+    @GetMapping("/all-available")
+    public ResponseEntity<?> getAllAvailable(@RequestHeader("Authorization") String authorizationHeader) {
+        List<RideResponse> availableRides = new ArrayList<>();
+        Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
+        if (jwtService.isTokenValid(jwtService.parse(authorizationHeader), rideService.getUser(userId))) {
+            availableRides = rideService.findAllAvailableRides();
         }
 
         return ResponseEntity.ok(availableRides);

@@ -96,12 +96,12 @@ public class RideService {
 
     public List<RideResponse> getAllRides() {
         List<Ride> rides = rideRepository.findAll();
-        List<RideResponse> availableRides = new ArrayList<>();
+        List<RideResponse> allRides = new ArrayList<>();
         for (Ride ride: rides) {
-                    availableRides.add(rideMapper.toRideResponse(ride));
+                    allRides.add(rideMapper.toRideResponse(ride));
 
         }
-        return availableRides;
+        return allRides;
     }
 
     public List<UserResponse> getRideMembers(Integer rideId) throws RideNotFoundException {
@@ -149,15 +149,28 @@ public class RideService {
         return rideMapper.toRideResponse(ride);
     }
 
-    public List<RideResponse> findAvailableRides(Integer userId) throws UserNotFoundException {
+    public List<RideResponse> findAvailableRidesToUser(Integer userId) throws UserNotFoundException {
         List<Ride> rides = rideRepository.findAll();
         boolean isWomen = getUser(userId).getSex().equals("F");
         List<RideResponse> availableRides = new ArrayList<>();
         for (Ride ride: rides) {
             if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
                 if(isWomen || !ride.getToWomen()){
-                    availableRides.add(rideMapper.toRideResponse(ride));
+                    if (!ride.getDriverId().equals(userId)) {
+                        availableRides.add(rideMapper.toRideResponse(ride));
+                    }
                 }
+            }
+        }
+        return availableRides;
+    }
+
+    public List<RideResponse> findAllAvailableRides() throws UserNotFoundException {
+        List<Ride> rides = rideRepository.findAll();
+        List<RideResponse> availableRides = new ArrayList<>();
+        for (Ride ride: rides) {
+            if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
+                availableRides.add(rideMapper.toRideResponse(ride));
             }
         }
         return availableRides;

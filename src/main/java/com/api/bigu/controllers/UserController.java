@@ -50,7 +50,6 @@ public class UserController {
 
     @GetMapping("/self")
     public ResponseEntity<?> getSelf(@RequestHeader("Authorization") String authorizationHeader) {
-        System.err.println("ENTROU AQUI.");
         UserResponse userResp = new UserResponse();
         try {
             Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
@@ -178,7 +177,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("{userId}/delete-feedback")
+    @DeleteMapping("/{userId}/delete-feedback")
     public ResponseEntity<?> deleteFeedback(@RequestHeader("Authorization") String authorizationHeader, @RequestParam Integer feedbackId){
         Integer userId = jwtService.extractUserId(jwtService.parse(authorizationHeader));
         try{
