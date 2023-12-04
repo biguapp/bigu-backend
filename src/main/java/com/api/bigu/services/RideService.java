@@ -1,7 +1,9 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.candidate.CandidateMapper;
 import com.api.bigu.dto.candidate.CandidateRequest;
 import com.api.bigu.dto.candidate.CandidateResponse;
+import com.api.bigu.dto.ride.RideMapper;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.dto.user.UserResponse;
@@ -69,6 +71,7 @@ public class RideService {
         ride.setCar(carService.findCarById(carId).get());
         members.add(driver);
         ride.setMembers(members);
+        ride.setIsOver(false);
         rideRepository.save(ride);
         userService.addRideToUser(driver.getUserId(), ride);
         return rideMapper.toRideResponse(ride);
@@ -93,12 +96,12 @@ public class RideService {
 
     public List<RideResponse> getAllRides() {
         List<Ride> rides = rideRepository.findAll();
-        List<RideResponse> availableRides = new ArrayList<>();
+        List<RideResponse> allRides = new ArrayList<>();
         for (Ride ride: rides) {
-                    availableRides.add(rideMapper.toRideResponse(ride));
+                    allRides.add(rideMapper.toRideResponse(ride));
 
         }
-        return availableRides;
+        return allRides;
     }
 
     public List<UserResponse> getRideMembers(Integer rideId) throws RideNotFoundException {
@@ -136,7 +139,7 @@ public class RideService {
         List<Candidate> candidates = ride.getCandidates().stream().toList();
 
         for (Candidate candidate: candidates) {
-            if (candidate.getUserId().equals(candidateResponse.getUserId())){
+            if (candidate.getUserId().equals(candidateResponse.getUserResponse().getUserId())){
                 if (candidateResponse.isAccepted()){
                     ride.getMembers().add(userService.findUserById(candidate.getUserId()));
                 }
@@ -146,15 +149,28 @@ public class RideService {
         return rideMapper.toRideResponse(ride);
     }
 
-    public List<RideResponse> findAvailableRides(Integer userId) throws UserNotFoundException {
+    public List<RideResponse> findAvailableRidesToUser(Integer userId) throws UserNotFoundException {
         List<Ride> rides = rideRepository.findAll();
         boolean isWomen = getUser(userId).getSex().equals("F");
         List<RideResponse> availableRides = new ArrayList<>();
         for (Ride ride: rides) {
             if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
                 if(isWomen || !ride.getToWomen()){
-                    availableRides.add(rideMapper.toRideResponse(ride));
+                    if (!ride.getDriverId().equals(userId)) {
+                        availableRides.add(rideMapper.toRideResponse(ride));
+                    }
                 }
+            }
+        }
+        return availableRides;
+    }
+
+    public List<RideResponse> findAllAvailableRides() throws UserNotFoundException {
+        List<Ride> rides = rideRepository.findAll();
+        List<RideResponse> availableRides = new ArrayList<>();
+        for (Ride ride: rides) {
+            if ((ride.getMembers().size() - 1 < ride.getNumSeats() && ride.getScheduledTime().isAfter(LocalDateTime.now()))){
+                availableRides.add(rideMapper.toRideResponse(ride));
             }
         }
         return availableRides;
@@ -169,5 +185,26 @@ public class RideService {
             }
         }
         return userHistory;
+    }
+
+    public List<CandidateResponse> getCandidates(Integer driverId) throws RideNotFoundException, AddressNotFoundException {
+        List<CandidateResponse> candidatesResponse = new ArrayList<>();
+        List<Candidate> candidates = new ArrayList<>();
+        List<Ride> userRides = userService.getRidesFromUser(driverId);
+        for (Ride ride : userRides) {
+            candidates.addAll(candidateService.getCandidatesFromRide(ride.getRideId()));
+        }
+
+        for(Candidate candidate: candidates) {
+            candidatesResponse.add(candidateMapper.toCandidateResponse(candidate));
+        }
+        return candidatesResponse;
+    }
+
+    public RideResponse setRideOver(Integer rideId) throws RideNotFoundException{
+        Ride ride = rideRepository.findById(rideId).get();
+        ride.setIsOver(true);
+        rideRepository.save(ride);
+        return rideMapper.toRideResponse(ride);
     }
 }

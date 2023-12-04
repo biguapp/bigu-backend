@@ -15,6 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class RideResponse {
 
+    private Integer id;
+
     private boolean goingToCollege;
 
     private UserResponse driver;
@@ -36,4 +38,6 @@ public class RideResponse {
     private CarResponse car;
 
     private String description;
+
+    private Boolean isOver;
 }

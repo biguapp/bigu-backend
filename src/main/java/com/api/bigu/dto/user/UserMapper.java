@@ -1,4 +1,4 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.user;
 
 import com.api.bigu.dto.user.UserResponse;
 import com.api.bigu.models.User;
@@ -15,6 +15,7 @@ public class UserMapper {
                 .email(userCreated.getEmail())
                 .phoneNumber(userCreated.getPhoneNumber())
                 .matricula(userCreated.getMatricula())
+                .avgScore(userCreated.getAvgScore())
                 .build();
     }
 }

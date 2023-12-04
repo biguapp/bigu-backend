@@ -23,5 +23,6 @@ public class UserResponse {
 
     private String matricula;
 
+    private float avgScore;
 
 }

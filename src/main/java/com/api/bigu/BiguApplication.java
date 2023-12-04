@@ -1,18 +1,19 @@
 package com.api.bigu;
-
+import com.api.bigu.dto.car.CarMapper;
 import com.api.bigu.dto.car.CarRequest;
 import com.api.bigu.dto.ride.RideRequest;
 import com.api.bigu.exceptions.CarNotFoundException;
+import com.api.bigu.exceptions.InvalidTimeException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.models.Address;
-import com.api.bigu.models.Car;
+import com.api.bigu.models.Ride;
+import com.api.bigu.models.User;
+import com.api.bigu.models.enums.Role;
 import com.api.bigu.repositories.AddressRepository;
 import com.api.bigu.repositories.CarRepository;
+import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.repositories.UserRepository;
 import com.api.bigu.services.*;
-import com.api.bigu.dto.auth.RegisterRequest;
-import com.api.bigu.util.errors.CarError;
-import com.api.bigu.util.errors.UserError;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,13 +21,13 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
 
-
 @SpringBootApplication
 public class BiguApplication {
     private final UserRepository userRepository;
 
     public BiguApplication(UserRepository userRepository) {
         this.userRepository = userRepository;
+
     }
 
     public static void main(String[] args) {
@@ -34,45 +35,58 @@ public class BiguApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(
-            AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService
-    ) {
+    public CommandLineRunner commandLineRunner(AuthenticationService authService, AddressRepository addressRepository, UserService userService, CarService carService, RideService rideService, CarMapper carMapper, CarRepository carRepository) {
         return args -> {
-            var admin = RegisterRequest.builder()
-                    .fullName("Admin")
-                    .email("admin@mail.ufcg.edu.br")
-                    .sex("M")
-                    .phoneNumber("111111111")
-                    .password("1234")
-                    .role("ADMIN")
-                    .build();
-            System.err.println("Admin Registered");
-            System.err.println("Admin token: " + authService.register(admin).getToken());
-
-            var driver = RegisterRequest.builder()
-                    .fullName("Driver de Araujo")
+            var driver = User.builder()
+                    .fullName("Driver Fuch")
                     .email("driver@mail.ufcg.edu.br")
-                    .sex("F")
+                    .sex("M")
+                    .phoneNumber("12312312123")
+                    .password("123456")
+                    .role(Role.USER)
+                    .isValidated(true)
+                    .build();
+            System.err.println("Driver Registered");
+            System.err.println("Driver token: " + authService.registerMock(driver).getToken());
+
+            var rider = User.builder()
+                    .fullName("Rider Ramalho")
+                    .email("rider@mail.ufcg.edu.br")
+                    .sex("M")
                     .phoneNumber("222222222")
                     .password("1234")
-                    .role("USER")
+                    .role(Role.USER)
+                    .isValidated(true)
                     .build();
-            System.err.println("User 1 registered");
-            System.err.println("User 1 token: " + authService.register(driver).getToken());
+            System.err.println("Rider registered");
+            System.err.println("Rider token: " + authService.registerMock(rider).getToken());
 
-            var driver2 = RegisterRequest.builder()
-                    .fullName("Driver2 Correia")
-                    .email("driver2@mail.ufcg.edu.br")
-                    .sex("M")
+            var driverF = User.builder()
+                    .fullName("Driver Alves")
+                    .email("driver.alves@mail.ufcg.edu.br")
+                    .sex("F")
                     .phoneNumber("8388876616")
                     .password("12345")
-                    .role("USER")
+                    .role(Role.USER)
+                    .isValidated(true)
                     .build();
-            System.err.println("User 2 registered");
-            System.err.println("User 2 token: " + authService.register(driver2).getToken());
+            System.err.println("Driver F registered");
+            System.err.println("Driver F token: " + authService.registerMock(driverF).getToken());
+
+            var riderF = User.builder()
+                    .fullName("Rider Female")
+                    .email("rider.female@mail.ufcg.edu.br")
+                    .sex("F")
+                    .phoneNumber("12312312312")
+                    .password("12345")
+                    .role(Role.USER)
+                    .isValidated(true)
+                    .build();
+            System.err.println("Rider F registered");
+            System.err.println("Rider F token: " + authService.registerMock(riderF).getToken());
 
 
-            var rider = RegisterRequest.builder()
+            /*var rider = RegisterRequest.builder()
                     .fullName("Rider1 Silva")
                     .email("matheus.rafael@ccc.ufcg.edu.br")
                     .sex("F")
@@ -92,10 +106,10 @@ public class BiguApplication {
                     .role("USER")
                     .build();
             System.err.println("User 4 registered");
-            System.err.println("User 4 token: " + authService.register(rider2).getToken());
+            System.err.println("User 4 token: " + authService.register(rider2).getToken());*/
 
 
-            CarRequest car = CarRequest.builder()
+            CarRequest carDriver = CarRequest.builder()
                     .brand("Chevrolet")
                     .plate("KGU7E07")
                     .color("Prata")
@@ -103,13 +117,13 @@ public class BiguApplication {
                     .modelYear("2019")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail(driver.getEmail()).get().getUserId(), car);
+                carService.addCarToUser(driver.getUserId(), carDriver);
             } catch (UserNotFoundException e) {
                 throw new NullPointerException("Usuário não encontrado.");
             }
             System.err.println("Car registered");
 
-            CarRequest car2 = CarRequest.builder()
+            CarRequest carDriverF = CarRequest.builder()
                     .brand("Hyundai")
                     .plate("MNH9728")
                     .color("Branco")
@@ -117,7 +131,7 @@ public class BiguApplication {
                     .modelYear("2021")
                     .build();
             try {
-                carService.addCarToUser(userRepository.findByEmail(driver2.getEmail()).get().getUserId(), car);
+                carService.addCarToUser(driverF.getUserId(), carDriverF);
             } catch (UserNotFoundException e) {
                 throw new NullPointerException("Usuário não encontrado.");
             }
@@ -169,8 +183,9 @@ public class BiguApplication {
                     .number("284")
                     .userId(userRepository.findByEmail(driver.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(addressDriver, userRepository.findByEmail(driver.getEmail()).get().getUserId());
             addressRepository.save(addressDriver);
+            userService.addAddressToUser(addressDriver, (userRepository.findByEmail(driver.getEmail()).get()).getUserId());
+
 
             Address addressDriver2 = Address.builder()
                     .nickname("Casa de pai")
@@ -180,10 +195,11 @@ public class BiguApplication {
                     .district("Liberdade")
                     .street("Rua das Coisas")
                     .number("111")
-                    .userId(userRepository.findByEmail(driver2.getEmail()).get().getUserId())
+                    .userId(userRepository.findByEmail(driverF.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(addressDriver2, userRepository.findByEmail(driver2.getEmail()).get().getUserId());
             addressRepository.save(addressDriver2);
+            userService.addAddressToUser(addressDriver2, (userRepository.findByEmail(driverF.getEmail()).get()).getUserId());
+
 
             Address addressRider = Address.builder()
                     .nickname("Trabalho")
@@ -195,8 +211,9 @@ public class BiguApplication {
                     .number("123")
                     .userId(userRepository.findByEmail(rider.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(addressRider, userRepository.findByEmail(rider.getEmail()).get().getUserId());
             addressRepository.save(addressRider);
+            userService.addAddressToUser(addressRider, userRepository.findByEmail(rider.getEmail()).get().getUserId());
+
 
             Address addressRider2 = Address.builder()
                     .nickname("Casa de mãe")
@@ -206,10 +223,28 @@ public class BiguApplication {
                     .district("Alto Branco")
                     .street("Av. Manoel Tavares")
                     .number("1000")
-                    .userId(userRepository.findByEmail(rider2.getEmail()).get().getUserId())
+                    .userId(userRepository.findByEmail(riderF.getEmail()).get().getUserId())
                     .build();
-            userService.addAddressToUser(addressRider2, userRepository.findByEmail(rider2.getEmail()).get().getUserId());
             addressRepository.save(addressRider2);
+            userService.addAddressToUser(addressRider2, userRepository.findByEmail(riderF.getEmail()).get().getUserId());
+
+            RideRequest ride1 = RideRequest.builder()
+                            .carId(carRepository.findByUserId(driver.getUserId()).get().get(0).getCarId())
+                            .price(2.5)
+                            .dateTime(LocalDateTime.of(2024, 6, 2, 8, 0))
+                            .numSeats(3)
+                            .toWomen(false)
+                            .goingToCollege(true)
+                            .destinationAddressId(addressUFCG1.getAddressId())
+                            .startAddressId(addressDriver.getAddressId())
+                            .build();
+            try {
+                rideService.createRide(ride1, driver);
+            } catch (CarNotFoundException e) {
+                throw new NullPointerException("Carro não encontrado.");
+            } catch (InvalidTimeException e) {
+                throw new NullPointerException("Hora inválida.");
+            }
 
         };
     }

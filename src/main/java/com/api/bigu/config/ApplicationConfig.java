@@ -5,8 +5,11 @@ import com.api.bigu.services.CarService;
 import com.api.bigu.services.EmailService;
 import com.api.bigu.services.JavaMailEmailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -18,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableJpaRepositories(basePackages = "com.api.bigu.repositories", entityManagerFactoryRef = "entityManagerFactory")
 public class ApplicationConfig {
 
     private final UserRepository userRepository;

@@ -7,6 +7,7 @@ import com.api.bigu.repositories.UserRepository;
 import com.api.bigu.services.AuthenticationService;
 import com.api.bigu.services.UserService;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ public class RegisterTest {
 	UserRepository userRepository;
 	UserService userService;
 	
+	@SneakyThrows
 	@Test
 	public void cadastroSucesso() {
 		RegisterRequest registerRequest = RegisterRequest.builder()
@@ -35,6 +37,7 @@ public class RegisterTest {
 		assertTrue(userRepository.findByEmail(registerRequest.getEmail()) != null);
 	}
 	
+	@SneakyThrows
 	@Test
 	public void cadastroEmailVazio() { //falha
 		RegisterRequest registerRequest = RegisterRequest.builder()
@@ -49,6 +52,7 @@ public class RegisterTest {
 		assertNull(registerResponse);
 	}
 	
+	@SneakyThrows
 	@Test
 	public void cadastroEmailInvalido() { //falha
 		RegisterRequest registerRequest = RegisterRequest.builder()
@@ -59,10 +63,11 @@ public class RegisterTest {
 				.role("USER")
 				.build();
 		AuthenticationResponse registerResponse = authenticationService.register(registerRequest);
-		
+
 		assertNull(registerResponse);
 	}
 	
+	@SneakyThrows
 	@Test
 	public void cadastroTelefoneVazio() { //falha
 		RegisterRequest registerRequest = RegisterRequest.builder()
@@ -77,6 +82,7 @@ public class RegisterTest {
 		assertNull(registerResponse);
 	}
 	
+	@SneakyThrows
 	@Test
 	public void remocaoUsuarioSucesso() {
 		RegisterRequest registerRequest = RegisterRequest.builder()
@@ -87,7 +93,7 @@ public class RegisterTest {
 				.role("USER")
 				.build();
 		authenticationService.register(registerRequest);
-		
+
 		Integer userId = userService.buildUser(registerRequest);
 		userService.deleteById(userId);
 		

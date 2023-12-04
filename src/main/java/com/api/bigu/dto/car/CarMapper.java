@@ -1,4 +1,4 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.car;
 
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
@@ -24,6 +24,7 @@ public class CarMapper {
 
     public CarResponse toCarResponse(Car carCreated) {
         return CarResponse.builder()
+                .carId(carCreated.getCarId())
                 .brand(carCreated.getBrand())
                 .model(carCreated.getModel())
                 .modelYear(carCreated.getModelYear())

@@ -1,5 +1,6 @@
 package com.api.bigu.services;
 
+import com.api.bigu.dto.address.AddressMapper;
 import com.api.bigu.dto.address.AddressRequest;
 import com.api.bigu.dto.address.AddressResponse;
 import com.api.bigu.exceptions.AddressNotFoundException;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -94,4 +94,14 @@ public class AddressService {
         System.out.println(userRepository.findAll());
         return addressMapper.toAddressResponse(addressCreated);
     }
+
+    public void removeAddressFromUser(Integer extractUserId, Integer addressId) throws AddressNotFoundException {
+        User user = userService.findUserById(extractUserId);
+        Address address = addressRepository.findById(addressId).get();
+        if (user.getAddresses().containsValue(address)) {
+            user.getAddresses().remove(address.getNickname());
+            addressRepository.delete(address);
+        }
+    }
+
 }

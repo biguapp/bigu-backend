@@ -1,9 +1,10 @@
-package com.api.bigu.services;
+package com.api.bigu.dto.ride;
 
-import com.api.bigu.dto.ride.RideRequest;
-import com.api.bigu.dto.ride.RideResponse;
 import com.api.bigu.models.Ride;
 import com.api.bigu.repositories.AddressRepository;
+import com.api.bigu.dto.address.AddressMapper;
+import com.api.bigu.dto.car.CarMapper;
+import com.api.bigu.dto.user.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,7 @@ public class RideMapper {
 
     public RideResponse toRideResponse(Ride rideCreated) {
         return RideResponse.builder()
+                .id(rideCreated.getRideId())
                 .goingToCollege(rideCreated.getGoingToCollege())
                 .driver(userMapper.toUserResponse(rideCreated.getMembers().get(0)))
                 .start(addressMapper.toAddressResponse(rideCreated.getStartAddress()))
@@ -47,6 +49,7 @@ public class RideMapper {
                 .toWomen(rideCreated.getToWomen())
                 .car(carMapper.toCarResponse(rideCreated.getCar()))
                 .description(rideCreated.getDescription())
+                .isOver(rideCreated.getIsOver())
                 .build();
     }
 }

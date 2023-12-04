@@ -28,6 +28,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer userId;
 
+    private String profileImageName;
+
+    private String profileImageType;
+
+    @Lob
+    private byte[] profileImage;
+
     @CPF
     @Column(name = "cpf_user")
     private String cpfUser;
@@ -58,25 +65,34 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId")
     @Column(name = "addresses")
     private Map<String, Address> addresses;
 
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userId")
     @Column(name = "cars")
-    private Map<String, Car> cars;
+    private Map<Integer, Car> cars;
 
-    @ManyToMany(mappedBy = "members", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private List<Ride> rides;
 
     @Builder.Default
     private boolean accountNonLocked = true;
 
-    @Builder.Default
-    private int failedLoginAttempts = 0;
+    @Column(name = "validated")
+    private boolean isValidated;
 
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    @Column(name = "userValidateToken")
+    private String userValidateToken;
+
+    @OneToMany
+    private List<Feedback> feedbacks;
+
+    @Column(name = "avgScore")
+    private float avgScore;
+
+    private static final int MAX_LOGIN_ATTEMPTS = 5;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -105,18 +121,6 @@ public class User implements UserDetails {
     @Override
     public boolean isAccountNonLocked() {
         return accountNonLocked;
-    }
-
-    public void loginFailed() {
-        failedLoginAttempts++;
-        if (failedLoginAttempts >= MAX_LOGIN_ATTEMPTS) {
-            accountNonLocked = false;
-        }
-    }
-
-    public void loginSucceeded() {
-        failedLoginAttempts = 0;
-        accountNonLocked = true;
     }
 
     @Override

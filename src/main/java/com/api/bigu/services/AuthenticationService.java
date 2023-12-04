@@ -3,6 +3,8 @@ package com.api.bigu.services;
 import com.api.bigu.config.JwtService;
 import com.api.bigu.dto.auth.*;
 import com.api.bigu.dto.user.UserResponse;
+import com.api.bigu.exceptions.NotValidatedException;
+import com.api.bigu.exceptions.UserAlreadyExistsException;
 import com.api.bigu.exceptions.UserNotFoundException;
 import com.api.bigu.exceptions.WrongPasswordException;
 import com.api.bigu.models.User;
@@ -15,7 +17,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -36,9 +40,38 @@ public class AuthenticationService {
 	@Autowired
     private AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest registerRequest) {
+    public AuthenticationResponse registerMock(User newUser) {
+        if(newUser.getRole() == null) {
+            newUser.setRole(Role.USER);
+        }
+        List<User> users = userService.getAllUsers();
+        for (User user: users) {
+            if(user.getEmail().equals(newUser.getEmail())){
+                throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " already exists.");
+            }
+        }
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
+        User user = userService.registerUser(newUser);
+        UserResponse userResp = userService.toResponse(user);
+        var claims = new HashMap<String, Integer>();
+        claims.put("uid", user.getUserId());
+        var jwtToken = jwtService.generateToken(claims, user);
+        return AuthenticationResponse.builder()
+                .token(jwtToken)
+                .userResponse(userResp)
+                .build();
+    }
+
+    public AuthenticationResponse register(RegisterRequest registerRequest) throws MessagingException {
         if(registerRequest.getRole() == null) {
             registerRequest.setRole(Role.USER.toString().toUpperCase());
+        }
+        List<User> users = new ArrayList<>();
+        users = userService.getAllUsers();
+        for (User user: users) {
+            if(user.getEmail().equals(registerRequest.getEmail())){
+                throw new UserAlreadyExistsException("User with email: " + user.getEmail() + " already exists.");
+            }
         }
 
         var user = userService.registerUser(User.builder()
@@ -48,13 +81,13 @@ public class AuthenticationService {
                 .phoneNumber(registerRequest.getPhoneNumber())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.valueOf(registerRequest.getRole().toUpperCase()))
+                .avgScore(0)
                 .build());
 
         UserResponse userResp = userService.toResponse(user);
-
         var claims = new HashMap<String, Integer>();
         claims.put("uid", user.getUserId());
-
+        validateEmail(user.getEmail());
         var jwtToken = jwtService.generateToken(claims, user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
@@ -63,17 +96,17 @@ public class AuthenticationService {
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-
+        if (!userService.findUserByEmail(authenticationRequest.getEmail()).isValidated()){
+            throw new NotValidatedException("Usuário inválido.");
+        }
         authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                     authenticationRequest.getEmail(),
                     authenticationRequest.getPassword()
             )
         );
+
         var user = userService.findUserByEmail(authenticationRequest.getEmail());
-        if (!user.getPassword().equals(authenticationRequest.getPassword())) {
-            incrementLoginAttempts(authenticationRequest.getEmail());
-        } else { resetLoginAttempts(authenticationRequest.getEmail()); }
 
         var claims = new HashMap<String, Integer>();
         claims.put("uid", user.getUserId());
@@ -85,7 +118,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public RecoveryResponse recover(String userEmail) throws UserNotFoundException, MessagingException {
+    public RecoveryResponse recoverEmail(String userEmail) throws UserNotFoundException, MessagingException {
         User user = userService.findUserByEmail(userEmail);
 
         String jwtToken = jwtService.generateToken(user);
@@ -101,7 +134,7 @@ public class AuthenticationService {
                 recoveryLink + "\n\n" +
                 "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
                 "Atenciosamente,\n" +
-                "Equipe do Sistema";
+                "Equipe do Bigu!";
 
         emailService.sendEmail(user.getEmail(), subject, body);
 
@@ -131,24 +164,6 @@ public class AuthenticationService {
         userService.updatePassword(userId, encodedNewPassword);
     }
 
-    public void incrementLoginAttempts(String email) throws UserNotFoundException {
-        userService.findUserByEmail(email).loginFailed();
-    }
-
-    public void resetLoginAttempts(String email) throws UserNotFoundException {
-        userService.findUserByEmail(email).loginSucceeded();
-    }
-
-    public void blockAuthenticate(String email) throws UserNotFoundException {
-        User user;
-        try {
-            user = userService.findUserByEmail(email);
-        } catch (UserNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        user.loginFailed();
-    }
-
     public void sendConfirmationEmail(String to, String code) throws MessagingException {
         String subject = "Confirmation code for your account";
         String body = "Your confirmation code is: " + code;
@@ -157,5 +172,41 @@ public class AuthenticationService {
 
     public void addToBlackList(String token) {
         jwtService.addToBlacklist(token);
+    }
+
+    public ValidateRequest validateEmail(String userEmail) throws UserNotFoundException, MessagingException{
+        User user = userService.findUserByEmail(userEmail);
+
+        String jwtToken = jwtService.generateToken(user);
+
+        userService.updateUserValidateToken(jwtToken, userEmail);
+
+        String validationLink = "https://bigu.herokuapp.com/validate?token=" + jwtToken;
+
+        String subject = "BIGU - Confirmação de conta";
+        String body = "Olá " + user.getFullName() + ",\n\n" +
+                "Seja bem-vindo(a) ao Bigu. \n" +
+                "Clique no link abaixo para confirmar seu cadastro:\n\n" +
+                validationLink + "\n\n" +
+                "Se você não solicitou a recuperação de senha, por favor, desconsidere este e-mail.\n\n" +
+                "Atenciosamente,\n" +
+                "Equipe do Bigu!";
+
+        System.err.println("Sending validation email to: " +  userEmail);
+        System.err.println("Subject: " +  subject);
+        System.err.println("Body: " + body);
+
+        emailService.sendEmail(user.getEmail(), subject, body);
+
+        return new ValidateRequest().builder()
+                .message("Email de validação enviado.")
+                .build();
+    }
+
+    public ValidateResponse validateAccount(String userEmail){
+        return ValidateResponse.builder()
+                .isValidated(userService.validateUser(userEmail))
+                .userEmail(userEmail)
+                .build();
     }
 }

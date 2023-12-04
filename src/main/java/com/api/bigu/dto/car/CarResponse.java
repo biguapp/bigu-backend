@@ -9,6 +9,8 @@ import lombok.*;
 @NoArgsConstructor
 public class CarResponse {
 
+    private Integer carId;
+
     private String brand;
 
     private String model;
